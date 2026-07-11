@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Sparkles, Brain, Users, Repeat, KeyRound, LayoutGrid,
-  MessageSquare, ShieldCheck, Activity, CalendarDays, Wallet,
-  TrendingDown, ArrowRight, ArrowUpRight, type LucideIcon,
+  ShieldCheck, Activity, CalendarDays, Fingerprint, DatabaseZap,
+  ArrowRight, ArrowUpRight, Server, type LucideIcon,
 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { useAppCatalog } from "../../hooks/useAppCatalog";
@@ -11,11 +11,12 @@ import { useAppFilter } from "../contexts/AppFilterContext";
 import { useAuth } from "../../lib/auth";
 
 /* ─────────────────────────────────────────────────────────────
-   Page d'accueil — style éditorial (hero, KPI, insight, avancement)
-   Adaptée au domaine de la console : apps, clients, abonnements, licences.
+   Accueil de la CONSOLE (derrière login) — style éditorial.
+   Données NON confidentielles uniquement : compteurs de structure
+   et état système. Aucun montant (MRR, revenus) n'est affiché ici.
    ───────────────────────────────────────────────────────────── */
 
-/** Sparkline purement décoratif (aucune valeur chiffrée revendiquée). */
+/** Sparkline décoratif (aucune valeur chiffrée revendiquée). */
 function Sparkline({ points, color }: { points: number[]; color: string }) {
   const w = 260, h = 56, pad = 4;
   const max = Math.max(...points), min = Math.min(...points);
@@ -56,9 +57,7 @@ function StatCard({ label, value, unit, caption, spark, color }: {
         </div>
         <div className="mt-1.5 text-neutral-muted text-[11px]">{caption}</div>
       </div>
-      <div className="mt-3">
-        <Sparkline points={spark} color={color} />
-      </div>
+      <div className="mt-3"><Sparkline points={spark} color={color} /></div>
     </div>
   );
 }
@@ -78,6 +77,15 @@ function MiniCard({ icon: Icon, label, value, caption }: {
   );
 }
 
+function Pill({ icon: Icon, children }: { icon: LucideIcon; children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-neutral-body text-[11px] font-semibold uppercase tracking-wider">
+      <Icon size={12} className="text-admin-accent" />
+      {children}
+    </span>
+  );
+}
+
 export default function HomePage() {
   const { appList } = useAppCatalog();
   const { selectedApp } = useAppFilter();
@@ -85,11 +93,7 @@ export default function HomePage() {
 
   const [users, setUsers] = useState(0);
   const [subs, setSubs] = useState(0);
-  const [mrr, setMrr] = useState(0);
-  const [tickets, setTickets] = useState(0);
   const [licences, setLicences] = useState(0);
-  const [pending, setPending] = useState(0);
-  const [churn, setChurn] = useState(0);
 
   useEffect(() => {
     async function load() {
@@ -98,31 +102,9 @@ export default function HomePage() {
         const s = statsRes.data as unknown as { total_users: number; active_subscriptions: number } | null;
         if (s) { setUsers(s.total_users || 0); setSubs(s.active_subscriptions || 0); }
 
-        const revRes = await supabase.rpc("admin_revenue_summary");
-        const r = revRes.data as unknown as { pending_payments: number } | null;
-        if (r) setPending(r.pending_payments || 0);
-
-        let subsQ = supabase.from("subscriptions").select("price_at_subscription").in("status", ["active", "trial"]);
-        if (selectedApp !== "all") subsQ = subsQ.eq("app_id", selectedApp);
-        const { data: activeSubs } = await subsQ;
-        if (activeSubs) setMrr(activeSubs.reduce((a, x) => a + (Number(x.price_at_subscription) || 0), 0));
-
-        let tQ = supabase.from("tickets").select("id", { count: "exact", head: true }).in("status", ["open", "in_progress"]);
-        if (selectedApp !== "all") tQ = tQ.eq("app_id", selectedApp);
-        const { count: tc } = await tQ;
-        setTickets(tc || 0);
-
         const { count: la } = await supabase.from("licences").select("id", { count: "exact", head: true }).eq("status", "active");
         setLicences(la || 0);
-
-        const thirtyAgo = new Date(Date.now() - 30 * 86400000).toISOString();
-        const [cRes, aRes] = await Promise.all([
-          supabase.from("subscriptions").select("id", { count: "exact", head: true }).eq("status", "cancelled").gte("cancelled_at", thirtyAgo),
-          supabase.from("subscriptions").select("id", { count: "exact", head: true }).in("status", ["active", "trial"]),
-        ]);
-        const can = cRes.count || 0, act = aRes.count || 0;
-        setChurn(act > 0 ? Math.round((can / (act + can)) * 100) : 0);
-      } catch { /* mode démo / hors-ligne — valeurs par défaut */ }
+      } catch { /* mode démo / hors-ligne */ }
     }
     load();
   }, [selectedApp]);
@@ -131,6 +113,7 @@ export default function HomePage() {
   const now = new Date();
   const moisAnnee = now.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
   const moisAnneeCap = moisAnnee.charAt(0).toUpperCase() + moisAnnee.slice(1);
+  const moisSeul = moisAnneeCap.split(" ")[0];
   const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
   const yearPct = Math.round((dayOfYear / 365) * 100);
   const prenom = (profile?.full_name || "").split(" ")[0] || "";
@@ -138,9 +121,9 @@ export default function HomePage() {
   const AMBER = "#EF9F27", BLUE = "#3B82F6", EMERALD = "#10B981";
 
   return (
-    <div>
-      {/* ═══ HERO (pleine largeur) ═══ */}
-      <div className="-mx-8 md:-mx-10 -mt-8 md:-mt-10 mb-8 relative overflow-hidden">
+    <div className="overflow-x-hidden">
+      {/* ═══ HERO (pleine largeur, avec barre du haut) ═══ */}
+      <div className="-mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-ink-radial" />
         <div
           className="absolute inset-0 opacity-[0.6]"
@@ -152,7 +135,28 @@ export default function HomePage() {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-admin-bg" />
-        <div className="relative px-8 md:px-10 py-14 text-center">
+
+        {/* Barre du haut */}
+        <div className="relative flex items-center justify-between gap-4 px-6 md:px-8 pt-6">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="text-neutral-light text-sm font-bold tracking-wide uppercase">Atlas Studio</span>
+            <span className="hidden sm:block w-px h-4 bg-white/15" />
+            <span className="hidden sm:block text-neutral-muted text-xs truncate">Console d'administration{prenom ? ` · ${prenom}` : ""}</span>
+          </div>
+          <div className="hidden md:flex items-center gap-2">
+            <Pill icon={CalendarDays}>Période {moisSeul}</Pill>
+            <Pill icon={DatabaseZap}>Temps réel</Pill>
+          </div>
+          <Link
+            to="/admin/dashboard"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-admin-accent text-onyx text-[13px] font-semibold hover:brightness-110 transition-all whitespace-nowrap"
+          >
+            Tableau de bord <ArrowUpRight size={14} />
+          </Link>
+        </div>
+
+        {/* Contenu hero */}
+        <div className="relative px-6 md:px-8 pt-10 pb-14 text-center">
           <div className="inline-flex items-center gap-2 text-admin-accent text-[11px] font-bold uppercase tracking-[0.2em]">
             <span className="w-1.5 h-1.5 rounded-full bg-admin-accent animate-pulse" />
             Bienvenue{prenom ? ` ${prenom}` : ""} · {moisAnneeCap}
@@ -167,19 +171,19 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ═══ KPI (4 cartes à courbe) ═══ */}
+      {/* ═══ KPI (4 compteurs de structure) ═══ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard label="Applications" value={appList.length} unit="apps" caption="catalogue actif" color={BLUE} spark={[4, 5, 4.6, 6, 6.4, 7.6, 8.2]} />
-        <StatCard label="Clients" value={fmt(users)} unit="comptes" caption="utilisateurs · partenaires" color={AMBER} spark={[3, 3.4, 4.2, 4, 5.2, 6, 7.1]} />
-        <StatCard label="Abonnements" value={fmt(subs)} unit="actifs" caption="abonnements en cours" color={EMERALD} spark={[2, 3, 3.6, 4.4, 4.2, 5.6, 6.8]} />
-        <StatCard label="Licences" value={fmt(licences)} unit="clés" caption="licences actives" color={AMBER} spark={[3, 3.2, 4, 4.8, 5.4, 6.2, 7.4]} />
+        <StatCard label="Applications" value={appList.length} unit="apps" caption="au catalogue" color={BLUE} spark={[4, 5, 4.6, 6, 6.4, 7.6, 8.2]} />
+        <StatCard label="Utilisateurs" value={fmt(users)} unit="comptes" caption="clients · partenaires" color={AMBER} spark={[3, 3.4, 4.2, 4, 5.2, 6, 7.1]} />
+        <StatCard label="Abonnements" value={fmt(subs)} unit="actifs" caption="en cours" color={EMERALD} spark={[2, 3, 3.6, 4.4, 4.2, 5.6, 6.8]} />
+        <StatCard label="Licences" value={fmt(licences)} unit="clés" caption="actives" color={AMBER} spark={[3, 3.2, 4, 4.8, 5.4, 6.2, 7.4]} />
       </div>
 
-      {/* ═══ INSIGHT + MINI-CARTES ═══ */}
+      {/* ═══ INSIGHT + CARTES D'ÉTAT ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         {/* Insight du jour */}
         <div className="lg:col-span-2 rounded-2xl border border-white/10 bg-gradient-card shadow-premium p-6 flex flex-col">
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
             <div className="w-9 h-9 rounded-xl bg-admin-accent flex items-center justify-center">
               <Sparkles size={17} className="text-onyx" />
             </div>
@@ -187,7 +191,7 @@ export default function HomePage() {
             <span className="text-admin-accent text-[11px] font-semibold uppercase tracking-wider">Proph3t · Confiance 86 %</span>
           </div>
           <p className="text-neutral-light text-[15px] leading-relaxed">
-            Aucune anomalie détectée sur les <strong>{fmt(users)}</strong> clients et <strong>{fmt(subs)}</strong> abonnements actifs.
+            Aucune anomalie détectée sur les <strong>{fmt(users)}</strong> comptes et <strong>{fmt(subs)}</strong> abonnements actifs.
           </p>
           <p className="text-neutral-muted text-xs mt-2 leading-relaxed">
             Conformité RGPD validée · piste d'audit chaînée SHA-256 · sauvegardes chiffrées en continu.
@@ -202,14 +206,14 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Cluster mini-cartes */}
+        {/* Cluster cartes d'état (non confidentielles) */}
         <div className="grid grid-cols-2 gap-3">
-          <MiniCard icon={LayoutGrid} label="Apps" value={String(appList.length)} caption="catalogue" />
-          <MiniCard icon={ShieldCheck} label="Conformité" value="100 %" caption="RGPD · SHA-256" />
-          <MiniCard icon={MessageSquare} label="Support" value={String(tickets)} caption="tickets ouverts" />
+          <MiniCard icon={Server} label="Environnement" value="Production" caption="temps réel" />
+          <MiniCard icon={ShieldCheck} label="Conformité" value="100 %" caption="RGPD · révisé" />
           <MiniCard icon={Activity} label="Système" value="Opérationnel" caption="uptime · monitoring" />
-          <MiniCard icon={Wallet} label="MRR" value={`${fmt(mrr)}`} caption="FCFA / mois" />
-          <MiniCard icon={CalendarDays} label="Période" value={moisAnneeCap.split(" ")[0]} caption={String(now.getFullYear())} />
+          <MiniCard icon={Fingerprint} label="Intégrité" value="SHA-256" caption="piste d'audit chaînée" />
+          <MiniCard icon={CalendarDays} label="Période" value={moisSeul} caption={String(now.getFullYear())} />
+          <MiniCard icon={LayoutGrid} label="Catalogue" value={String(appList.length)} caption="applications" />
         </div>
       </div>
 
@@ -231,9 +235,9 @@ export default function HomePage() {
             <div className="h-full rounded-full bg-gradient-to-r from-admin-accent-dark via-admin-accent to-emerald-400 transition-all" style={{ width: `${yearPct}%` }} />
           </div>
           <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-[11px]">
-            <span className="text-neutral-muted">Churn 30j · <span className={churn > 5 ? "text-red-400" : "text-emerald-400"}>{churn}%</span></span>
-            <span className="text-neutral-muted">En attente · <span className="text-amber-400">{fmt(pending)} FCFA</span></span>
-            <span className="text-neutral-muted">Abonnements actifs · <span className="text-neutral-light">{fmt(subs)}</span></span>
+            <span className="text-neutral-muted">Applications · <span className="text-neutral-light">{appList.length}</span></span>
+            <span className="text-neutral-muted">Conformité · <span className="text-emerald-400">100 %</span></span>
+            <span className="text-neutral-muted">Backend · <span className="text-neutral-light">Supabase temps réel</span></span>
           </div>
         </div>
 
@@ -252,7 +256,7 @@ export default function HomePage() {
             Analyse, commente et anticipe l'activité de votre plateforme.
           </p>
           <div className="mt-3 flex items-center gap-2 text-[10px] text-neutral-muted">
-            <TrendingDown size={11} className="rotate-180 text-emerald-400" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             Modèle v3.4 · AUC 0.87 · garde-fous éthiques actifs
           </div>
         </Link>
