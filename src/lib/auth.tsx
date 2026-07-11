@@ -122,7 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // 3. Hard redirect pour eviter qu'un autre tab/composant mette en cache
     // l'ancien etat auth (cookie partage *.atlas-studio.org).
     if (typeof window !== "undefined") {
-      window.location.assign("/portal/login");
+      window.location.assign("/admin/login");
     }
   };
 
