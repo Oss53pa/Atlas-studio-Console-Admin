@@ -132,7 +132,7 @@ export default function AdminLoginPage() {
                 Un lien de réinitialisation sera envoyé à votre <strong>email de récupération</strong> configuré dans vos paramètres.
               </div>
               <button onClick={handleForgotPassword} disabled={recoveryLoading || !email}
-                className="w-full py-3.5 bg-p-ink text-p-bg font-semibold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3.5 bg-p-accent text-p-on-accent font-semibold rounded-lg hover:brightness-110 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {recoveryLoading ? <><Loader2 size={16} className="animate-spin" /> Envoi...</> : "Envoyer le lien"}
               </button>
@@ -146,7 +146,7 @@ export default function AdminLoginPage() {
           ) : (
             <>
               <button onClick={handleSubmit} disabled={loading}
-                className="w-full py-3.5 bg-p-ink text-p-bg font-semibold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-p-accent text-p-on-accent font-semibold rounded-lg hover:brightness-110 transition-all flex items-center justify-center gap-2"
                 style={{ opacity: loading ? 0.6 : 1 }}>
                 {loading ? <><Loader2 size={16} className="animate-spin" /> Vérification...</> : "Se connecter"}
               </button>
