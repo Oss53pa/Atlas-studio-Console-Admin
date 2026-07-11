@@ -56,16 +56,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (mounted) setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, s) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
       if (!mounted) return;
       setSession(s);
       setUser(s?.user ?? null);
 
       if (s?.user) {
-        // On SIGNED_IN for the same user (e.g. lock screen re-auth),
-        // don't null-flash the profile — just refresh it in the background.
-        // For a different user or initial sign-in, fetch fresh.
-        await fetchProfile(s.user.id);
+        // IMPORTANT : ne jamais `await` un appel Supabase DANS ce callback.
+        // GoTrue sérialise les callbacks d'auth ; un await d'une requête
+        // Supabase ici peut bloquer l'opération d'auth en cours
+        // (ex : signInWithPassword du LockScreen reste en « Vérification… »).
+        // On défère donc le chargement du profil hors du callback.
+        const uid = s.user.id;
+        setTimeout(() => { if (mounted) void fetchProfile(uid); }, 0);
       } else if (event === 'SIGNED_OUT') {
         setProfile(null);
       }

@@ -29,16 +29,17 @@ export function LockScreen({ onUnlock, onSignOut }: LockScreenProps) {
     setError("");
     setLoading(true);
 
-    // Verify password WITHOUT triggering a full re-sign-in.
-    // The user already has an active session — we just need to confirm
-    // they know the password. We use signInWithPassword then immediately
-    // check the result without waiting for onAuthStateChange to propagate,
-    // which avoids the race condition that causes the "ram" effect.
+    // On vérifie le mot de passe via signInWithPassword. Un filet de sécurité
+    // (timeout) garantit que le bouton ne reste jamais bloqué sur
+    // « Vérification… » si le réseau traîne ou si la requête ne répond pas.
     try {
-      const { error: authErr } = await supabase.auth.signInWithPassword({
-        email: user.email,
-        password,
-      });
+      const result = await Promise.race([
+        supabase.auth.signInWithPassword({ email: user.email, password }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("timeout")), 12000)
+        ),
+      ]);
+      const authErr = (result as { error: { message: string } | null }).error;
       if (authErr) {
         setError("Mot de passe incorrect");
         setPassword("");
@@ -47,10 +48,16 @@ export function LockScreen({ onUnlock, onSignOut }: LockScreenProps) {
         setPassword("");
         onUnlock();
       }
-    } catch {
-      setError("Erreur de vérification");
+    } catch (e) {
+      setError(
+        e instanceof Error && e.message === "timeout"
+          ? "Connexion trop lente. Réessayez."
+          : "Erreur de vérification"
+      );
+      inputRef.current?.focus();
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
