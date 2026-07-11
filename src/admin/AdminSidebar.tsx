@@ -13,6 +13,7 @@ import { useAppFilter } from "./contexts/AppFilterContext";
 import { useTheme } from "./contexts/ThemeContext";
 import { useAppCatalog } from "../hooks/useAppCatalog";
 import { NotificationCenter } from "./components/NotificationCenter";
+import { SITE_URL } from "../config/site";
 
 interface NavItem { to: string; icon: LucideIcon; label: string; }
 interface NavGroup { id: string; label: string; icon: LucideIcon; items: NavItem[]; }
@@ -141,7 +142,7 @@ export function AdminSidebar() {
       {/* Header */}
       <div className="px-4 pt-5 pb-3 border-b border-white/5">
         <div className="flex items-center justify-between">
-          <Link to="/"><Logo size={20} color="text-neutral-light" /></Link>
+          <a href={SITE_URL}><Logo size={20} color="text-neutral-light" /></a>
           <NotificationCenter />
         </div>
         <div className="text-admin-accent text-[9px] font-bold uppercase tracking-widest mt-1">Admin</div>
@@ -281,13 +282,13 @@ export function AdminSidebar() {
           </div>
         </div>
 
-        <Link
-          to="/"
+        <a
+          href={SITE_URL}
           className="flex items-center gap-2 px-2 py-1.5 rounded-md text-neutral-500 text-[11px] hover:text-neutral-300 hover:bg-white/5 transition-all"
         >
           <ArrowLeft size={12} />
           Retour au site
-        </Link>
+        </a>
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-neutral-500 text-[11px] hover:text-red-400 hover:bg-white/5 transition-all"

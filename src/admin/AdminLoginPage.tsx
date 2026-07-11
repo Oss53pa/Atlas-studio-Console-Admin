@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Shield, Zap, Loader2 } from "lucide-react";
 import { Logo } from "../components/ui/Logo";
 import { useAuth } from "../lib/auth";
 import { supabase } from "../lib/supabase";
+import { SITE_URL } from "../config/site";
 
 export default function AdminLoginPage() {
   const { signIn, user } = useAuth();
@@ -159,9 +160,9 @@ export default function AdminLoginPage() {
         </div>
 
         <p className="text-center mt-6">
-          <Link to="/" className="text-admin-muted text-[13px] hover:text-admin-accent transition-colors">
+          <a href={SITE_URL} className="text-admin-muted text-[13px] hover:text-admin-accent transition-colors">
             &larr; Retour au site
-          </Link>
+          </a>
         </p>
 
         <p className="text-center mt-4 text-admin-muted/40 text-[11px]">

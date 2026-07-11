@@ -3,6 +3,7 @@ import { Save, RotateCcw, Loader2, Check, Trash2, Plus, Upload, X, Image, Extern
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../lib/auth";
 import { DEFAULT_CONTENT } from "../../config/content";
+import { SITE_URL } from "../../config/site";
 
 const tabs = ["Hero", "Stats", "Trust Bar", "Steps", "About", "Témoignages", "Secteurs", "Comparatif", "FAQs", "Contact", "Réseaux sociaux", "Apparence"] as const;
 type Tab = (typeof tabs)[number];
@@ -229,7 +230,7 @@ export default function ContentManagementPage() {
           <h1 className="text-neutral-text dark:text-admin-text text-2xl font-bold mb-1">Gestion du contenu</h1>
           <p className="text-neutral-muted dark:text-admin-muted text-sm">Modifiez le contenu du site vitrine — textes, images, couleurs, réseaux sociaux</p>
         </div>
-        <a href="/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-gold dark:text-admin-accent text-[13px] font-semibold hover:underline">
+        <a href={SITE_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-gold dark:text-admin-accent text-[13px] font-semibold hover:underline">
           <ExternalLink size={14} /> Voir le site
         </a>
       </div>
