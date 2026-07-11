@@ -21,7 +21,7 @@ interface NavItem { to: string; icon: LucideIcon; label: string; }
 interface NavGroup { id: string; label: string; icon: LucideIcon; items: NavItem[]; }
 
 const PINNED: NavItem[] = [
-  { to: "/admin", icon: LayoutDashboard, label: "Accueil" },
+  { to: "/", icon: LayoutDashboard, label: "Accueil" },
   { to: "/admin/dashboard", icon: BarChart3, label: "Tableau de bord" },
   { to: "/admin/proph3t", icon: Brain, label: "Proph3t IA" },
   { to: "/admin/clients", icon: Users, label: "Clients" },
@@ -34,7 +34,7 @@ const NAV_GROUPS: NavGroup[] = [
     label: "Vue d'ensemble",
     icon: Home,
     items: [
-      { to: "/admin", icon: LayoutDashboard, label: "Accueil" },
+      { to: "/", icon: LayoutDashboard, label: "Accueil" },
       { to: "/admin/dashboard", icon: BarChart3, label: "Tableau de bord" },
       { to: "/admin/stats", icon: BarChart3, label: "Statistiques" },
       { to: "/admin/analytics", icon: BarChart3, label: "Analytics" },
@@ -244,7 +244,7 @@ export function AdminSidebar() {
                   onClick={() => { setActiveSection(group.id); if (!secondaryOpen) setSecondaryOpen(true); }}
                   className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12.5px] transition-all ${
                     isActiveSection
-                      ? "bg-onyx-light text-white font-semibold ring-1 ring-white/10"
+                      ? "bg-white/10 text-white font-semibold ring-1 ring-white/10"
                       : hasActivePage
                         ? "text-admin-accent hover:bg-white/5"
                         : "text-white/70 hover:bg-white/5 hover:text-white"

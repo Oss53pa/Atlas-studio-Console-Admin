@@ -86,7 +86,10 @@ function Pill({ icon: Icon, children }: { icon: LucideIcon; children: React.Reac
 export default function HomePage() {
   const { appList } = useAppCatalog();
   const { selectedApp } = useAppFilter();
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
+  const cta = user
+    ? { to: "/admin/dashboard", label: "Accéder à la console" }
+    : { to: "/admin/login", label: "Se connecter" };
 
   const [users, setUsers] = useState(0);
   const [subs, setSubs] = useState(0);
@@ -142,10 +145,10 @@ export default function HomePage() {
             <Pill icon={DatabaseZap}>Temps réel</Pill>
           </div>
           <Link
-            to="/admin/dashboard"
+            to={cta.to}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-p-accent text-p-on-accent text-[13px] font-semibold hover:brightness-110 transition-all whitespace-nowrap"
           >
-            Tableau de bord <ArrowUpRight size={14} />
+            {cta.label} <ArrowUpRight size={14} />
           </Link>
         </div>
 

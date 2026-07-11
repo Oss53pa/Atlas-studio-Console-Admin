@@ -8,6 +8,7 @@ import { RequireSuperAdmin } from './components/guards/RequireSuperAdmin';
 import { AdminLayout } from './admin/AdminLayout';
 import AdminLoginPage from './admin/AdminLoginPage';
 import { PaletteProvider } from './theme/palette';
+import { AppFilterProvider } from './admin/contexts/AppFilterContext';
 import './index.css';
 
 // Pages admin — chargées à la demande
@@ -110,16 +111,16 @@ root.render(
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            {/* Racine → console (accueil derrière login) */}
-            <Route path="/" element={<Navigate to="/admin" replace />} />
+            {/* Accueil PUBLIC (avant login) — page éditoriale, sans l'appli */}
+            <Route path="/" element={<AppFilterProvider>{S(<HomePage />)}</AppFilterProvider>} />
 
             <Route path="/admin">
               {/* Connexion — publique */}
               <Route path="login" element={<AdminLoginPage />} />
 
-              {/* Pages protégées */}
+              {/* Pages protégées (l'appli) */}
               <Route element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
-                <Route index element={S(<HomePage />)} />
+                <Route index element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="dashboard" element={S(<DashboardPage />)} />
                 <Route path="content" element={S(<ContentManagementPage />)} />
                 <Route path="apps" element={S(<AdminAppsTable />)} />
