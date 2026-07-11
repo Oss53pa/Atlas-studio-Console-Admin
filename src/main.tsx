@@ -11,66 +11,85 @@ import { PaletteProvider } from './theme/palette';
 import { AppFilterProvider } from './admin/contexts/AppFilterContext';
 import './index.css';
 
+// Chargement paresseux résilient : après un nouveau déploiement, les anciens
+// chunks (hashés) n'existent plus sur le serveur. Si un import dynamique échoue
+// (« Failed to fetch dynamically imported module »), on recharge UNE fois la
+// page pour récupérer les nouveaux assets, au lieu d'afficher un écran d'erreur.
+function lazyRetry<T extends { default: React.ComponentType<any> }>(factory: () => Promise<T>) {
+  return lazy(() =>
+    factory().catch((err: unknown) => {
+      const KEY = 'atlas_chunk_reload_at';
+      const last = Number(sessionStorage.getItem(KEY) || 0);
+      if (typeof window !== 'undefined' && Date.now() - last > 10000) {
+        sessionStorage.setItem(KEY, String(Date.now()));
+        window.location.reload();
+        return new Promise<T>(() => {}); // suspend jusqu'au rechargement
+      }
+      throw err;
+    })
+  );
+}
+
 // Pages admin — chargées à la demande
-const HomePage = lazy(() => import('./admin/pages/HomePage'));
-const DashboardPage = lazy(() => import('./admin/pages/DashboardPage'));
-const ContentManagementPage = lazy(() => import('./admin/pages/ContentManagementPage'));
-const AdminAppsTable = lazy(() => import('./admin/pages/AdminAppsTable'));
-const ClientsPage = lazy(() => import('./admin/pages/ClientsPage'));
-const SubscriptionsPage = lazy(() => import('./admin/pages/SubscriptionsPage'));
-const InvoicesPage = lazy(() => import('./admin/pages/InvoicesPage'));
-const ActivityLogPage = lazy(() => import('./admin/pages/ActivityLogPage'));
-const TicketsPage = lazy(() => import('./admin/pages/TicketsPage'));
-const NewsletterPage = lazy(() => import('./admin/pages/NewsletterPage'));
-const EmailTemplatesPage = lazy(() => import('./admin/pages/EmailTemplatesPage'));
-const AnalyticsPage = lazy(() => import('./admin/pages/AnalyticsPage'));
-const AdminStatsPage = lazy(() => import('./admin/pages/AdminStatsPage'));
-const Proph3tPage = lazy(() => import('./admin/pages/Proph3tPage'));
-const SystemHealthPage = lazy(() => import('./admin/pages/SystemHealthPage'));
-const FeatureFlagsPage = lazy(() => import('./admin/pages/FeatureFlagsPage'));
-const AlertsPage = lazy(() => import('./admin/pages/AlertsPage'));
-const PromoCodesPage = lazy(() => import('./admin/pages/PromoCodesPage'));
-const DeploymentsPage = lazy(() => import('./admin/pages/DeploymentsPage'));
-const KnowledgeBasePage = lazy(() => import('./admin/pages/KnowledgeBasePage'));
-const SettingsPage = lazy(() => import('./admin/pages/SettingsPage'));
-const RolesPage = lazy(() => import('./admin/pages/RolesPage'));
-const CampaignsPage = lazy(() => import('./admin/pages/CampaignsPage'));
-const Proph3tMemoryPage = lazy(() => import('./admin/pages/Proph3tMemoryPage'));
-const Proph3tPlansPage = lazy(() => import('./admin/pages/Proph3tPlansPage'));
-const Proph3tKnowledgePage = lazy(() => import('./admin/pages/Proph3tKnowledgePage'));
-const LicencesPage = lazy(() => import('./admin/pages/LicencesPage'));
-const PaymentsPage = lazy(() => import('./admin/pages/PaymentsPage'));
-const LandingPagesPage = lazy(() => import('./admin/pages/LandingPagesPage'));
-const PlansPage = lazy(() => import('./admin/pages/PlansPage'));
-const OhadaReferentielPage = lazy(() => import('./admin/pages/OhadaReferentielPage'));
-const AdminsPage = lazy(() => import('./admin/pages/AdminsPage'));
-const ErrorMonitorIndexPage = lazy(() => import('./admin/pages/error-monitor/ErrorMonitorIndexPage'));
-const ErrorMonitorAppPage = lazy(() => import('./admin/pages/error-monitor/ErrorMonitorAppPage'));
-const ErrorMonitorDetailPage = lazy(() => import('./admin/pages/error-monitor/ErrorMonitorDetailPage'));
-const AsvcHubPage = lazy(() => import('./admin/pages/asvc/AsvcHubPage'));
-const AsvcArbitrationsPage = lazy(() => import('./admin/pages/asvc/AsvcArbitrationsPage'));
-const AsvcAgentsPage = lazy(() => import('./admin/pages/asvc/AsvcAgentsPage'));
-const AsvcActionsLogPage = lazy(() => import('./admin/pages/asvc/AsvcActionsLogPage'));
-const AsvcKillSwitchPage = lazy(() => import('./admin/pages/asvc/AsvcKillSwitchPage'));
-const AsvcConfigPage = lazy(() => import('./admin/pages/asvc/AsvcConfigPage'));
-const AsvcTicketsPage = lazy(() => import('./admin/pages/asvc/AsvcTicketsPage'));
-const AsvcCustomersPage = lazy(() => import('./admin/pages/asvc/AsvcCustomersPage'));
-const AsvcContentPage = lazy(() => import('./admin/pages/asvc/AsvcContentPage'));
-const AsvcLeadsPage = lazy(() => import('./admin/pages/asvc/AsvcLeadsPage'));
-const AsvcFinancePage = lazy(() => import('./admin/pages/asvc/AsvcFinancePage'));
-const AsvcPipelinePage = lazy(() => import('./admin/pages/asvc/AsvcPipelinePage'));
-const AsvcHealthPage = lazy(() => import('./admin/pages/asvc/AsvcHealthPage'));
-const AsvcTestsReadinessPage = lazy(() => import('./admin/pages/asvc/AsvcTestsReadinessPage'));
-const AsvcTemplatesPage = lazy(() => import('./admin/pages/asvc/AsvcTemplatesPage'));
-const AsvcConnectorsPage = lazy(() => import('./admin/pages/asvc/AsvcConnectorsPage'));
-const AsvcBriefsPage = lazy(() => import('./admin/pages/asvc/AsvcBriefsPage'));
-const AsvcSettingsPage = lazy(() => import('./admin/pages/asvc/AsvcSettingsPage'));
-const AsvcAgentPromptsPage = lazy(() => import('./admin/pages/asvc/AsvcAgentPromptsPage'));
-const AsvcSetupGuidePage = lazy(() => import('./admin/pages/asvc/AsvcSetupGuidePage'));
-const AsvcSpecDetailPage = lazy(() => import('./admin/pages/asvc/AsvcSpecDetailPage'));
-const AsvcPrDetailPage = lazy(() => import('./admin/pages/asvc/AsvcPrDetailPage'));
-const AsvcDeploymentDetailPage = lazy(() => import('./admin/pages/asvc/AsvcDeploymentDetailPage'));
-const AsvcTechDebtPage = lazy(() => import('./admin/pages/asvc/AsvcTechDebtPage'));
+const HomePage = lazyRetry(() => import('./admin/pages/HomePage'));
+const DashboardPage = lazyRetry(() => import('./admin/pages/DashboardPage'));
+const ContentManagementPage = lazyRetry(() => import('./admin/pages/ContentManagementPage'));
+const AdminAppsTable = lazyRetry(() => import('./admin/pages/AdminAppsTable'));
+const ClientsPage = lazyRetry(() => import('./admin/pages/ClientsPage'));
+const SubscriptionsPage = lazyRetry(() => import('./admin/pages/SubscriptionsPage'));
+const InvoicesPage = lazyRetry(() => import('./admin/pages/InvoicesPage'));
+const ActivityLogPage = lazyRetry(() => import('./admin/pages/ActivityLogPage'));
+const TicketsPage = lazyRetry(() => import('./admin/pages/TicketsPage'));
+const NewsletterPage = lazyRetry(() => import('./admin/pages/NewsletterPage'));
+const EmailTemplatesPage = lazyRetry(() => import('./admin/pages/EmailTemplatesPage'));
+const AnalyticsPage = lazyRetry(() => import('./admin/pages/AnalyticsPage'));
+const AdminStatsPage = lazyRetry(() => import('./admin/pages/AdminStatsPage'));
+const Proph3tPage = lazyRetry(() => import('./admin/pages/Proph3tPage'));
+const SystemHealthPage = lazyRetry(() => import('./admin/pages/SystemHealthPage'));
+const FeatureFlagsPage = lazyRetry(() => import('./admin/pages/FeatureFlagsPage'));
+const AlertsPage = lazyRetry(() => import('./admin/pages/AlertsPage'));
+const PromoCodesPage = lazyRetry(() => import('./admin/pages/PromoCodesPage'));
+const DeploymentsPage = lazyRetry(() => import('./admin/pages/DeploymentsPage'));
+const KnowledgeBasePage = lazyRetry(() => import('./admin/pages/KnowledgeBasePage'));
+const SettingsPage = lazyRetry(() => import('./admin/pages/SettingsPage'));
+const RolesPage = lazyRetry(() => import('./admin/pages/RolesPage'));
+const CampaignsPage = lazyRetry(() => import('./admin/pages/CampaignsPage'));
+const Proph3tMemoryPage = lazyRetry(() => import('./admin/pages/Proph3tMemoryPage'));
+const Proph3tPlansPage = lazyRetry(() => import('./admin/pages/Proph3tPlansPage'));
+const Proph3tKnowledgePage = lazyRetry(() => import('./admin/pages/Proph3tKnowledgePage'));
+const LicencesPage = lazyRetry(() => import('./admin/pages/LicencesPage'));
+const PaymentsPage = lazyRetry(() => import('./admin/pages/PaymentsPage'));
+const LandingPagesPage = lazyRetry(() => import('./admin/pages/LandingPagesPage'));
+const PlansPage = lazyRetry(() => import('./admin/pages/PlansPage'));
+const OhadaReferentielPage = lazyRetry(() => import('./admin/pages/OhadaReferentielPage'));
+const AdminsPage = lazyRetry(() => import('./admin/pages/AdminsPage'));
+const ErrorMonitorIndexPage = lazyRetry(() => import('./admin/pages/error-monitor/ErrorMonitorIndexPage'));
+const ErrorMonitorAppPage = lazyRetry(() => import('./admin/pages/error-monitor/ErrorMonitorAppPage'));
+const ErrorMonitorDetailPage = lazyRetry(() => import('./admin/pages/error-monitor/ErrorMonitorDetailPage'));
+const AsvcHubPage = lazyRetry(() => import('./admin/pages/asvc/AsvcHubPage'));
+const AsvcArbitrationsPage = lazyRetry(() => import('./admin/pages/asvc/AsvcArbitrationsPage'));
+const AsvcAgentsPage = lazyRetry(() => import('./admin/pages/asvc/AsvcAgentsPage'));
+const AsvcActionsLogPage = lazyRetry(() => import('./admin/pages/asvc/AsvcActionsLogPage'));
+const AsvcKillSwitchPage = lazyRetry(() => import('./admin/pages/asvc/AsvcKillSwitchPage'));
+const AsvcConfigPage = lazyRetry(() => import('./admin/pages/asvc/AsvcConfigPage'));
+const AsvcTicketsPage = lazyRetry(() => import('./admin/pages/asvc/AsvcTicketsPage'));
+const AsvcCustomersPage = lazyRetry(() => import('./admin/pages/asvc/AsvcCustomersPage'));
+const AsvcContentPage = lazyRetry(() => import('./admin/pages/asvc/AsvcContentPage'));
+const AsvcLeadsPage = lazyRetry(() => import('./admin/pages/asvc/AsvcLeadsPage'));
+const AsvcFinancePage = lazyRetry(() => import('./admin/pages/asvc/AsvcFinancePage'));
+const AsvcPipelinePage = lazyRetry(() => import('./admin/pages/asvc/AsvcPipelinePage'));
+const AsvcHealthPage = lazyRetry(() => import('./admin/pages/asvc/AsvcHealthPage'));
+const AsvcTestsReadinessPage = lazyRetry(() => import('./admin/pages/asvc/AsvcTestsReadinessPage'));
+const AsvcTemplatesPage = lazyRetry(() => import('./admin/pages/asvc/AsvcTemplatesPage'));
+const AsvcConnectorsPage = lazyRetry(() => import('./admin/pages/asvc/AsvcConnectorsPage'));
+const AsvcBriefsPage = lazyRetry(() => import('./admin/pages/asvc/AsvcBriefsPage'));
+const AsvcSettingsPage = lazyRetry(() => import('./admin/pages/asvc/AsvcSettingsPage'));
+const AsvcAgentPromptsPage = lazyRetry(() => import('./admin/pages/asvc/AsvcAgentPromptsPage'));
+const AsvcSetupGuidePage = lazyRetry(() => import('./admin/pages/asvc/AsvcSetupGuidePage'));
+const AsvcSpecDetailPage = lazyRetry(() => import('./admin/pages/asvc/AsvcSpecDetailPage'));
+const AsvcPrDetailPage = lazyRetry(() => import('./admin/pages/asvc/AsvcPrDetailPage'));
+const AsvcDeploymentDetailPage = lazyRetry(() => import('./admin/pages/asvc/AsvcDeploymentDetailPage'));
+const AsvcTechDebtPage = lazyRetry(() => import('./admin/pages/asvc/AsvcTechDebtPage'));
 
 const CONSOLE_APP_ID = 'atlas-studio-console';
 
@@ -93,6 +112,17 @@ if (typeof window !== 'undefined') {
           String((reason as { message?: string }).message || '').includes('signal is aborted')));
     if (isAbort) {
       event.preventDefault();
+    }
+  });
+
+  // Vite signale l'échec de préchargement d'un chunk (après un nouveau déploiement).
+  // On recharge une fois pour récupérer les nouveaux assets.
+  window.addEventListener('vite:preloadError', () => {
+    const KEY = 'atlas_chunk_reload_at';
+    const last = Number(sessionStorage.getItem(KEY) || 0);
+    if (Date.now() - last > 10000) {
+      sessionStorage.setItem(KEY, String(Date.now()));
+      window.location.reload();
     }
   });
 }
