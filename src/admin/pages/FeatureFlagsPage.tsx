@@ -33,7 +33,7 @@ export default function FeatureFlagsPage() {
 
   const fetchFlags = async () => {
     const { data } = await supabase.from("feature_flags").select("*").order("created_at", { ascending: false });
-    setFlags(data as FeatureFlag[] || []);
+    setFlags(data as unknown as FeatureFlag[] || []);
     setLoading(false);
   };
 
@@ -69,7 +69,7 @@ export default function FeatureFlagsPage() {
     };
     const { error } = isNew
       ? await supabase.from("feature_flags").insert(row)
-      : await supabase.from("feature_flags").update(row).eq("id", editFlag.id);
+      : await supabase.from("feature_flags").update(row).eq("id", editFlag.id as string);
     setSaving(false);
     if (error) showError(formatSupabaseError(error));
     else { success(isNew ? "Feature flag créé" : "Feature flag mis à jour"); setEditFlag(null); fetchFlags(); }
@@ -134,8 +134,8 @@ export default function FeatureFlagsPage() {
           )},
           { key: "rollout_percentage", label: "Rollout", render: (r: FeatureFlag) => (
             <div className="flex items-center gap-2">
-              <div className="w-16 h-1.5 bg-warm-bg dark:bg-admin-surface-alt rounded-full overflow-hidden">
-                <div className="h-full bg-gold dark:bg-admin-accent rounded-full" style={{ width: `${r.rollout_percentage}%` }} />
+              <div className="w-16 h-2 bg-warm-bg dark:bg-admin-surface-alt rounded-full overflow-hidden shadow-inner">
+                <div className="h-full bg-gold dark:bg-admin-accent rounded-full transition-all duration-500" style={{ width: `${r.rollout_percentage}%` }} />
               </div>
               <span className="text-[11px] text-neutral-muted dark:text-admin-muted font-mono">{r.rollout_percentage}%</span>
             </div>

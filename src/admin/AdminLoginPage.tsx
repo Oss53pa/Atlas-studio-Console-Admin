@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { SITE_URL } from "../config/site";
 import { Shield, Zap, Loader2 } from "lucide-react";
 import { Logo } from "../components/ui/Logo";
 import { useAuth } from "../lib/auth";
 import { supabase } from "../lib/supabase";
-import { SITE_URL } from "../config/site";
 
 export default function AdminLoginPage() {
   const { signIn, user } = useAuth();

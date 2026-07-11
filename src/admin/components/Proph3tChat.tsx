@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Paperclip, X, Bot, User, Zap, Loader2 } from "lucide-react";
+import { Send, Paperclip, X, Bot, User, Zap } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 
 interface Message {
@@ -66,7 +66,7 @@ export function Proph3tChat({ open, onClose }: { open: boolean; onClose: () => v
   };
 
   const promptCorrection = (messageId: string) => {
-    const correction = window.prompt("Quelle est la bonne réponse ? PROPH3T va apprendre de votre correction.");
+    const correction = window.prompt("Quelle est la bonne réponse ? Proph3t va apprendre de votre correction.");
     if (correction && correction.trim()) {
       sendFeedback(messageId, "correction", correction.trim());
     }
@@ -80,34 +80,149 @@ export function Proph3tChat({ open, onClose }: { open: boolean; onClose: () => v
     const userMsg: Message = { id: Date.now().toString(), role: "user", content, created_at: new Date().toISOString() };
     setMessages(prev => [...prev, userMsg]);
 
+    // ID stable du message assistant - on le crée vide tout de suite et on le remplit par stream
+    const assistantId = Date.now().toString() + "_r";
+    setMessages(prev => [...prev, {
+      id: assistantId,
+      role: "assistant",
+      content: "",
+      created_at: new Date().toISOString(),
+    }]);
+
+    // Timers (déclarés ici pour être accessibles dans le finally)
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let inactivityChecker: ReturnType<typeof setInterval> | null = null;
+
     try {
-      // Call new proph3t-ask edge function (CDC v2 ReAct orchestrator)
-      const { data, error } = await supabase.functions.invoke("proph3t-ask", {
-        body: { message: content, conversation_id: conversationId, product: "admin" },
+      // Récupérer le JWT user pour l'auth header
+      const { data: { session }, error: sessErr } = await supabase.auth.getSession();
+      if (sessErr || !session?.access_token) {
+        // Tenter un refresh
+        const { data: refreshed } = await supabase.auth.refreshSession();
+        if (!refreshed?.session?.access_token) throw new Error("Session expirée — reconnectez-vous");
+      }
+      const token = (await supabase.auth.getSession()).data.session?.access_token;
+
+      // Appel SSE via fetch (pas EventSource car POST + body)
+      // Timeout global 60s pour éviter le hang si le serveur arrête d'envoyer
+      const abortController = new AbortController();
+      timeoutId = setTimeout(() => abortController.abort(new Error("Timeout 60s — pas de réponse serveur")), 60000);
+      // Reset le timeout à chaque event reçu (sliding window)
+      let lastEventAt = Date.now();
+      inactivityChecker = setInterval(() => {
+        if (Date.now() - lastEventAt > 30000) {
+          abortController.abort(new Error("Inactivité 30s — stream interrompu"));
+        }
+      }, 5000);
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+      const res = await fetch(`${supabaseUrl}/functions/v1/proph3t-ask-stream`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "Accept": "text/event-stream",
+        },
+        body: JSON.stringify({ message: content, conversation_id: conversationId, product: "admin" }),
+        signal: abortController.signal,
       });
 
-      if (error) throw error;
-      if (data?.conversation_id) setConversationId(data.conversation_id);
+      if (!res.ok || !res.body) {
+        // Tenter de lire le body JSON d'erreur
+        let errMsg = `HTTP ${res.status}`;
+        try { const j = await res.json(); if (j?.error) errMsg = j.error; } catch { /* ignore */ }
+        throw new Error(errMsg);
+      }
 
-      setMessages(prev => [...prev, {
-        id: Date.now().toString() + "_r",
-        message_id: data?.message_id,
-        role: "assistant",
-        content: data?.answer || "Réponse reçue.",
-        citations: data?.citations,
-        confidence: data?.confidence,
-        created_at: new Date().toISOString(),
-      }]);
-    } catch {
-      // Fallback: generate insights locally from Supabase data (v1 fallback heuristique)
-      const response = await generateLocalInsight(content);
-      setMessages(prev => [...prev, {
-        id: Date.now().toString() + "_r",
-        role: "assistant",
-        content: response + "\n\n_⚠️ Mode dégradé: Ollama VPS non disponible. Réponse heuristique locale._",
-        model_used: "local-fallback",
-        created_at: new Date().toISOString(),
-      }]);
+      // Lire le stream SSE
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let streamedContent = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        lastEventAt = Date.now(); // reset inactivity timer
+        buffer += decoder.decode(value, { stream: true });
+        const events = buffer.split("\n\n");
+        buffer = events.pop() || "";
+
+        for (const event of events) {
+          if (!event.startsWith("data: ")) continue;
+          try {
+            const data = JSON.parse(event.slice(6));
+            switch (data.type) {
+              case "start":
+                if (data.conversation_id) setConversationId(data.conversation_id);
+                break;
+              case "status":
+                // Mise à jour du placeholder italique tant qu'il n'y a pas de contenu réel
+                setMessages(prev => prev.map(m =>
+                  m.id === assistantId && (m.content === "" || (m.content.startsWith("_") && m.content.endsWith("_")))
+                    ? { ...m, content: `_${data.msg}_` }
+                    : m
+                ));
+                break;
+              case "rag":
+                // Reset le placeholder pour préparer le tool_call ou delta
+                setMessages(prev => prev.map(m =>
+                  m.id === assistantId && m.content.startsWith("_")
+                    ? { ...m, content: "" }
+                    : m
+                ));
+                break;
+              case "tool_call":
+                setMessages(prev => prev.map(m =>
+                  m.id === assistantId && (m.content === "" || (m.content.startsWith("_") && m.content.endsWith("_")))
+                    ? { ...m, content: `_🔧 Calcul : **${data.name}**..._` }
+                    : m
+                ));
+                break;
+              case "tool_result":
+                // Pas de reset ici - le status "Generation reponse..." va prendre le relais
+                break;
+              case "delta":
+                streamedContent += data.content;
+                setMessages(prev => prev.map(m =>
+                  m.id === assistantId ? { ...m, content: streamedContent } : m
+                ));
+                break;
+              case "done":
+                setMessages(prev => prev.map(m =>
+                  m.id === assistantId ? {
+                    ...m,
+                    message_id: data.message_id,
+                    model_used: data.model_used,
+                    citations: data.citations,
+                    confidence: data.confidence,
+                  } : m
+                ));
+                break;
+              case "error":
+                throw new Error(data.error || "Erreur stream");
+            }
+          } catch (e) {
+            // Continuer sur erreur de parsing isolée, sauf si c'est notre type=error
+            if ((e as Error).message && !(e instanceof SyntaxError)) throw e;
+          }
+        }
+      }
+    } catch (err) {
+      const errMessage = (err as Error)?.message || "Erreur inconnue";
+      console.error("[proph3t-chat] stream failed:", err, errMessage);
+      const fallback = await generateLocalInsight(content);
+      setMessages(prev => prev.map(m =>
+        m.id === assistantId ? {
+          ...m,
+          content: fallback + `\n\n_⚠️ Mode dégradé : Edge function **proph3t-ask-stream** indisponible — ${errMessage}_`,
+          model_used: "local-fallback",
+        } : m
+      ));
+    } finally {
+      // Cleanup timers
+      if (timeoutId) clearTimeout(timeoutId);
+      if (inactivityChecker) clearInterval(inactivityChecker);
     }
 
     setAttachment(null);
@@ -164,10 +279,18 @@ export function Proph3tChat({ open, onClose }: { open: boolean; onClose: () => v
                   : "bg-white/5 text-neutral-light border border-white/10"
               }`}>
                 <div className="text-[13px] leading-relaxed whitespace-pre-wrap">
-                  {msg.content.split(/(\*\*.*?\*\*)/).map((part, i) =>
-                    part.startsWith("**") && part.endsWith("**")
-                      ? <strong key={i} className="text-gold font-semibold">{part.slice(2, -2)}</strong>
-                      : <span key={i}>{part}</span>
+                  {msg.content === "" && msg.role === "assistant" ? (
+                    <div className="flex gap-1.5 py-1">
+                      <span className="w-2 h-2 bg-gold rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <span className="w-2 h-2 bg-gold rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <span className="w-2 h-2 bg-gold rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                    </div>
+                  ) : (
+                    msg.content.split(/(\*\*.*?\*\*)/).map((part, i) =>
+                      part.startsWith("**") && part.endsWith("**")
+                        ? <strong key={i} className="text-gold font-semibold">{part.slice(2, -2)}</strong>
+                        : <span key={i}>{part}</span>
+                    )
                   )}
                 </div>
                 {/* Citations + confidence badge (CDC v2 garde-fous) */}
@@ -212,20 +335,7 @@ export function Proph3tChat({ open, onClose }: { open: boolean; onClose: () => v
             </div>
           ))}
 
-          {isLoading && (
-            <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-gold flex items-center justify-center flex-shrink-0">
-                <Zap size={14} className="text-onyx animate-pulse" />
-              </div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl px-4 py-3">
-                <div className="flex gap-1.5">
-                  <span className="w-2 h-2 bg-gold rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                  <span className="w-2 h-2 bg-gold rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                  <span className="w-2 h-2 bg-gold rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Loader désormais intégré au bubble assistant vide pendant le streaming */}
           <div ref={messagesEndRef} />
         </div>
 
@@ -300,7 +410,7 @@ async function generateLocalInsight(query: string): Promise<string> {
     }
 
     if (q.includes("impayé") || q.includes("retard") || q.includes("facture")) {
-      const { data } = await supabase.from("invoices").select("*, profiles(full_name, email)").eq("status", "pending").order("created_at");
+      const { data } = await supabase.from("invoices").select("*, profiles(full_name, email)").eq("status", "pending").order("created_at") as { data: any[] | null };
       if (!data || data.length === 0) return "Aucune facture en attente. Tout est en ordre.";
       const total = data.reduce((s, i) => s + Number(i.amount || 0), 0);
       return `**${data.length} facture(s) en attente** — Total : **${total.toLocaleString("fr-FR")} FCFA**\n\n` +
@@ -310,29 +420,30 @@ async function generateLocalInsight(query: string): Promise<string> {
     }
 
     if (q.includes("ticket") || q.includes("support") || q.includes("urgent")) {
-      const { data } = await supabase.from("tickets").select("*, profiles(full_name)").in("status", ["open", "in_progress"]).order("created_at");
+      const { data } = await supabase.from("tickets").select("*, profiles(full_name)").in("status", ["open", "in_progress"]).order("created_at") as { data: any[] | null };
       if (!data || data.length === 0) return "Aucun ticket ouvert. Le support est à jour.";
-      const critical = data.filter(t => t.priority === "high");
+      const critical = data.filter((t: any) => t.priority === "high");
       return `**${data.length} ticket(s) ouvert(s)** dont **${critical.length} haute priorité**\n\n` +
         data.slice(0, 5).map((t: any) => `- [${t.priority?.toUpperCase()}] ${t.subject} — ${(t.profiles as any)?.full_name || "—"}`).join("\n") +
         `\n\n**Recommandation :** Traitez les tickets haute priorité en premier pour respecter le SLA.`;
     }
 
     if (q.includes("client") || q.includes("risque") || q.includes("churn")) {
-      const { data } = await supabase.from("subscriptions").select("*, profiles!subscriptions_user_id_fkey(full_name, email)").eq("status", "trial");
-      const expiring = (data || []).filter(s => s.trial_ends_at && new Date(s.trial_ends_at).getTime() < Date.now() + 3 * 86400000);
+      const { data } = await supabase.from("subscriptions").select("*, profiles!subscriptions_user_id_fkey(full_name, email)").eq("status", "trial") as { data: any[] | null };
+      const expiring = (data || []).filter((s: any) => s.trial_ends_at && new Date(s.trial_ends_at).getTime() < Date.now() + 3 * 86400000);
       if (expiring.length === 0) return "Aucun essai n'expire dans les 72 prochaines heures. Situation stable.";
       return `**${expiring.length} essai(s) expirent dans 72h :**\n\n` +
         expiring.map((s: any) => `- ${(s.profiles as any)?.full_name || "—"} (${(s.profiles as any)?.email || "—"}) — expire le ${new Date(s.trial_ends_at).toLocaleDateString("fr-FR")}`).join("\n") +
         `\n\n**Action :** Contactez-les avec une offre de conversion personnalisée.`;
     }
 
-    return "Je comprends votre question, mais l'Edge Function **proph3t-orchestrator** n'est pas encore déployée. Pour le moment, je peux répondre aux questions sur :\n\n" +
+    return "Je comprends votre question, mais je suis en mode degradé local. Pour le moment, je peux répondre aux questions sur :\n\n" +
       "- **Rapport du jour** (MRR, clients, tickets)\n" +
       "- **Factures en attente** (impayés, relances)\n" +
       "- **Tickets ouverts** (support, urgences)\n" +
       "- **Risque churn** (essais expirants)\n\n" +
-      "Posez l'une de ces questions ou utilisez les commandes rapides ci-dessus.";
+      "Posez l'une de ces questions ou utilisez les commandes rapides ci-dessus.\n\n" +
+      "_Si l'IA répond systématiquement en mode dégradé : vérifier que vous avez configuré une clé Anthropic/Gemini, ou que GROQ_API_KEY est défini côté serveur._";
 
   } catch (err) {
     return "Erreur lors de l'analyse des données. Vérifiez votre connexion à Supabase.";

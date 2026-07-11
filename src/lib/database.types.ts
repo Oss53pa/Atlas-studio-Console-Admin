@@ -1,6 +1,6 @@
 export type AppType = 'Module ERP' | 'App' | 'App mobile';
 export type AppStatus = 'available' | 'coming_soon' | 'unavailable';
-export type SubscriptionStatus = 'active' | 'suspended' | 'cancelled' | 'expired' | 'trial';
+export type SubscriptionStatus = 'active' | 'suspended' | 'cancelled' | 'cancelled_eop' | 'expired' | 'trial' | 'past_due' | 'degraded';
 export type InvoiceStatus = 'paid' | 'pending' | 'failed' | 'refunded';
 export type NotificationType = 'info' | 'success' | 'warning' | 'error';
 
@@ -127,8 +127,10 @@ export interface TicketMessage {
 export interface NewsletterSubscriber {
   id: string;
   email: string;
+  status?: string;
   subscribed_at: string;
   is_active: boolean;
+  updated_at?: string;
 }
 
 export type ErrorSeverityDb = 'critical' | 'error' | 'warning' | 'info';
@@ -161,73 +163,182 @@ export interface ErrorLogRow {
   created_at: string;
 }
 
+export interface DataBusObjectRow {
+  id: string;
+  owner_id: string;
+  company_id: string | null;
+  producer_app: string;
+  consumer_app: string | null;
+  object_type: string;
+  schema_version: number;
+  status: 'pending' | 'claimed' | 'consumed' | 'failed' | 'archived';
+  payload: Record<string, any>;
+  idempotency_key: string | null;
+  error: string | null;
+  created_at: string;
+  claimed_at: string | null;
+  consumed_at: string | null;
+  consumed_by: string | null;
+}
+
+export interface MobileMoneyStatementRow {
+  id: string;
+  owner_id: string;
+  company_id: string | null;
+  provider: 'orange_money' | 'wave' | 'mtn_momo' | 'moov_money' | 'free_money' | 'mpesa' | 'airtel_money' | 'other';
+  account_label: string | null;
+  account_msisdn: string | null;
+  currency: string;
+  period_start: string | null;
+  period_end: string | null;
+  opening_balance: number | null;
+  closing_balance: number | null;
+  source: 'file' | 'cinetpay' | 'api' | 'manual';
+  external_ref: string | null;
+  tx_count: number;
+  created_at: string;
+}
+
+export interface MobileMoneyTransactionRow {
+  id: string;
+  statement_id: string;
+  owner_id: string;
+  occurred_at: string;
+  direction: 'debit' | 'credit';
+  amount: number;
+  fee: number;
+  balance_after: number | null;
+  counterparty: string | null;
+  counterparty_msisdn: string | null;
+  reference: string | null;
+  raw_label: string | null;
+  category: string | null;
+  reconciled: boolean;
+  raw: Record<string, any> | null;
+  created_at: string;
+}
+
+export interface OhadaCountryTaxRow {
+  country_code: string;
+  country_name: string;
+  zone: 'UEMOA' | 'CEMAC' | 'other';
+  currency: string;
+  vat_standard_rate: number | null;
+  vat_rates: any[];
+  corporate_tax_rate: number | null;
+  min_tax: Record<string, any>;
+  tax_authority: string | null;
+  efiling_url: string | null;
+  syscohada_variant: string;
+  rates_verified: boolean;
+  notes: string | null;
+  updated_at: string;
+}
+
+// ─── Generic shape compatible with @supabase/postgrest-js v2.95+ ──────────
+// Chaque table doit fournir Row / Insert / Update / Relationships pour
+// satisfaire `GenericTable`. On factorise via le helper `Table<R, I>`.
+type Relationship = {
+  foreignKeyName: string;
+  columns: string[];
+  isOneToOne?: boolean;
+  referencedRelation: string;
+  referencedColumns: string[];
+};
+
+type Table<R, I = Partial<R>, Rels extends Relationship[] = []> = {
+  Row: R;
+  Insert: I;
+  Update: Partial<R>;
+  Relationships: Rels;
+};
+
+// Fallback permissif pour les tables qui n'ont pas (encore) de modele TS
+// dedie. Signature compatible GenericTable -> typecheck OK partout.
+type LooseRow = Record<string, unknown>;
+type LooseTable = {
+  Row: LooseRow;
+  Insert: LooseRow;
+  Update: LooseRow;
+  Relationships: [];
+};
+
 export interface Database {
+  __InternalSupabase: {
+    PostgrestVersion: "12";
+  };
   public: {
     Tables: {
-      profiles: {
-        Row: Profile;
-        Insert: Partial<Profile> & { id: string; email: string };
-        Update: Partial<Profile>;
-      };
-      apps: {
-        Row: AppRow;
-        Insert: Partial<AppRow> & { id: string; name: string; type: AppType };
-        Update: Partial<AppRow>;
-      };
-      site_content: {
-        Row: SiteContentRow;
-        Insert: Partial<SiteContentRow> & { key: string };
-        Update: Partial<SiteContentRow>;
-      };
-      subscriptions: {
-        Row: Subscription;
-        Insert: Partial<Subscription> & { user_id: string; app_id: string; plan: string };
-        Update: Partial<Subscription>;
-      };
-      invoices: {
-        Row: Invoice;
-        Insert: Partial<Invoice> & { invoice_number: string; user_id: string; app_id: string; plan: string; amount: number };
-        Update: Partial<Invoice>;
-      };
-      activity_log: {
-        Row: ActivityLog;
-        Insert: Partial<ActivityLog> & { action: string };
-        Update: Partial<ActivityLog>;
-      };
-      notifications: {
-        Row: Notification;
-        Insert: Partial<Notification> & { user_id: string; title: string; message: string };
-        Update: Partial<Notification>;
-      };
-      tickets: {
-        Row: Ticket;
-        Insert: Partial<Ticket> & { user_id: string; subject: string };
-        Update: Partial<Ticket>;
-      };
-      ticket_messages: {
-        Row: TicketMessage;
-        Insert: Partial<TicketMessage> & { ticket_id: string; user_id: string; message: string };
-        Update: Partial<TicketMessage>;
-      };
-      newsletter_subscribers: {
-        Row: NewsletterSubscriber;
-        Insert: Partial<NewsletterSubscriber> & { email: string };
-        Update: Partial<NewsletterSubscriber>;
-      };
-      error_logs: {
-        Row: ErrorLogRow;
-        Insert: Partial<ErrorLogRow> & {
-          app_id: string;
-          severity: ErrorSeverityDb;
-          message: string;
-          fingerprint: string;
-          environment: ErrorEnvironmentDb;
-        };
-        Update: Partial<ErrorLogRow>;
-      };
+      profiles: Table<Profile, Partial<Profile> & { id: string; email: string }>;
+      apps: Table<AppRow, Partial<AppRow> & { id: string; name: string; type: AppType }>;
+      site_content: Table<SiteContentRow, Partial<SiteContentRow> & { key: string }>;
+      subscriptions: Table<Subscription, Partial<Subscription> & { user_id: string; app_id: string; plan: string }>;
+      invoices: Table<Invoice, Partial<Invoice> & { invoice_number: string; user_id: string; app_id: string; plan: string; amount: number }>;
+      activity_log: Table<ActivityLog, Partial<ActivityLog> & { action: string }>;
+      notifications: Table<Notification, Partial<Notification> & { user_id: string; title: string; message: string }>;
+      tickets: Table<Ticket, Partial<Ticket> & { user_id: string; subject: string }>;
+      ticket_messages: Table<TicketMessage, Partial<TicketMessage> & { ticket_id: string; user_id: string; message: string }>;
+      newsletter_subscribers: Table<NewsletterSubscriber, Partial<NewsletterSubscriber> & { email: string }>;
+      error_logs: Table<ErrorLogRow, Partial<ErrorLogRow> & {
+        app_id: string;
+        severity: ErrorSeverityDb;
+        message: string;
+        fingerprint: string;
+        environment: ErrorEnvironmentDb;
+      }>;
+      databus_objects: Table<DataBusObjectRow, Partial<DataBusObjectRow> & { owner_id: string; producer_app: string; object_type: string; payload: Record<string, any> }>;
+      mobile_money_statements: Table<MobileMoneyStatementRow, Partial<MobileMoneyStatementRow> & { owner_id: string; provider: MobileMoneyStatementRow['provider'] }>;
+      mobile_money_transactions: Table<MobileMoneyTransactionRow, Partial<MobileMoneyTransactionRow> & { statement_id: string; owner_id: string; occurred_at: string; direction: 'debit' | 'credit'; amount: number }>;
+      ohada_country_tax: Table<OhadaCountryTaxRow, Partial<OhadaCountryTaxRow> & { country_code: string; country_name: string; zone: OhadaCountryTaxRow['zone']; currency: string }>;
+      // ── Tables sans modele TS dedie (typage permissif compatible GenericTable) ──
+      plans: LooseTable;
+      app_settings: LooseTable;
+      promo_codes: LooseTable;
+      campaigns: LooseTable;
+      newsletter_campaigns: LooseTable;
+      email_templates: LooseTable;
+      landing_pages: LooseTable;
+      knowledge_articles: LooseTable;
+      consents: LooseTable;
+      licences: LooseTable;
+      licence_seats: LooseTable;
+      licence_audit_log: LooseTable;
+      payments: LooseTable;
+      tablesmart_plans: LooseTable;
+      tablesmart_features: LooseTable;
+      atlas_fa_plans: LooseTable;
+      cockpit_fa_plans: LooseTable;
+      proph3t_conversations: LooseTable;
+      proph3t_messages: LooseTable;
+      proph3t_user_profile: LooseTable;
+      proph3t_observations: LooseTable;
+      proph3t_business_rules: LooseTable;
+      proph3t_validated_qa: LooseTable;
+      proph3t_alerts: LooseTable;
+      proph3t_audit: LooseTable;
+      proph3t_chunks: LooseTable;
+      proph3t_documents: LooseTable;
+      proph3t_knowledge: LooseTable;
+      proph3t_societies: LooseTable;
+      proph3t_plans: LooseTable;
+      otp_codes: LooseTable;
+      feature_flags: LooseTable;
+      deployments: LooseTable;
+      [key: string]: { Row: any; Insert: any; Update: any; Relationships: any[] };
     };
+    Views: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
     Functions: {
       is_admin: { Args: Record<string, never>; Returns: boolean };
+      databus_claim: {
+        Args: { p_consumer_app: string; p_owner_id?: string | null; p_object_type?: string | null; p_limit?: number };
+        Returns: DataBusObjectRow[];
+      };
+      databus_ack: {
+        Args: { p_ids: string[]; p_consumer: string; p_status?: string; p_error?: string | null };
+        Returns: number;
+      };
       admin_revenue_summary: { Args: Record<string, never>; Returns: Record<string, any> };
       admin_dashboard_stats: { Args: Record<string, never>; Returns: Record<string, any> };
       upsert_error_log: {
@@ -247,6 +358,7 @@ export interface Database {
         };
         Returns: string;
       };
+      [key: string]: { Args: Record<string, unknown> | never; Returns: unknown };
     };
   };
 }

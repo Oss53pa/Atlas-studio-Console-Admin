@@ -7,7 +7,7 @@ import { CampaignStats } from "../../components/newsletter/CampaignStats";
 import { SubscribersList } from "../../components/newsletter/SubscribersList";
 import { TemplateGallery } from "../../components/newsletter/TemplateGallery";
 import { Mail, Users, LayoutTemplate } from "lucide-react";
-import type { Campaign, NewsletterTemplate } from "../../types/newsletter";
+import type { NewsletterTemplate } from "../../types/newsletter";
 
 type MainTab = "campaigns" | "subscribers" | "templates";
 type View = "list" | "editor" | "stats";
@@ -19,10 +19,10 @@ export default function NewsletterPage() {
 
   const createCampaign = async (blocks?: unknown[]) => {
     const defaultBlocks = blocks || [
-      createDefaultBlock("header", "#EF9F27"),
-      createDefaultBlock("text", "#EF9F27"),
-      createDefaultBlock("button", "#EF9F27"),
-      createDefaultBlock("footer", "#EF9F27"),
+      createDefaultBlock("header", "#A9B57E"),
+      createDefaultBlock("text", "#A9B57E"),
+      createDefaultBlock("button", "#A9B57E"),
+      createDefaultBlock("footer", "#A9B57E"),
     ];
 
     const { data } = await supabase
@@ -39,7 +39,7 @@ export default function NewsletterPage() {
       .single();
 
     if (data) {
-      setSelectedCampaignId(data.id);
+      setSelectedCampaignId((data as any).id);
       setView("editor");
       setMainTab("campaigns");
     }
@@ -74,7 +74,7 @@ export default function NewsletterPage() {
   return (
     <div>
       {/* Tab bar */}
-      <div className="flex items-center gap-1 mb-6 border-b border-[#2A2A3A] pb-0">
+      <div className="flex items-center gap-1 mb-6 border-b border-[#2a2a30] pb-0">
         {([
           { key: "campaigns" as const, icon: Mail, label: "Campagnes" },
           { key: "subscribers" as const, icon: Users, label: "Abonnés" },
@@ -85,7 +85,7 @@ export default function NewsletterPage() {
             onClick={() => setMainTab(key)}
             className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
               mainTab === key
-                ? "text-[#EF9F27] border-[#EF9F27]"
+                ? "text-[#A9B57E] border-[#A9B57E]"
                 : "text-[#888] border-transparent hover:text-[#F5F5F5]"
             }`}
           >
