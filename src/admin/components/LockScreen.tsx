@@ -83,7 +83,7 @@ export function LockScreen({ onUnlock, onSignOut }: LockScreenProps) {
       <div className="w-full max-w-md mx-auto px-6">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Logo size={32} color="text-neutral-light" />
+          <Logo size={32} color="text-white" />
           <div className="text-[#A9B57E] text-[10px] font-bold uppercase tracking-widest mt-1">
             Console Administration
           </div>

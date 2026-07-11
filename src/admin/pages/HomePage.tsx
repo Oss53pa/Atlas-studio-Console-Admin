@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Sparkles, Brain, Users, Repeat, KeyRound, LayoutGrid,
-  ShieldCheck, Activity, CalendarDays, Fingerprint, DatabaseZap,
-  ArrowRight, ArrowUpRight, Server, type LucideIcon,
+  Sparkles, Brain, LayoutGrid, ShieldCheck, Activity, CalendarDays,
+  Fingerprint, DatabaseZap, ArrowRight, ArrowUpRight, Server, type LucideIcon,
 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { useAppCatalog } from "../../hooks/useAppCatalog";
@@ -11,12 +10,10 @@ import { useAppFilter } from "../contexts/AppFilterContext";
 import { useAuth } from "../../lib/auth";
 
 /* ─────────────────────────────────────────────────────────────
-   Accueil de la CONSOLE (derrière login) — style éditorial.
-   Données NON confidentielles uniquement : compteurs de structure
-   et état système. Aucun montant (MRR, revenus) n'est affiché ici.
+   Accueil de la CONSOLE (derrière login) — thème CLAIR (palette A/B).
+   Données NON confidentielles : compteurs de structure + état système.
    ───────────────────────────────────────────────────────────── */
 
-/** Sparkline décoratif (aucune valeur chiffrée revendiquée). */
 function Sparkline({ points, color }: { points: number[]; color: string }) {
   const w = 260, h = 56, pad = 4;
   const max = Math.max(...points), min = Math.min(...points);
@@ -34,7 +31,7 @@ function Sparkline({ points, color }: { points: number[]; color: string }) {
     <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-14" preserveAspectRatio="none">
       <defs>
         <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.22" />
+          <stop offset="0%" stopColor={color} stopOpacity="0.20" />
           <stop offset="100%" stopColor={color} stopOpacity="0" />
         </linearGradient>
       </defs>
@@ -48,14 +45,14 @@ function StatCard({ label, value, unit, caption, spark, color }: {
   label: string; value: string | number; unit: string; caption: string; spark: number[]; color: string;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-card shadow-premium">
+    <div className="relative overflow-hidden rounded-2xl border border-p-border bg-p-surface shadow-[0_8px_24px_-14px_rgba(0,0,0,0.18)]">
       <div className="p-5 pb-0">
-        <div className="text-neutral-muted text-[10px] font-bold uppercase tracking-widest">{label}</div>
+        <div className="text-p-muted text-[10px] font-bold uppercase tracking-widest">{label}</div>
         <div className="mt-3 flex items-baseline gap-1.5">
-          <span className="text-neutral-light text-[34px] leading-none font-bold tracking-tight">{value}</span>
-          <span className="text-neutral-muted text-xs font-medium">{unit}</span>
+          <span className="text-p-text text-[34px] leading-none font-bold tracking-tight">{value}</span>
+          <span className="text-p-muted text-xs font-medium">{unit}</span>
         </div>
-        <div className="mt-1.5 text-neutral-muted text-[11px]">{caption}</div>
+        <div className="mt-1.5 text-p-muted text-[11px]">{caption}</div>
       </div>
       <div className="mt-3"><Sparkline points={spark} color={color} /></div>
     </div>
@@ -66,21 +63,21 @@ function MiniCard({ icon: Icon, label, value, caption }: {
   icon: LucideIcon; label: string; value: string; caption: string;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4 hover:border-white/20 transition-colors">
-      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center mb-3">
-        <Icon size={15} className="text-neutral-muted" strokeWidth={1.5} />
+    <div className="rounded-xl border border-p-border bg-p-surface p-4 hover:border-p-accent/40 transition-colors">
+      <div className="w-8 h-8 rounded-lg bg-p-surface-alt flex items-center justify-center mb-3">
+        <Icon size={15} className="text-p-accent" strokeWidth={1.5} />
       </div>
-      <div className="text-neutral-muted text-[9px] font-bold uppercase tracking-widest">{label}</div>
-      <div className="text-neutral-light text-lg font-semibold mt-0.5 leading-tight">{value}</div>
-      <div className="text-neutral-muted text-[10px] mt-0.5">{caption}</div>
+      <div className="text-p-muted text-[9px] font-bold uppercase tracking-widest">{label}</div>
+      <div className="text-p-text text-lg font-semibold mt-0.5 leading-tight">{value}</div>
+      <div className="text-p-muted text-[10px] mt-0.5">{caption}</div>
     </div>
   );
 }
 
 function Pill({ icon: Icon, children }: { icon: LucideIcon; children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-neutral-body text-[11px] font-semibold uppercase tracking-wider">
-      <Icon size={12} className="text-admin-accent" />
+    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/15 bg-white/[0.06] text-white/80 text-[11px] font-semibold uppercase tracking-wider">
+      <Icon size={12} className="text-p-accent" />
       {children}
     </span>
   );
@@ -101,7 +98,6 @@ export default function HomePage() {
         const statsRes = await supabase.rpc("admin_dashboard_stats");
         const s = statsRes.data as unknown as { total_users: number; active_subscriptions: number } | null;
         if (s) { setUsers(s.total_users || 0); setSubs(s.active_subscriptions || 0); }
-
         const { count: la } = await supabase.from("licences").select("id", { count: "exact", head: true }).eq("status", "active");
         setLicences(la || 0);
       } catch { /* mode démo / hors-ligne */ }
@@ -122,26 +118,24 @@ export default function HomePage() {
 
   return (
     <div className="overflow-x-hidden">
-      {/* ═══ HERO (pleine largeur, avec barre du haut) ═══ */}
-      <div className="-mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-ink-radial" />
+      {/* ═══ HERO (bande foncée « encre », pleine largeur) ═══ */}
+      <div className="-mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-8 relative overflow-hidden" style={{ background: "var(--c-ink)" }}>
         <div
-          className="absolute inset-0 opacity-[0.6]"
+          className="absolute inset-0 opacity-[0.5]"
           style={{
-            backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0)",
+            backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0)",
             backgroundSize: "22px 22px",
             maskImage: "linear-gradient(to left, black, transparent 55%)",
             WebkitMaskImage: "linear-gradient(to left, black, transparent 55%)",
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-admin-bg" />
 
         {/* Barre du haut */}
         <div className="relative flex items-center justify-between gap-4 px-6 md:px-8 pt-6">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="text-neutral-light text-sm font-bold tracking-wide uppercase">Atlas Studio</span>
-            <span className="hidden sm:block w-px h-4 bg-white/15" />
-            <span className="hidden sm:block text-neutral-muted text-xs truncate">Console d'administration{prenom ? ` · ${prenom}` : ""}</span>
+            <span className="text-white text-sm font-bold tracking-wide uppercase">Atlas Studio</span>
+            <span className="hidden sm:block w-px h-4 bg-white/20" />
+            <span className="hidden sm:block text-white/55 text-xs truncate">Console d'administration{prenom ? ` · ${prenom}` : ""}</span>
           </div>
           <div className="hidden md:flex items-center gap-2">
             <Pill icon={CalendarDays}>Période {moisSeul}</Pill>
@@ -149,7 +143,7 @@ export default function HomePage() {
           </div>
           <Link
             to="/admin/dashboard"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-admin-accent text-onyx text-[13px] font-semibold hover:brightness-110 transition-all whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-p-accent text-p-on-accent text-[13px] font-semibold hover:brightness-110 transition-all whitespace-nowrap"
           >
             Tableau de bord <ArrowUpRight size={14} />
           </Link>
@@ -157,16 +151,16 @@ export default function HomePage() {
 
         {/* Contenu hero */}
         <div className="relative px-6 md:px-8 pt-10 pb-14 text-center">
-          <div className="inline-flex items-center gap-2 text-admin-accent text-[11px] font-bold uppercase tracking-[0.2em]">
-            <span className="w-1.5 h-1.5 rounded-full bg-admin-accent animate-pulse" />
+          <div className="inline-flex items-center gap-2 text-p-accent text-[11px] font-bold uppercase tracking-[0.2em]">
+            <span className="w-1.5 h-1.5 rounded-full bg-p-accent animate-pulse" />
             Bienvenue{prenom ? ` ${prenom}` : ""} · {moisAnneeCap}
           </div>
-          <h1 className="mt-4 text-4xl md:text-5xl font-bold text-neutral-light tracking-tight">
+          <h1 className="mt-4 text-4xl md:text-5xl font-bold text-white tracking-tight">
             Console <span className="font-logo text-[1.15em] bg-gradient-champagne bg-clip-text text-transparent">Atlas Studio</span>
           </h1>
-          <p className="mt-4 max-w-2xl mx-auto text-neutral-body text-sm md:text-[15px] leading-relaxed">
-            Pilotage unifié de votre suite — du <strong className="text-neutral-light font-semibold">catalogue d'apps</strong> aux{" "}
-            <strong className="text-neutral-light font-semibold">clients, abonnements et licences</strong>. Données 100 % en temps réel.
+          <p className="mt-4 max-w-2xl mx-auto text-white/60 text-sm md:text-[15px] leading-relaxed">
+            Pilotage unifié de votre suite — du <strong className="text-white font-semibold">catalogue d'apps</strong> aux{" "}
+            <strong className="text-white font-semibold">clients, abonnements et licences</strong>. Données 100 % en temps réel.
           </p>
         </div>
       </div>
@@ -181,37 +175,35 @@ export default function HomePage() {
 
       {/* ═══ INSIGHT + CARTES D'ÉTAT ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        {/* Insight du jour */}
-        <div className="lg:col-span-2 rounded-2xl border border-white/10 bg-gradient-card shadow-premium p-6 flex flex-col">
+        <div className="lg:col-span-2 rounded-2xl border border-p-border bg-p-surface shadow-[0_8px_24px_-14px_rgba(0,0,0,0.18)] p-6 flex flex-col">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
-            <div className="w-9 h-9 rounded-xl bg-admin-accent flex items-center justify-center">
-              <Sparkles size={17} className="text-onyx" />
+            <div className="w-9 h-9 rounded-xl bg-p-accent flex items-center justify-center">
+              <Sparkles size={17} className="text-p-on-accent" />
             </div>
-            <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-body text-[11px] font-medium">Insight du jour</span>
-            <span className="text-admin-accent text-[11px] font-semibold uppercase tracking-wider">Proph3t · Confiance 86 %</span>
+            <span className="px-2.5 py-1 rounded-full bg-p-surface-alt border border-p-border text-p-text-2 text-[11px] font-medium">Insight du jour</span>
+            <span className="text-p-accent text-[11px] font-semibold uppercase tracking-wider">Proph3t · Confiance 86 %</span>
           </div>
-          <p className="text-neutral-light text-[15px] leading-relaxed">
+          <p className="text-p-text text-[15px] leading-relaxed">
             Aucune anomalie détectée sur les <strong>{fmt(users)}</strong> comptes et <strong>{fmt(subs)}</strong> abonnements actifs.
           </p>
-          <p className="text-neutral-muted text-xs mt-2 leading-relaxed">
+          <p className="text-p-muted text-xs mt-2 leading-relaxed">
             Conformité RGPD validée · piste d'audit chaînée SHA-256 · sauvegardes chiffrées en continu.
           </p>
           <div className="flex flex-wrap items-center gap-3 mt-5 pt-1">
-            <Link to="/admin/clients" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-admin-accent text-onyx text-sm font-semibold hover:brightness-110 transition-all">
+            <Link to="/admin/clients" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-p-accent text-p-on-accent text-sm font-semibold hover:brightness-110 transition-all">
               Consulter les clients <ArrowRight size={15} />
             </Link>
-            <Link to="/admin/proph3t" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/15 text-neutral-light text-sm font-medium hover:bg-white/5 transition-all">
+            <Link to="/admin/proph3t" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-p-border text-p-text text-sm font-medium hover:bg-p-surface-alt transition-all">
               Demander à Proph3t
             </Link>
           </div>
         </div>
 
-        {/* Cluster cartes d'état (non confidentielles) */}
         <div className="grid grid-cols-2 gap-3">
           <MiniCard icon={Server} label="Environnement" value="Production" caption="temps réel" />
           <MiniCard icon={ShieldCheck} label="Conformité" value="100 %" caption="RGPD · révisé" />
           <MiniCard icon={Activity} label="Système" value="Opérationnel" caption="uptime · monitoring" />
-          <MiniCard icon={Fingerprint} label="Intégrité" value="SHA-256" caption="piste d'audit chaînée" />
+          <MiniCard icon={Fingerprint} label="Intégrité" value="SHA-256" caption="piste d'audit" />
           <MiniCard icon={CalendarDays} label="Période" value={moisSeul} caption={String(now.getFullYear())} />
           <MiniCard icon={LayoutGrid} label="Catalogue" value={String(appList.length)} caption="applications" />
         </div>
@@ -219,44 +211,42 @@ export default function HomePage() {
 
       {/* ═══ AVANCEMENT + ASSISTANT ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Avancement de l'année */}
-        <div className="lg:col-span-2 rounded-2xl border border-white/10 bg-gradient-card shadow-premium p-6">
+        <div className="lg:col-span-2 rounded-2xl border border-p-border bg-p-surface shadow-[0_8px_24px_-14px_rgba(0,0,0,0.18)] p-6">
           <div className="flex items-start justify-between">
             <div>
-              <div className="text-neutral-muted text-[10px] font-bold uppercase tracking-widest">Avancement de l'année</div>
-              <div className="text-neutral-light text-lg font-semibold mt-1">{moisAnneeCap}</div>
+              <div className="text-p-muted text-[10px] font-bold uppercase tracking-widest">Avancement de l'année</div>
+              <div className="text-p-text text-lg font-semibold mt-1">{moisAnneeCap}</div>
             </div>
             <div className="text-right">
-              <div className="text-neutral-light text-4xl font-bold leading-none">{yearPct}%</div>
-              <div className="text-neutral-muted text-[10px] font-semibold uppercase tracking-widest mt-1">YTD</div>
+              <div className="text-p-text text-4xl font-bold leading-none">{yearPct}%</div>
+              <div className="text-p-muted text-[10px] font-semibold uppercase tracking-widest mt-1">YTD</div>
             </div>
           </div>
-          <div className="mt-5 h-2 rounded-full bg-white/5 overflow-hidden">
-            <div className="h-full rounded-full bg-gradient-to-r from-admin-accent-dark via-admin-accent to-emerald-400 transition-all" style={{ width: `${yearPct}%` }} />
+          <div className="mt-5 h-2 rounded-full bg-p-surface-alt overflow-hidden">
+            <div className="h-full rounded-full transition-all" style={{ width: `${yearPct}%`, background: "linear-gradient(90deg, var(--c-accent-dark), var(--c-accent))" }} />
           </div>
           <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-[11px]">
-            <span className="text-neutral-muted">Applications · <span className="text-neutral-light">{appList.length}</span></span>
-            <span className="text-neutral-muted">Conformité · <span className="text-emerald-400">100 %</span></span>
-            <span className="text-neutral-muted">Backend · <span className="text-neutral-light">Supabase temps réel</span></span>
+            <span className="text-p-muted">Applications · <span className="text-p-text">{appList.length}</span></span>
+            <span className="text-p-muted">Conformité · <span className="text-p-ok">100 %</span></span>
+            <span className="text-p-muted">Backend · <span className="text-p-text">Supabase temps réel</span></span>
           </div>
         </div>
 
-        {/* Assistant IA */}
-        <Link to="/admin/proph3t" className="group rounded-2xl border border-white/10 bg-gradient-card shadow-premium p-6 flex flex-col hover:border-admin-accent/30 transition-all">
+        <Link to="/admin/proph3t" className="group rounded-2xl border border-p-border bg-p-surface shadow-[0_8px_24px_-14px_rgba(0,0,0,0.18)] p-6 flex flex-col hover:border-p-accent/40 transition-all">
           <div className="flex items-center justify-between">
-            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-              <Brain size={19} className="text-admin-accent" />
+            <div className="w-10 h-10 rounded-xl bg-p-surface-alt flex items-center justify-center">
+              <Brain size={19} className="text-p-accent" />
             </div>
-            <ArrowUpRight size={16} className="text-neutral-muted group-hover:text-admin-accent transition-colors" />
+            <ArrowUpRight size={16} className="text-p-muted group-hover:text-p-accent transition-colors" />
           </div>
-          <div className="mt-4 text-neutral-light text-sm font-semibold flex items-center gap-1.5">
-            Proph3t <span className="text-neutral-muted font-normal">· Assistant IA</span>
+          <div className="mt-4 text-p-text text-sm font-semibold flex items-center gap-1.5">
+            Proph3t <span className="text-p-muted font-normal">· Assistant IA</span>
           </div>
-          <p className="text-neutral-muted text-xs mt-1.5 leading-relaxed flex-1">
+          <p className="text-p-muted text-xs mt-1.5 leading-relaxed flex-1">
             Analyse, commente et anticipe l'activité de votre plateforme.
           </p>
-          <div className="mt-3 flex items-center gap-2 text-[10px] text-neutral-muted">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <div className="mt-3 flex items-center gap-2 text-[10px] text-p-muted">
+            <span className="w-1.5 h-1.5 rounded-full bg-p-ok" />
             Modèle v3.4 · AUC 0.87 · garde-fous éthiques actifs
           </div>
         </Link>

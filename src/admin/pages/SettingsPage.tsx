@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Save, Shield, Globe, Bell, Key, Loader2, CreditCard, CheckCircle, XCircle, Eye, EyeOff, Sparkles } from "lucide-react";
+import { Save, Shield, Globe, Bell, Key, Loader2, CreditCard, CheckCircle, XCircle, Eye, EyeOff, Sparkles, Palette } from "lucide-react";
+import { PaletteSwitcher } from "../../theme/PaletteSwitcher";
 import { ADMIN_INPUT_CLASS } from "../components/AdminFormField";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../lib/auth";
@@ -202,6 +203,17 @@ export default function SettingsPage() {
     <div>
       <h1 className="text-neutral-text dark:text-admin-text text-2xl font-bold mb-1">Paramètres</h1>
       <p className="text-neutral-muted dark:text-admin-muted text-sm mb-7">Configuration de la console d'administration</p>
+
+      {/* Apparence — choix de la palette de couleurs */}
+      <div className="bg-p-surface border border-p-border rounded-2xl shadow-sm p-6 max-w-2xl mb-6">
+        <h3 className="text-p-text text-sm font-semibold mb-1 flex items-center gap-2">
+          <Palette size={16} className="text-p-accent" /> Apparence
+        </h3>
+        <p className="text-p-muted text-[12px] mb-4">
+          Choisissez la palette de couleurs de la console. Elle sera bientôt synchronisée sur le site et le portail.
+        </p>
+        <PaletteSwitcher variant="cards" />
+      </div>
 
       <div className="flex gap-2 mb-6">
         {tabs.map(t => (

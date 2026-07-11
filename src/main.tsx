@@ -7,6 +7,7 @@ import { RequireAdmin } from './components/guards/RequireAdmin';
 import { RequireSuperAdmin } from './components/guards/RequireSuperAdmin';
 import { AdminLayout } from './admin/AdminLayout';
 import AdminLoginPage from './admin/AdminLoginPage';
+import { PaletteProvider } from './theme/palette';
 import './index.css';
 
 // Pages admin — chargées à la demande
@@ -105,6 +106,7 @@ const root = (container as any).__root ?? createRoot(container);
 root.render(
   <StrictMode>
     <AtlasErrorBoundary appId={CONSOLE_APP_ID}>
+      <PaletteProvider>
       <BrowserRouter>
         <AuthProvider>
           <Routes>
@@ -184,6 +186,7 @@ root.render(
           </Routes>
         </AuthProvider>
       </BrowserRouter>
+      </PaletteProvider>
     </AtlasErrorBoundary>
   </StrictMode>
 );

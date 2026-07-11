@@ -5,6 +5,7 @@ import { Shield, Zap, Loader2 } from "lucide-react";
 import { Logo } from "../components/ui/Logo";
 import { useAuth } from "../lib/auth";
 import { supabase } from "../lib/supabase";
+import { PaletteSwitcher } from "../theme/PaletteSwitcher";
 
 export default function AdminLoginPage() {
   const { signIn, user } = useAuth();
@@ -72,72 +73,72 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-admin-bg flex items-center justify-center px-5 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-admin-accent/[0.04] rounded-full blur-[120px] pointer-events-none" />
+    <div className="min-h-screen bg-p-bg flex items-center justify-center px-5 relative overflow-hidden">
+      {/* Halo décoratif */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-p-accent/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="w-full max-w-sm relative">
-        <div className="text-center mb-10">
-          <Logo size={36} color="text-admin-text" />
+        <div className="text-center mb-8">
+          <Logo size={36} color="text-p-ink" />
           <div className="flex items-center justify-center gap-2 mt-3">
-            <Shield size={14} className="text-admin-accent" strokeWidth={1.5} />
-            <span className="text-admin-accent text-[11px] font-bold uppercase tracking-widest">Administration</span>
+            <Shield size={14} className="text-p-accent" strokeWidth={1.5} />
+            <span className="text-p-accent text-[11px] font-bold uppercase tracking-widest">Administration</span>
           </div>
         </div>
 
-        <div className="bg-admin-surface border border-admin-surface-alt rounded-2xl p-8">
+        <div className="bg-p-surface border border-p-border rounded-2xl p-8 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.18)]">
           <div className="flex items-center justify-center gap-2 mb-6">
-            <Zap size={18} className="text-admin-accent" />
-            <h2 className="text-admin-text text-lg font-bold">{forgotMode ? "Mot de passe oublié" : "Connexion"}</h2>
+            <Zap size={18} className="text-p-accent" />
+            <h2 className="text-p-text text-lg font-bold">{forgotMode ? "Mot de passe oublié" : "Connexion"}</h2>
           </div>
 
           <div className="mb-4">
-            <label className="block text-admin-muted text-[13px] font-semibold mb-1.5">Email</label>
+            <label className="block text-p-text-2 text-[13px] font-semibold mb-1.5">Email</label>
             <input
               type="email" value={email} onChange={e => setEmail(e.target.value)}
               placeholder="admin@atlasstudio.com"
               onKeyDown={e => e.key === 'Enter' && (forgotMode ? handleForgotPassword() : handleSubmit())}
-              className="w-full px-4 py-3 bg-admin-surface-alt border border-admin-surface-alt rounded-lg text-admin-text text-sm outline-none transition-colors focus:border-admin-accent placeholder:text-admin-muted/40"
+              className="w-full px-4 py-3 bg-p-surface-alt border border-p-border rounded-lg text-p-text text-sm outline-none transition-colors focus:border-p-accent placeholder:text-p-muted/60"
             />
           </div>
 
           {!forgotMode && (
             <div className="mb-4">
-              <label className="block text-admin-muted text-[13px] font-semibold mb-1.5">Mot de passe</label>
+              <label className="block text-p-text-2 text-[13px] font-semibold mb-1.5">Mot de passe</label>
               <input
                 type="password" value={password} onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
                 onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-                className="w-full px-4 py-3 bg-admin-surface-alt border border-admin-surface-alt rounded-lg text-admin-text text-sm outline-none transition-colors focus:border-admin-accent placeholder:text-admin-muted/40"
+                className="w-full px-4 py-3 bg-p-surface-alt border border-p-border rounded-lg text-p-text text-sm outline-none transition-colors focus:border-p-accent placeholder:text-p-muted/60"
               />
             </div>
           )}
 
           {error && (
-            <div className="mb-4 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[13px]">
+            <div className="mb-4 px-4 py-3 rounded-lg text-[13px]" style={{ background: "color-mix(in srgb, var(--c-err) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--c-err) 25%, transparent)", color: "var(--c-err)" }}>
               {error}
             </div>
           )}
 
           {recoverySent && (
-            <div className="mb-4 px-4 py-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[13px]">
+            <div className="mb-4 px-4 py-3 rounded-lg text-[13px]" style={{ background: "color-mix(in srgb, var(--c-ok) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--c-ok) 25%, transparent)", color: "var(--c-ok)" }}>
               ✓ {recoverySent}
             </div>
           )}
 
           {forgotMode ? (
             <>
-              <div className="mb-4 px-4 py-3 rounded-lg bg-amber-500/5 border border-amber-500/15 text-amber-300 text-[12px] leading-relaxed">
+              <div className="mb-4 px-4 py-3 rounded-lg text-[12px] leading-relaxed" style={{ background: "color-mix(in srgb, var(--c-accent) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--c-accent) 20%, transparent)", color: "var(--c-text-2)" }}>
                 Un lien de réinitialisation sera envoyé à votre <strong>email de récupération</strong> configuré dans vos paramètres.
               </div>
               <button onClick={handleForgotPassword} disabled={recoveryLoading || !email}
-                className="w-full py-3.5 bg-admin-accent text-black font-semibold rounded-lg hover:bg-admin-accent-dark transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3.5 bg-p-ink text-p-bg font-semibold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {recoveryLoading ? <><Loader2 size={16} className="animate-spin" /> Envoi...</> : "Envoyer le lien"}
               </button>
               <button
                 onClick={() => { setForgotMode(false); setRecoverySent(null); setError(""); }}
-                className="w-full mt-2 py-2 text-admin-muted text-[12px] hover:text-admin-accent transition-colors"
+                className="w-full mt-2 py-2 text-p-muted text-[12px] hover:text-p-accent transition-colors"
               >
                 ← Retour à la connexion
               </button>
@@ -145,13 +146,13 @@ export default function AdminLoginPage() {
           ) : (
             <>
               <button onClick={handleSubmit} disabled={loading}
-                className="w-full py-3.5 bg-admin-accent text-black font-semibold rounded-lg hover:bg-admin-accent-dark transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-p-ink text-p-bg font-semibold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                 style={{ opacity: loading ? 0.6 : 1 }}>
                 {loading ? <><Loader2 size={16} className="animate-spin" /> Vérification...</> : "Se connecter"}
               </button>
               <button
                 onClick={() => { setForgotMode(true); setError(""); }}
-                className="w-full mt-3 py-1 text-admin-muted text-[12px] hover:text-admin-accent transition-colors"
+                className="w-full mt-3 py-1 text-p-muted text-[12px] hover:text-p-accent transition-colors"
               >
                 Mot de passe oublié ?
               </button>
@@ -159,14 +160,19 @@ export default function AdminLoginPage() {
           )}
         </div>
 
-        <p className="text-center mt-6">
-          <a href={SITE_URL} className="text-admin-muted text-[13px] hover:text-admin-accent transition-colors">
+        {/* Sélecteur de palette */}
+        <div className="flex justify-center mt-6">
+          <PaletteSwitcher />
+        </div>
+
+        <p className="text-center mt-5">
+          <a href={SITE_URL} className="text-p-muted text-[13px] hover:text-p-accent transition-colors">
             &larr; Retour au site
           </a>
         </p>
 
-        <p className="text-center mt-4 text-admin-muted/40 text-[11px]">
-          Console Atlas Studio v2.0 — <span className="font-logo text-admin-accent/60">Proph3t</span> Intelligence
+        <p className="text-center mt-3 text-p-muted/70 text-[11px]">
+          Console Atlas Studio v2.0 — <span className="font-logo text-p-accent">Proph3t</span> Intelligence
         </p>
       </div>
     </div>

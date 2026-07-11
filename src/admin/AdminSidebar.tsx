@@ -195,8 +195,8 @@ export function AdminSidebar() {
       <div className="px-4 pt-5 pb-3 border-b border-white/5">
         <div className="flex items-center justify-between">
           <a href={SITE_URL} className="flex items-center gap-2">
-            <Logo size={18} color="text-neutral-light" />
-            <span className="text-neutral-light text-[13px] font-semibold">Menu</span>
+            <Logo size={18} color="text-white" />
+            <span className="text-white text-[13px] font-semibold">Menu</span>
           </a>
           <NotificationCenter />
         </div>
@@ -205,7 +205,7 @@ export function AdminSidebar() {
 
       {/* Pinned shortcuts at the very top */}
       <div className="px-2 pt-3 pb-2 border-b border-white/5">
-        <div className="px-2 mb-1.5 text-[9px] font-bold uppercase tracking-widest text-neutral-600">Épinglés</div>
+        <div className="px-2 mb-1.5 text-[9px] font-bold uppercase tracking-widest text-white/40">Épinglés</div>
         <div className="space-y-0.5">
           {PINNED.map(item => {
             const active = isActive(item.to);
@@ -216,7 +216,7 @@ export function AdminSidebar() {
                 className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[12px] transition-all ${
                   active
                     ? "bg-admin-accent/15 text-admin-accent font-medium"
-                    : "text-neutral-400 hover:bg-white/5 hover:text-neutral-light"
+                    : "text-white/70 hover:bg-white/5 hover:text-white"
                 }`}
               >
                 <item.icon size={13} strokeWidth={1.5} />
@@ -229,7 +229,7 @@ export function AdminSidebar() {
 
       {/* Sections list — avec petit trait vertical entre les icones */}
       <nav className="flex-1 overflow-y-auto px-2 py-3 scrollbar-thin">
-        <div className="px-2 mb-1.5 text-[9px] font-bold uppercase tracking-widest text-neutral-600">Sections</div>
+        <div className="px-2 mb-1.5 text-[9px] font-bold uppercase tracking-widest text-white/40">Sections</div>
         <div>
           {NAV_GROUPS.map((group, idx) => {
             const isActiveSection = activeSection === group.id;
@@ -244,10 +244,10 @@ export function AdminSidebar() {
                   onClick={() => { setActiveSection(group.id); if (!secondaryOpen) setSecondaryOpen(true); }}
                   className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12.5px] transition-all ${
                     isActiveSection
-                      ? "bg-onyx-light text-neutral-light font-semibold ring-1 ring-white/10"
+                      ? "bg-onyx-light text-white font-semibold ring-1 ring-white/10"
                       : hasActivePage
                         ? "text-admin-accent hover:bg-white/5"
-                        : "text-neutral-400 hover:bg-white/5 hover:text-neutral-light"
+                        : "text-white/70 hover:bg-white/5 hover:text-white"
                   }`}
                 >
                   <group.icon size={15} strokeWidth={1.75} />
@@ -264,14 +264,14 @@ export function AdminSidebar() {
       <div className="border-t border-white/5 px-2 py-2 space-y-0.5">
         <button
           onClick={toggleTheme}
-          className="w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-neutral-500 text-[11px] hover:text-neutral-300 hover:bg-white/5 transition-all"
+          className="w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-white/50 text-[11px] hover:text-white/80 hover:bg-white/5 transition-all"
         >
           {isDark ? <Sun size={13} /> : <Moon size={13} />}
           {isDark ? "Mode clair" : "Mode sombre"}
         </button>
         <button
           onClick={() => setSecondaryOpen(v => !v)}
-          className="hidden md:flex w-full items-center gap-2 px-3 py-1.5 rounded-md text-neutral-500 text-[11px] hover:text-neutral-300 hover:bg-white/5 transition-all"
+          className="hidden md:flex w-full items-center gap-2 px-3 py-1.5 rounded-md text-white/50 text-[11px] hover:text-white/80 hover:bg-white/5 transition-all"
         >
           {secondaryOpen ? <PanelLeftClose size={13} /> : <PanelLeftOpen size={13} />}
           {secondaryOpen ? "Réduire panneau" : "Afficher panneau"}
@@ -286,14 +286,14 @@ export function AdminSidebar() {
       {/* Header: active section name */}
       <div className="h-14 px-4 flex items-center gap-2 border-b border-white/5">
         <activeGroup.icon size={15} className="text-admin-accent" strokeWidth={1.75} />
-        <span className="text-neutral-light text-[13px] font-semibold tracking-wide">{activeGroup.label}</span>
+        <span className="text-white text-[13px] font-semibold tracking-wide">{activeGroup.label}</span>
       </div>
 
       {/* Search + app filter */}
       <div className="px-3 pt-3 pb-2 space-y-2 border-b border-white/5">
         <button
           onClick={() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true }))}
-          className="w-full px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-md flex items-center gap-2 text-neutral-500 text-[11px] hover:border-gold/30 hover:text-neutral-400 transition-colors"
+          className="w-full px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-md flex items-center gap-2 text-white/50 text-[11px] hover:border-gold/30 hover:text-white/70 transition-colors"
         >
           <Search size={11} />
           <span className="flex-1 text-left">Rechercher...</span>
@@ -302,7 +302,7 @@ export function AdminSidebar() {
         <select
           value={selectedApp}
           onChange={e => setSelectedApp(e.target.value)}
-          className="w-full px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-md text-[11px] text-neutral-light outline-none focus:border-gold/50 appearance-none cursor-pointer"
+          className="w-full px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-md text-[11px] text-white outline-none focus:border-gold/50 appearance-none cursor-pointer"
         >
           <option value="all" className="bg-onyx">Toutes les apps</option>
           {appList.map(app => (
@@ -323,7 +323,7 @@ export function AdminSidebar() {
                 className={`flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[12px] transition-all ${
                   active
                     ? "bg-admin-accent/15 text-admin-accent font-medium"
-                    : "text-neutral-400 hover:bg-white/5 hover:text-neutral-light"
+                    : "text-white/70 hover:bg-white/5 hover:text-white"
                 }`}
               >
                 <item.icon size={14} strokeWidth={1.5} />
@@ -342,7 +342,7 @@ export function AdminSidebar() {
             className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[11px] transition-all ${
               isActive("/admin/admins")
                 ? "bg-purple-500/15 text-purple-400 font-medium"
-                : "text-neutral-500 hover:text-purple-400 hover:bg-white/5"
+                : "text-white/50 hover:text-purple-400 hover:bg-white/5"
             }`}
           >
             <Crown size={12} />
@@ -352,7 +352,7 @@ export function AdminSidebar() {
 
         <a
           href={SITE_URL}
-          className="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-neutral-500 text-[11px] hover:text-neutral-300 hover:bg-white/5 transition-all"
+          className="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-white/50 text-[11px] hover:text-white/80 hover:bg-white/5 transition-all"
         >
           <ArrowLeft size={12} />
           Retour au site
@@ -363,7 +363,7 @@ export function AdminSidebar() {
             {(profile?.full_name || "A").split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-neutral-light text-[11px] font-medium truncate">{profile?.full_name || "Admin"}</div>
+            <div className="text-white text-[11px] font-medium truncate">{profile?.full_name || "Admin"}</div>
             <div className={`text-[9px] flex items-center gap-1 ${isSuperAdmin ? "text-purple-400" : "text-admin-accent"}`}>
               {isSuperAdmin && <Crown size={9} />}
               {isSuperAdmin ? "Super Admin" : "Admin"}
@@ -373,7 +373,7 @@ export function AdminSidebar() {
 
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-neutral-500 text-[11px] hover:text-red-400 hover:bg-white/5 transition-all"
+          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-white/50 text-[11px] hover:text-red-400 hover:bg-white/5 transition-all"
         >
           <LogOut size={12} />
           Déconnexion
@@ -393,7 +393,7 @@ export function AdminSidebar() {
     <>
       <button
         onClick={() => setMobileOpen(true)}
-        className="fixed top-4 left-4 z-50 md:hidden w-10 h-10 rounded-lg bg-onyx border border-white/10 flex items-center justify-center text-neutral-400"
+        className="fixed top-4 left-4 z-50 md:hidden w-10 h-10 rounded-lg bg-onyx border border-white/10 flex items-center justify-center text-white/70"
       >
         <Menu size={20} />
       </button>
