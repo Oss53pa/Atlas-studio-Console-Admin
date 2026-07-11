@@ -7,6 +7,7 @@ import { RequireAdmin } from './components/guards/RequireAdmin';
 import { RequireSuperAdmin } from './components/guards/RequireSuperAdmin';
 import { AdminLayout } from './admin/AdminLayout';
 import AdminLoginPage from './admin/AdminLoginPage';
+import LandingPage from './admin/LandingPage';
 import './index.css';
 
 // Pages admin — chargées à la demande
@@ -108,8 +109,8 @@ root.render(
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            {/* Racine → console */}
-            <Route path="/" element={<Navigate to="/admin" replace />} />
+            {/* Racine → page d'accueil publique (avant login) */}
+            <Route path="/" element={<LandingPage />} />
 
             <Route path="/admin">
               {/* Connexion — publique */}
@@ -179,8 +180,8 @@ root.render(
               </Route>
             </Route>
 
-            {/* Tout le reste → console */}
-            <Route path="*" element={<Navigate to="/admin" replace />} />
+            {/* Tout le reste → page d'accueil */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>
