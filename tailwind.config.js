@@ -15,6 +15,8 @@ export default {
           accent: 'rgb(var(--c-accent-rgb) / <alpha-value>)',
           'accent-dark': 'rgb(var(--c-accent-dark-rgb) / <alpha-value>)',
           'on-accent': 'rgb(var(--c-on-accent-rgb) / <alpha-value>)',
+          volt: 'rgb(var(--c-volt-rgb) / <alpha-value>)',
+          'on-volt': 'rgb(var(--c-on-volt-rgb) / <alpha-value>)',
           text: 'rgb(var(--c-text-rgb) / <alpha-value>)',
           'text-2': 'rgb(var(--c-text-2-rgb) / <alpha-value>)',
           muted: 'rgb(var(--c-muted-rgb) / <alpha-value>)',
@@ -22,6 +24,11 @@ export default {
           ok: 'rgb(var(--c-ok-rgb) / <alpha-value>)',
           warn: 'rgb(var(--c-warn-rgb) / <alpha-value>)',
           err: 'rgb(var(--c-err-rgb) / <alpha-value>)',
+        },
+        // Ponctuation volt (Lando) — aplats uniquement.
+        volt: {
+          DEFAULT: 'rgb(var(--c-volt-rgb) / <alpha-value>)',
+          on: 'rgb(var(--c-on-volt-rgb) / <alpha-value>)',
         },
         // Olive Noir — charcoal feutré + olive sauge (neumorphique sombre)
         onyx: 'rgb(var(--c-ink-rgb) / <alpha-value>)',
@@ -172,7 +179,7 @@ export default {
       },
       backgroundImage: {
         // Olive 5-stop gradient — premium feutré shimmer
-        'gradient-gold': 'linear-gradient(135deg, var(--c-accent-dark) 0%, var(--c-accent) 35%, #E8C88A 50%, var(--c-accent) 65%, var(--c-accent-dark) 100%)',
+        'gradient-gold': 'linear-gradient(135deg, var(--c-accent-dark) 0%, var(--c-accent) 50%, var(--c-accent-dark) 100%)',
         'gradient-gold-soft': 'linear-gradient(135deg, rgba(169,181,126,0.14) 0%, rgba(194,204,146,0.06) 100%)',
         // Cream for brand wordmark
         'gradient-champagne': 'linear-gradient(135deg, var(--c-accent-dark) 0%, var(--c-accent) 50%, var(--c-accent-dark) 100%)',

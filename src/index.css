@@ -20,6 +20,8 @@
   --c-accent: rgb(var(--c-accent-rgb));
   --c-accent-dark: rgb(var(--c-accent-dark-rgb));
   --c-on-accent: rgb(var(--c-on-accent-rgb));
+  --c-volt: rgb(var(--c-volt-rgb));
+  --c-on-volt: rgb(var(--c-on-volt-rgb));
   --c-text: rgb(var(--c-text-rgb));
   --c-text-2: rgb(var(--c-text-2-rgb));
   --c-muted: rgb(var(--c-muted-rgb));
@@ -29,21 +31,24 @@
   --c-err: rgb(var(--c-err-rgb));
 }
 
+/* Palette B — « Lando » (défaut) : olive-lime lisible + volt (aplats) + crème + olive-noir. */
 :root,
 :root[data-palette="b"] {
-  --c-bg-rgb: 247 243 236;
+  --c-bg-rgb: 244 244 237;
   --c-surface-rgb: 255 255 255;
-  --c-surface-alt-rgb: 245 240 232;
-  --c-ink-rgb: 26 20 16;          /* noir chaud */
-  --c-accent-rgb: 152 104 20;     /* cuivre */
-  --c-accent-dark-rgb: 126 86 22;
-  --c-on-accent-rgb: 255 250 240;
-  --c-text-rgb: 26 20 16;
-  --c-text-2-rgb: 74 66 56;
-  --c-muted-rgb: 110 100 86;
-  --c-border-rgb: 229 224 213;
-  --c-ok-rgb: 74 117 88;
-  --c-warn-rgb: 176 114 42;
+  --c-surface-alt-rgb: 236 236 227;
+  --c-ink-rgb: 40 44 32;          /* olive-noir */
+  --c-accent-rgb: 92 107 18;      /* olive-lime (texte + aplat) */
+  --c-accent-dark-rgb: 62 74 12;
+  --c-on-accent-rgb: 244 244 237;
+  --c-text-rgb: 22 23 15;
+  --c-text-2-rgb: 74 76 64;
+  --c-muted-rgb: 124 125 112;
+  --c-border-rgb: 221 221 210;
+  --c-volt-rgb: 210 255 0;        /* volt — ponctuation (aplats) */
+  --c-on-volt-rgb: 22 23 15;
+  --c-ok-rgb: 60 122 74;
+  --c-warn-rgb: 150 92 24;
   --c-err-rgb: 168 50 50;
 }
 
@@ -59,6 +64,8 @@
   --c-text-2-rgb: 52 62 74;
   --c-muted-rgb: 95 104 117;
   --c-border-rgb: 230 228 222;
+  --c-volt-rgb: 134 104 36;
+  --c-on-volt-rgb: 255 252 245;
   --c-ok-rgb: 5 150 105;
   --c-warn-rgb: 180 83 9;
   --c-err-rgb: 185 28 28;
@@ -132,17 +139,17 @@
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
               filter 0.25s ease;
-  color: #1a1c12;
+  color: var(--c-on-volt);
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 60%),
-    linear-gradient(135deg, var(--c-accent-dark) 0%, var(--c-accent) 35%, #E8C88A 50%, var(--c-accent) 65%, var(--c-accent-dark) 100%);
+    linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 60%),
+    linear-gradient(135deg, var(--c-volt) 0%, var(--c-volt) 100%);
   background-size: 100% 100%, 240% 240%;
   background-position: 0 0, 0% 50%;
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.32),
     inset 0 -1px 0 0 rgba(0, 0, 0, 0.18),
-    0 4px 14px rgba(152, 104, 20, 0.36),
-    0 0 0 1px rgba(152, 104, 20, 0.45);
+    0 4px 16px rgba(210, 255, 0, 0.40),
+    0 0 0 1px rgba(210, 255, 0, 0.55);
 }
 
 .btn-gold::before {
@@ -631,8 +638,8 @@
 }
 
 .prose-atlas a:hover {
-  color: #E8C88A;
-  border-bottom-color: rgba(221, 184, 118, 0.7);
+  color: var(--c-accent-dark);
+  border-bottom-color: rgba(92, 107, 18, 0.7);
 }
 
 /* ---------- SECTIONS ---------- */
