@@ -107,7 +107,7 @@ function AgentMonitorCard({ agent, stats }: { agent: Agent; stats: AgentActionSt
         ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
         : healthScore >= 50
           ? 'bg-admin-accent/15 text-admin-accent border-admin-accent/30'
-          : 'bg-red-500/15 text-red-300 border-red-500/30';
+          : 'bg-red-500/15 text-red-700 border-red-500/30';
 
   return (
     <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
@@ -191,7 +191,7 @@ function Stat({
   accent?: 'amber' | 'emerald' | 'red';
 }) {
   const cls = accent === 'red'
-    ? 'border-red-500/30 bg-red-500/10 text-red-300'
+    ? 'border-red-500/30 bg-red-500/10 text-red-700'
     : accent === 'emerald'
       ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
       : accent === 'amber'

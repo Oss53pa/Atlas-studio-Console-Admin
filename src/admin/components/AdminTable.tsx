@@ -94,7 +94,7 @@ export function AdminTable<T>({
               <button key={i} onClick={() => { action.onClick(Array.from(selected)); clearSelection(); }}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-colors ${
                   action.variant === "danger"
-                    ? "bg-red-50 dark:bg-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/30"
+                    ? "bg-red-50 dark:bg-red-500/20 text-red-600 dark:text-red-700 hover:bg-red-100 dark:hover:bg-red-500/30"
                     : "bg-white dark:bg-admin-surface-alt border border-warm-border dark:border-admin-surface-alt text-neutral-body dark:text-admin-text hover:border-gold/40 dark:hover:border-admin-accent/40"
                 }`}>{action.icon}{action.label}</button>
             ))}

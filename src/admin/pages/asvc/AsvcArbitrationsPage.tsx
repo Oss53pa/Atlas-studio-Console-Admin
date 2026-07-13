@@ -215,7 +215,7 @@ function ExecutionTab({
       </div>
 
       {error && (
-        <div className="mb-4 text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
+        <div className="mb-4 text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
           <AlertCircle size={12} />
           {error}
         </div>
@@ -227,10 +227,10 @@ function ExecutionTab({
           <span className="text-emerald-300 font-semibold">Dernier batch :</span>
           <span className="text-emerald-200">{lastSummary.succeeded_internal} exécutées</span>
           {lastSummary.pending_external > 0 && (
-            <span className="text-amber-300">{lastSummary.pending_external} en attente connecteur</span>
+            <span className="text-amber-700">{lastSummary.pending_external} en attente connecteur</span>
           )}
           {lastSummary.failed > 0 && (
-            <span className="text-red-300">{lastSummary.failed} en échec</span>
+            <span className="text-red-700">{lastSummary.failed} en échec</span>
           )}
           <span className="text-emerald-300/60">sur {lastSummary.total} action{lastSummary.total > 1 ? 's' : ''}</span>
         </div>

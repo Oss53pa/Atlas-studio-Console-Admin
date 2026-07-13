@@ -51,11 +51,11 @@ export default function AsvcHealthPage() {
           }`}
         >
           <div className="flex items-start gap-3">
-            <ShieldAlert size={18} className={scanError || (scanResult && scanResult.critical_count > 0) ? 'text-red-400' : 'text-admin-accent'} strokeWidth={1.75} />
+            <ShieldAlert size={18} className={scanError || (scanResult && scanResult.critical_count > 0) ? 'text-red-700' : 'text-admin-accent'} strokeWidth={1.75} />
             <div className="min-w-0 flex-1">
               <div className="text-neutral-light text-[13px] font-semibold mb-0.5">SecOps · passe CTEM</div>
               {scanError ? (
-                <p className="text-red-300 text-[12px]">{scanError}</p>
+                <p className="text-red-700 text-[12px]">{scanError}</p>
               ) : scanResult ? (
                 <>
                   <p className="text-neutral-400 text-[12px] leading-snug mb-2">{scanResult.summary}</p>
@@ -63,7 +63,7 @@ export default function AsvcHealthPage() {
                     <span className="pill pill-neutral">Posture {scanResult.posture_score}/100</span>
                     <span className="pill">{scanResult.findings_count} findings</span>
                     {scanResult.critical_count > 0 && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full font-semibold bg-red-500/15 text-red-300 border border-red-500/30">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full font-semibold bg-red-500/15 text-red-700 border border-red-500/30">
                         {scanResult.critical_count} critique{scanResult.critical_count > 1 ? 's' : ''}
                       </span>
                     )}
@@ -167,19 +167,19 @@ export default function AsvcHealthPage() {
                 ) : (
                   <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-3">
                     <div className="flex items-start gap-2 mb-2">
-                      <AlertCircle size={14} className="text-red-300 mt-0.5" />
+                      <AlertCircle size={14} className="text-red-700 mt-0.5" />
                       <div>
-                        <div className="text-red-200 text-[12.5px] font-semibold">
+                        <div className="text-red-700 text-[12.5px] font-semibold">
                           ⚠️ {integrity.mismatch_count} mismatch{integrity.mismatch_count > 1 ? 'es' : ''} détecté{integrity.mismatch_count > 1 ? 's' : ''}
                         </div>
-                        <div className="text-red-300/70 text-[11.5px]">
+                        <div className="text-red-700/70 text-[11.5px]">
                           Investigation immédiate requise — l'audit log a peut-être été altéré.
                         </div>
                       </div>
                     </div>
                     <div className="space-y-1 mt-2 max-h-40 overflow-y-auto">
                       {integrity.mismatches.slice(0, 10).map((m) => (
-                        <div key={m.id} className="text-red-200/80 text-[10.5px] font-mono">
+                        <div key={m.id} className="text-red-700/80 text-[10.5px] font-mono">
                           {new Date(m.ts).toISOString()} · {m.event_type} · id={m.id.slice(0, 8)}
                         </div>
                       ))}

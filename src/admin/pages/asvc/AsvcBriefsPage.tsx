@@ -22,9 +22,9 @@ const BRIEF_LABELS = {
 
 const BRIEF_COLORS = {
   morning: 'text-admin-accent',
-  evening: 'text-violet-300',
-  weekly: 'text-blue-300',
-  alert: 'text-red-300',
+  evening: 'text-violet-700',
+  weekly: 'text-blue-700',
+  alert: 'text-red-700',
 } as const;
 
 type Filter = 'all' | 'morning' | 'evening' | 'weekly' | 'alert';
@@ -120,7 +120,7 @@ function BriefCard({ brief }: { brief: CooBrief }) {
               <span>{brief.arbitrations_pending} arbitrages</span>
             )}
             {brief.arbitrations_urgent > 0 && (
-              <span className="text-red-300">{brief.arbitrations_urgent} urgents</span>
+              <span className="text-red-700">{brief.arbitrations_urgent} urgents</span>
             )}
           </div>
         </div>

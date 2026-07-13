@@ -163,7 +163,7 @@ export default function SystemHealthPage() {
               max={100}
               size={96}
               thickness={9}
-              accent={healthScore >= 90 ? "#A9B57E" : healthScore >= 70 ? "#8E9A63" : "#C0635C"}
+              accent={healthScore >= 90 ? "var(--c-accent)" : healthScore >= 70 ? "var(--c-accent-dark)" : "#C0635C"}
               display={String(healthScore)}
             />
           </div>
@@ -222,10 +222,10 @@ export default function SystemHealthPage() {
             <div className="space-y-3">
               {incidents.map(inc => (
                 <div key={inc.id} className="flex items-start gap-3 p-3.5 bg-red-50 dark:bg-admin-error/10 border border-red-100 dark:border-admin-error/20 rounded-xl">
-                  <XCircle size={14} className="text-red-500 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                  <XCircle size={14} className="text-red-500 dark:text-red-700 mt-0.5 flex-shrink-0" />
                   <div>
-                    <div className="text-red-700 dark:text-red-300 text-[13px] font-medium">{inc.action.replace(/_/g, " ")}</div>
-                    <div className="text-red-600 dark:text-red-400/80 text-[11px]">{new Date(inc.created_at).toLocaleString("fr-FR")}</div>
+                    <div className="text-red-700 dark:text-red-700 text-[13px] font-medium">{inc.action.replace(/_/g, " ")}</div>
+                    <div className="text-red-600 dark:text-red-700/80 text-[11px]">{new Date(inc.created_at).toLocaleString("fr-FR")}</div>
                   </div>
                 </div>
               ))}

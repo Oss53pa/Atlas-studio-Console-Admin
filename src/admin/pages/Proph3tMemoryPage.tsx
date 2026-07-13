@@ -54,9 +54,9 @@ interface ValidatedQa {
 }
 
 const SEVERITY_COLORS: Record<string, string> = {
-  info: "bg-blue-500/20 text-blue-400",
-  warn: "bg-amber-500/20 text-amber-400",
-  critical: "bg-red-500/20 text-red-400",
+  info: "bg-blue-500/20 text-blue-700",
+  warn: "bg-amber-500/20 text-amber-700",
+  critical: "bg-red-500/20 text-red-700",
 };
 
 export default function Proph3tMemoryPage() {
@@ -146,7 +146,7 @@ export default function Proph3tMemoryPage() {
           emptyIcon={<Database size={32} />}
           columns={[
             { key: "observation_type", label: "Type", render: (r: Observation) => (
-              <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-500/20 text-purple-400">{r.observation_type}</span>
+              <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-500/20 text-purple-700">{r.observation_type}</span>
             )},
             { key: "severity", label: "Sévérité", render: (r: Observation) => r.severity ? (
               <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold ${SEVERITY_COLORS[r.severity] || ""}`}>{r.severity}</span>

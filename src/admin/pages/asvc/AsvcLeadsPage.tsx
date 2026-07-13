@@ -76,7 +76,7 @@ export default function AsvcLeadsPage() {
           <span className="font-semibold">{stats.actionable}</span>
           <span className="opacity-80">actifs</span>
         </span>
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-amber-500/30 bg-amber-500/10 text-amber-300 font-mono">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-amber-500/30 bg-amber-500/10 text-amber-700 font-mono">
           {fcfaFmt(stats.pipelineFcfa)} <span className="opacity-80 font-sans">pipeline</span>
         </span>
         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-300">
@@ -111,7 +111,7 @@ export default function AsvcLeadsPage() {
       </div>
 
       {actionError && (
-        <div className="mb-4 text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
+        <div className="mb-4 text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
           <AlertCircle size={12} />
           {actionError}
         </div>
@@ -181,7 +181,7 @@ function LeadRow({
             <span>{lead.interactions_count} interaction{lead.interactions_count > 1 ? 's' : ''}</span>
             <span>{lead.days_in_stage}j dans le stage</span>
             {lead.contract_value_fcfa && (
-              <span className="font-mono text-amber-300/80">{fcfaFmt(lead.contract_value_fcfa)}</span>
+              <span className="font-mono text-amber-700/80">{fcfaFmt(lead.contract_value_fcfa)}</span>
             )}
             {lead.last_touch_at && <span>touche {timeAgoFr(lead.last_touch_at)}</span>}
             {lead.last_interaction_outcome && (

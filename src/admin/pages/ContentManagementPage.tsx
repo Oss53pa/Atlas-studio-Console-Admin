@@ -118,7 +118,7 @@ function ImageField({ label, value, onChange, folder }: {
 /* ─── Delete button ─── */
 function DeleteBtn({ onClick }: { onClick: () => void }) {
   return (
-    <button onClick={onClick} className="text-red-400 hover:text-red-300 transition-colors p-1" title="Supprimer">
+    <button onClick={onClick} className="text-red-700 hover:text-red-700 transition-colors p-1" title="Supprimer">
       <Trash2 size={14} />
     </button>
   );
@@ -160,9 +160,9 @@ export default function ContentManagementPage() {
         contact: map.contact || DEFAULT_CONTENT.contact,
         social: map.social || { facebook: "", instagram: "", linkedin: "", twitter: "", youtube: "", tiktok: "" },
         appearance: map.appearance || {
-          primaryColor: "#8E9A63",
-          accentColor: "#C2CC92",
-          heroBackground: "#131316",
+          primaryColor: "var(--c-accent-dark)",
+          accentColor: "var(--c-accent)",
+          heroBackground: "var(--c-surface)",
           clientLogos: [] as string[],
         },
       });
@@ -202,7 +202,7 @@ export default function ContentManagementPage() {
       faqs: DEFAULT_CONTENT.faqs,
       contact: DEFAULT_CONTENT.contact,
       social: { facebook: "", instagram: "", linkedin: "", twitter: "", youtube: "", tiktok: "" },
-      appearance: { primaryColor: "#8E9A63", accentColor: "#C2CC92", heroBackground: "#131316", clientLogos: [] },
+      appearance: { primaryColor: "var(--c-accent-dark)", accentColor: "var(--c-accent)", heroBackground: "var(--c-surface)", clientLogos: [] },
     };
     update(key, defaults[key]);
   };
@@ -501,10 +501,10 @@ export default function ContentManagementPage() {
           <>
             <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3">Couleurs</h3>
             <div className="grid grid-cols-2 gap-4">
-              <ColorField label="Couleur principale (gold)" value={content.appearance?.primaryColor || "#8E9A63"} onChange={v => update("appearance", { ...content.appearance, primaryColor: v })} />
-              <ColorField label="Couleur accent" value={content.appearance?.accentColor || "#C2CC92"} onChange={v => update("appearance", { ...content.appearance, accentColor: v })} />
+              <ColorField label="Couleur principale (gold)" value={content.appearance?.primaryColor || "var(--c-accent-dark)"} onChange={v => update("appearance", { ...content.appearance, primaryColor: v })} />
+              <ColorField label="Couleur accent" value={content.appearance?.accentColor || "var(--c-accent)"} onChange={v => update("appearance", { ...content.appearance, accentColor: v })} />
             </div>
-            <ColorField label="Fond du hero" value={content.appearance?.heroBackground || "#131316"} onChange={v => update("appearance", { ...content.appearance, heroBackground: v })} />
+            <ColorField label="Fond du hero" value={content.appearance?.heroBackground || "var(--c-surface)"} onChange={v => update("appearance", { ...content.appearance, heroBackground: v })} />
 
             <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-6">Logos des entreprises clientes</h3>
             <p className="text-neutral-muted dark:text-admin-muted text-[13px] mb-4">Logos affichés comme preuve sociale sur la landing page.</p>

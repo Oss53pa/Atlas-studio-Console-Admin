@@ -138,7 +138,7 @@ export function ArbitrationCard({ action, onApprove, onReject, onModify }: Props
           type="button"
           disabled={pending !== null}
           onClick={() => runAction(() => onReject(action.id), 'reject')}
-          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-white/10 text-neutral-500 hover:bg-white/5 hover:text-red-300 disabled:opacity-50 text-[12px] rounded-lg transition"
+          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-white/10 text-neutral-500 hover:bg-white/5 hover:text-red-700 disabled:opacity-50 text-[12px] rounded-lg transition"
         >
           {pending === 'reject' ? (
             <Loader2 size={13} className="animate-spin" />

@@ -145,7 +145,7 @@ export default function AsvcTechDebtPage() {
       </AdminPageHeader>
 
       {scanError && (
-        <div className="mb-4 px-3 py-2 rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 text-[12px]">
+        <div className="mb-4 px-3 py-2 rounded-lg border border-red-500/30 bg-red-500/10 text-red-700 text-[12px]">
           Erreur scan : {scanError}
         </div>
       )}
@@ -162,7 +162,7 @@ export default function AsvcTechDebtPage() {
       )}
 
       {error && (
-        <div className="mb-4 px-3 py-2 rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 text-[12px]">
+        <div className="mb-4 px-3 py-2 rounded-lg border border-red-500/30 bg-red-500/10 text-red-700 text-[12px]">
           {error}
         </div>
       )}
@@ -302,7 +302,7 @@ export default function AsvcTechDebtPage() {
                 type="button"
                 disabled={pendingId === selected.id || selected.status === 'qualified'}
                 onClick={() => handleUpdate('qualified')}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 border border-blue-500/40 text-blue-300 hover:bg-blue-500/30 disabled:opacity-40 text-[12px] font-semibold"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 border border-blue-500/40 text-blue-700 hover:bg-blue-500/30 disabled:opacity-40 text-[12px] font-semibold"
               >
                 <ArrowDownToLine size={12} />
                 Qualifier
@@ -361,8 +361,8 @@ function AppDebtGroup({
                   (audit.score ?? 0) >= 75
                     ? 'text-emerald-300'
                     : (audit.score ?? 0) >= 50
-                      ? 'text-amber-300'
-                      : 'text-red-300'
+                      ? 'text-amber-700'
+                      : 'text-red-700'
                 }`}
               >
                 {audit.score?.toFixed(0) ?? '—'}/100
@@ -557,8 +557,8 @@ function StatTile({
   const valueColor = {
     neutral: 'text-neutral-300',
     emerald: 'text-emerald-300',
-    amber: 'text-amber-300',
-    red: 'text-red-300',
+    amber: 'text-amber-700',
+    red: 'text-red-700',
   }[accent];
   return (
     <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-3">

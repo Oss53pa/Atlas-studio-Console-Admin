@@ -120,7 +120,7 @@ export default function HomePage() {
   const yearPct = Math.round((dayOfYear / 365) * 100);
   const prenom = (profile?.full_name || "").split(" ")[0] || "";
 
-  const AMBER = "#EF9F27", BLUE = "#3B82F6", EMERALD = "#10B981";
+  const AMBER = "#EF9F27", BLUE = "#3B82F6", EMERALD = "var(--c-accent)";
 
   return (
     <div className="h-screen overflow-hidden flex flex-col bg-p-bg">

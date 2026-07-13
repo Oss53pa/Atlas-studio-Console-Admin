@@ -21,9 +21,9 @@ interface Deployment {
 }
 
 const ENV_COLORS: Record<string, string> = {
-  production: "bg-green-500/20 text-green-400 border-green-500/30",
-  staging: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  dev: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  production: "bg-green-500/20 text-green-700 border-green-500/30",
+  staging: "bg-amber-500/20 text-amber-700 border-amber-500/30",
+  dev: "bg-blue-500/20 text-blue-700 border-blue-500/30",
 };
 
 const STATUS_ICONS: Record<string, React.ReactNode> = {

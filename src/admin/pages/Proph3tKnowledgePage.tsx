@@ -51,20 +51,20 @@ interface DocumentRow {
 const KB_CATEGORIES = ["syscohada", "ohada", "fiscal", "rh", "immobilier", "retail", "sectoriel", "autre"];
 const KB_COLORS: Record<string, string> = {
   syscohada: "bg-emerald-500/20 text-emerald-400",
-  ohada: "bg-blue-500/20 text-blue-400",
-  fiscal: "bg-amber-500/20 text-amber-400",
-  rh: "bg-purple-500/20 text-purple-400",
-  immobilier: "bg-indigo-500/20 text-indigo-400",
-  retail: "bg-cyan-500/20 text-cyan-400",
-  sectoriel: "bg-rose-500/20 text-rose-400",
+  ohada: "bg-blue-500/20 text-blue-700",
+  fiscal: "bg-amber-500/20 text-amber-700",
+  rh: "bg-purple-500/20 text-purple-700",
+  immobilier: "bg-indigo-500/20 text-indigo-700",
+  retail: "bg-cyan-500/20 text-cyan-700",
+  sectoriel: "bg-rose-500/20 text-rose-700",
   autre: "bg-neutral-500/20 text-neutral-400",
 };
 
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-neutral-500/20 text-neutral-400",
-  processing: "bg-blue-500/20 text-blue-400",
+  processing: "bg-blue-500/20 text-blue-700",
   done: "bg-emerald-500/20 text-emerald-400",
-  failed: "bg-red-500/20 text-red-400",
+  failed: "bg-red-500/20 text-red-700",
 };
 
 export default function Proph3tKnowledgePage() {
@@ -341,7 +341,7 @@ export default function Proph3tKnowledgePage() {
               <div><span className="text-neutral-muted dark:text-admin-muted">Créé:</span> {new Date(detailDoc.created_at).toLocaleDateString("fr-FR")}</div>
             </div>
             {detailDoc.ingestion_error && (
-              <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded text-[12px]">{detailDoc.ingestion_error}</div>
+              <div className="bg-red-500/10 border border-red-500/30 text-red-700 p-3 rounded text-[12px]">{detailDoc.ingestion_error}</div>
             )}
           </div>
         )}

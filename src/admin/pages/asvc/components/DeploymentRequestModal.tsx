@@ -60,7 +60,7 @@ export function DeploymentRequestModal({ action, onConfirm, onCancel }: Props) {
   };
 
   const borderColor = isRollback ? 'border-red-500/50' : 'border-violet-500/50';
-  const headerColor = isRollback ? 'text-red-300' : 'text-violet-300';
+  const headerColor = isRollback ? 'text-red-700' : 'text-violet-700';
   const buttonBg = isRollback
     ? 'bg-red-500/30 hover:bg-red-500/40 text-red-100 border-red-500/40'
     : 'bg-violet-500/30 hover:bg-violet-500/40 text-violet-100 border-violet-500/40';
@@ -90,8 +90,8 @@ export function DeploymentRequestModal({ action, onConfirm, onCancel }: Props) {
         {/* Bloqueurs */}
         {payload.blockers && payload.blockers.length > 0 && (
           <section className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3">
-            <div className="text-red-200 text-[12px] font-semibold mb-1">🚨 Bloqueurs détectés</div>
-            <ul className="text-red-200/80 text-[11.5px] list-disc list-inside">
+            <div className="text-red-700 text-[12px] font-semibold mb-1">🚨 Bloqueurs détectés</div>
+            <ul className="text-red-700/80 text-[11.5px] list-disc list-inside">
               {payload.blockers.map((b, i) => <li key={i}>{b}</li>)}
             </ul>
           </section>
@@ -100,7 +100,7 @@ export function DeploymentRequestModal({ action, onConfirm, onCancel }: Props) {
         {/* Go/no-go server */}
         {payload.go_no_go === 'no_go' && (
           <section className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3">
-            <div className="text-red-200 text-[12px]">
+            <div className="text-red-700 text-[12px]">
               ⛔ Le serveur recommande <strong>NO-GO</strong> sur ce déploiement.
               La validation forcée reste possible mais déconseillée.
             </div>
@@ -128,8 +128,8 @@ export function DeploymentRequestModal({ action, onConfirm, onCancel }: Props) {
                       m.status === 'ok'
                         ? 'bg-emerald-500/15 text-emerald-300'
                         : m.status === 'warning'
-                          ? 'bg-amber-500/15 text-amber-300'
-                          : 'bg-red-500/15 text-red-300'
+                          ? 'bg-amber-500/15 text-amber-700'
+                          : 'bg-red-500/15 text-red-700'
                     }`}
                   >
                     {m.status === 'ok' ? <CheckCircle2 size={10} /> : <AlertOctagon size={10} />}
@@ -242,7 +242,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 function KV({ label, value, accent }: { label: string; value: string; accent?: 'red' | 'green' }) {
-  const cls = accent === 'red' ? 'text-red-300' : accent === 'green' ? 'text-emerald-300' : 'text-neutral-300';
+  const cls = accent === 'red' ? 'text-red-700' : accent === 'green' ? 'text-emerald-300' : 'text-neutral-300';
   return (
     <div className="flex items-baseline gap-2 text-[11.5px]">
       <span className="text-neutral-500 min-w-[140px]">{label}</span>

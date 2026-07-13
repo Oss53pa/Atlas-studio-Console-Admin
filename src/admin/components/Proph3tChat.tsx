@@ -297,7 +297,7 @@ export function Proph3tChat({ open, onClose }: { open: boolean; onClose: () => v
                 {msg.role === "assistant" && (msg.confidence !== undefined || (msg.citations && msg.citations.length > 0)) && (
                   <div className="mt-2 flex items-center gap-2 flex-wrap text-[10px]">
                     {msg.confidence !== undefined && (
-                      <span className={`px-2 py-0.5 rounded-full font-mono ${msg.confidence >= 70 ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"}`}>
+                      <span className={`px-2 py-0.5 rounded-full font-mono ${msg.confidence >= 70 ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-700"}`}>
                         confiance {msg.confidence}
                       </span>
                     )}
@@ -316,12 +316,12 @@ export function Proph3tChat({ open, onClose }: { open: boolean; onClose: () => v
                     >👍</button>
                     <button
                       onClick={() => sendFeedback(msg.message_id!, "down")}
-                      className="px-2 py-1 rounded hover:bg-red-500/10 text-neutral-500 hover:text-red-400 transition-colors"
+                      className="px-2 py-1 rounded hover:bg-red-500/10 text-neutral-500 hover:text-red-700 transition-colors"
                       title="Mauvaise réponse"
                     >👎</button>
                     <button
                       onClick={() => promptCorrection(msg.message_id!)}
-                      className="px-2 py-1 rounded hover:bg-amber-500/10 text-neutral-500 hover:text-amber-400 transition-colors"
+                      className="px-2 py-1 rounded hover:bg-amber-500/10 text-neutral-500 hover:text-amber-700 transition-colors"
                       title="Corriger"
                     >✏️</button>
                   </div>
@@ -345,7 +345,7 @@ export function Proph3tChat({ open, onClose }: { open: boolean; onClose: () => v
             <div className="mb-2 flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg">
               <Paperclip size={12} className="text-gold" />
               <span className="text-[11px] text-neutral-light flex-1 truncate">{attachment.name}</span>
-              <button onClick={() => setAttachment(null)} className="text-neutral-500 hover:text-red-400 text-[11px]">x</button>
+              <button onClick={() => setAttachment(null)} className="text-neutral-500 hover:text-red-700 text-[11px]">x</button>
             </div>
           )}
           <div className="flex gap-2 items-end">

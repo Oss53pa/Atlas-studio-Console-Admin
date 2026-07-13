@@ -47,7 +47,7 @@ function KpiCard({ label, value, icon: Icon, trend, trendDown }: {
       </div>
       <div className="text-gold dark:text-admin-accent text-2xl font-mono font-semibold">{value}</div>
       {trend && (
-        <div className={`flex items-center gap-1 mt-1 text-[11px] font-semibold ${trendDown ? "text-red-500 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}>
+        <div className={`flex items-center gap-1 mt-1 text-[11px] font-semibold ${trendDown ? "text-red-500 dark:text-red-700" : "text-emerald-600 dark:text-emerald-400"}`}>
           {trendDown ? <TrendingDown size={11} /> : <TrendingUp size={11} />}
           {trend}
         </div>
@@ -178,9 +178,9 @@ export default function DashboardPage() {
       {/* Alert */}
       {revenue && revenue.pending_payments > 0 && tab === "overview" && (
         <div className="mb-6 px-5 py-3.5 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 flex items-center gap-3 shadow-sm dark:shadow-none">
-          <AlertTriangle size={16} className="text-amber-500 dark:text-amber-400" strokeWidth={1.8} />
-          <span className="text-amber-700 dark:text-amber-300 text-sm font-medium">{fmt(revenue.pending_payments)} FCFA en attente</span>
-          <Link to="/admin/invoices" className="ml-auto text-amber-600 dark:text-amber-400 text-xs hover:underline">Voir →</Link>
+          <AlertTriangle size={16} className="text-amber-500 dark:text-amber-700" strokeWidth={1.8} />
+          <span className="text-amber-700 dark:text-amber-700 text-sm font-medium">{fmt(revenue.pending_payments)} FCFA en attente</span>
+          <Link to="/admin/invoices" className="ml-auto text-amber-600 dark:text-amber-700 text-xs hover:underline">Voir →</Link>
         </div>
       )}
 
@@ -194,12 +194,12 @@ export default function DashboardPage() {
             <KpiCard label="Licences actives" value={licenceCount.active} icon={KeyRound} trend={`${licenceCount.pending} en attente`} />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
-            <QuickLink to="/admin/proph3t" icon={Brain} label="Proph3t IA" desc="Insights & recommandations" color="bg-amber-500/10 text-amber-400" />
-            <QuickLink to="/admin/clients" icon={Users} label="Utilisateurs" desc="Comptes & accès" stat={stats?.total_users || 0} color="bg-blue-500/10 text-blue-400" />
+            <QuickLink to="/admin/proph3t" icon={Brain} label="Proph3t IA" desc="Insights & recommandations" color="bg-amber-500/10 text-amber-700" />
+            <QuickLink to="/admin/clients" icon={Users} label="Utilisateurs" desc="Comptes & accès" stat={stats?.total_users || 0} color="bg-blue-500/10 text-blue-700" />
             <QuickLink to="/admin/licences" icon={KeyRound} label="Licences" desc="Clés, sièges, activation" stat={licenceCount.total} color="bg-emerald-500/10 text-emerald-400" />
-            <QuickLink to="/admin/payments" icon={Wallet} label="Paiements" desc="Transactions & virements" color="bg-yellow-500/10 text-yellow-400" />
-            <QuickLink to="/admin/tickets" icon={MessageSquare} label="Support" desc="Tickets ouverts" stat={openTickets} color="bg-purple-500/10 text-purple-400" />
-            <QuickLink to="/admin/plans" icon={Layers} label="Plans & Tarifs" desc="Starter / Pro / Enterprise" color="bg-cyan-500/10 text-cyan-400" />
+            <QuickLink to="/admin/payments" icon={Wallet} label="Paiements" desc="Transactions & virements" color="bg-yellow-500/10 text-yellow-700" />
+            <QuickLink to="/admin/tickets" icon={MessageSquare} label="Support" desc="Tickets ouverts" stat={openTickets} color="bg-purple-500/10 text-purple-700" />
+            <QuickLink to="/admin/plans" icon={Layers} label="Plans & Tarifs" desc="Starter / Pro / Enterprise" color="bg-cyan-500/10 text-cyan-700" />
           </div>
           {/* Revenue chart */}
           <div className="bg-white dark:bg-admin-surface border border-warm-border dark:border-white/5 rounded-2xl p-6 shadow-sm dark:shadow-premium">
@@ -231,15 +231,15 @@ export default function DashboardPage() {
               {pendingInvoices.length > 0 ? pendingInvoices.map(inv => (
                 <div key={inv.id} className="flex items-center justify-between py-2.5 border-b border-warm-border/50 dark:border-white/5 last:border-0">
                   <div><div className="text-neutral-text dark:text-admin-text text-sm">{inv.invoice_number}</div><div className="text-neutral-muted dark:text-admin-muted text-[11px]">{(inv.profiles as any)?.full_name || "—"}</div></div>
-                  <span className="text-amber-600 dark:text-amber-400 text-sm font-mono font-semibold">{fmt(Number(inv.amount))} FCFA</span>
+                  <span className="text-amber-600 dark:text-amber-700 text-sm font-mono font-semibold">{fmt(Number(inv.amount))} FCFA</span>
                 </div>
               )) : <p className="text-neutral-muted dark:text-admin-muted text-sm">Aucune facture en attente</p>}
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <QuickLink to="/admin/payments" icon={Wallet} label="Paiements" desc="Transactions, virements" color="bg-yellow-500/10 text-yellow-400" />
+            <QuickLink to="/admin/payments" icon={Wallet} label="Paiements" desc="Transactions, virements" color="bg-yellow-500/10 text-yellow-700" />
             <QuickLink to="/admin/invoices" icon={Receipt} label="Facturation" desc="Factures & avoir" color="bg-emerald-500/10 text-emerald-400" />
-            <QuickLink to="/admin/promo-codes" icon={Tag} label="Codes Promo" desc="Réductions, coupons" color="bg-rose-500/10 text-rose-400" />
+            <QuickLink to="/admin/promo-codes" icon={Tag} label="Codes Promo" desc="Réductions, coupons" color="bg-rose-500/10 text-rose-700" />
           </div>
         </>
       )}
@@ -280,10 +280,10 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <QuickLink to="/admin/clients" icon={Users} label="Utilisateurs" desc="Comptes & rôles" color="bg-blue-500/10 text-blue-400" />
+            <QuickLink to="/admin/clients" icon={Users} label="Utilisateurs" desc="Comptes & rôles" color="bg-blue-500/10 text-blue-700" />
             <QuickLink to="/admin/subscriptions" icon={Repeat} label="Abonnements" desc="Actifs, essais" color="bg-emerald-500/10 text-emerald-400" />
-            <QuickLink to="/admin/licences" icon={KeyRound} label="Licences" desc="Clés & sièges" color="bg-amber-500/10 text-amber-400" />
-            <QuickLink to="/admin/tickets" icon={MessageSquare} label="Support" desc="Tickets clients" color="bg-purple-500/10 text-purple-400" />
+            <QuickLink to="/admin/licences" icon={KeyRound} label="Licences" desc="Clés & sièges" color="bg-amber-500/10 text-amber-700" />
+            <QuickLink to="/admin/tickets" icon={MessageSquare} label="Support" desc="Tickets clients" color="bg-purple-500/10 text-purple-700" />
           </div>
         </>
       )}
@@ -298,13 +298,13 @@ export default function DashboardPage() {
             <KpiCard label="Abonnements" value={stats?.active_subscriptions || 0} icon={Repeat} />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            <QuickLink to="/admin/system" icon={Activity} label="Santé système" desc="Monitoring, uptime" color="bg-green-500/10 text-green-400" />
-            <QuickLink to="/admin/alerts" icon={Bell} label="Alertes" desc="Anomalies, incidents" color="bg-red-500/10 text-red-400" />
-            <QuickLink to="/admin/feature-flags" icon={Flag} label="Feature Flags" desc="Toggles, rollout" color="bg-violet-500/10 text-violet-400" />
-            <QuickLink to="/admin/deployments" icon={Rocket} label="Déploiements" desc="Versions, releases" color="bg-sky-500/10 text-sky-400" />
-            <QuickLink to="/admin/roles" icon={ShieldCheck} label="Rôles & Permissions" desc="RBAC, accès" color="bg-indigo-500/10 text-indigo-400" />
+            <QuickLink to="/admin/system" icon={Activity} label="Santé système" desc="Monitoring, uptime" color="bg-green-500/10 text-green-700" />
+            <QuickLink to="/admin/alerts" icon={Bell} label="Alertes" desc="Anomalies, incidents" color="bg-red-500/10 text-red-700" />
+            <QuickLink to="/admin/feature-flags" icon={Flag} label="Feature Flags" desc="Toggles, rollout" color="bg-violet-500/10 text-violet-700" />
+            <QuickLink to="/admin/deployments" icon={Rocket} label="Déploiements" desc="Versions, releases" color="bg-sky-500/10 text-sky-700" />
+            <QuickLink to="/admin/roles" icon={ShieldCheck} label="Rôles & Permissions" desc="RBAC, accès" color="bg-indigo-500/10 text-indigo-700" />
             <QuickLink to="/admin/activity" icon={ClipboardList} label="Logs & Audit" desc="Événements, historique" color="bg-slate-500/10 text-slate-400" />
-            <QuickLink to="/admin/analytics" icon={BarChart3} label="Analytics" desc="Revenus, tendances" color="bg-cyan-500/10 text-cyan-400" />
+            <QuickLink to="/admin/analytics" icon={BarChart3} label="Analytics" desc="Revenus, tendances" color="bg-cyan-500/10 text-cyan-700" />
             <QuickLink to="/admin/settings" icon={Settings} label="Paramètres" desc="Configuration système" color="bg-gray-500/10 text-gray-400" />
           </div>
         </>
@@ -313,12 +313,12 @@ export default function DashboardPage() {
       {/* ═══ TAB: Contenu & Marketing ═══ */}
       {tab === "content" && (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          <QuickLink to="/admin/content" icon={FileText} label="Landing Page" desc="Contenu, images, couleurs" color="bg-pink-500/10 text-pink-400" />
-          <QuickLink to="/admin/newsletter" icon={Mail} label="Newsletter" desc="Éditeur, campagnes" color="bg-orange-500/10 text-orange-400" />
+          <QuickLink to="/admin/content" icon={FileText} label="Landing Page" desc="Contenu, images, couleurs" color="bg-pink-500/10 text-pink-700" />
+          <QuickLink to="/admin/newsletter" icon={Mail} label="Newsletter" desc="Éditeur, campagnes" color="bg-orange-500/10 text-orange-700" />
           <QuickLink to="/admin/campaigns" icon={Send} label="Campagnes" desc="Email marketing" color="bg-teal-500/10 text-teal-400" />
-          <QuickLink to="/admin/emails" icon={Mail} label="Templates Email" desc="Modèles transactionnels" color="bg-blue-500/10 text-blue-400" />
-          <QuickLink to="/admin/knowledge-base" icon={BookOpen} label="Base de connaissances" desc="Articles, FAQ" color="bg-lime-500/10 text-lime-400" />
-          <QuickLink to="/admin/apps" icon={CreditCard} label="Grille Tarifaire" desc="Apps, plans, pricing" color="bg-amber-500/10 text-amber-400" />
+          <QuickLink to="/admin/emails" icon={Mail} label="Templates Email" desc="Modèles transactionnels" color="bg-blue-500/10 text-blue-700" />
+          <QuickLink to="/admin/knowledge-base" icon={BookOpen} label="Base de connaissances" desc="Articles, FAQ" color="bg-lime-500/10 text-lime-700" />
+          <QuickLink to="/admin/apps" icon={CreditCard} label="Grille Tarifaire" desc="Apps, plans, pricing" color="bg-amber-500/10 text-amber-700" />
         </div>
       )}
     </div>

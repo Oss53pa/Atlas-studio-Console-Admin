@@ -31,9 +31,9 @@ const METHOD_LABELS: Record<string, string> = {
 };
 
 const METHOD_COLORS: Record<string, string> = {
-  orange_money: "bg-orange-500/20 text-orange-400", mtn_momo: "bg-yellow-500/20 text-yellow-400",
-  wave: "bg-blue-500/20 text-blue-400", wire_transfer: "bg-emerald-500/20 text-emerald-400",
-  manual: "bg-neutral-500/20 text-neutral-400", card: "bg-purple-500/20 text-purple-400",
+  orange_money: "bg-orange-500/20 text-orange-700", mtn_momo: "bg-yellow-500/20 text-yellow-700",
+  wave: "bg-blue-500/20 text-blue-700", wire_transfer: "bg-emerald-500/20 text-emerald-400",
+  manual: "bg-neutral-500/20 text-neutral-400", card: "bg-purple-500/20 text-purple-700",
 };
 
 const STATUS_ICONS: Record<string, React.ReactNode> = {

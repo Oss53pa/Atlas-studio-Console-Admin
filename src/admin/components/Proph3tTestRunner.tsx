@@ -88,9 +88,9 @@ export function Proph3tTestRunner({ open, onClose }: { open: boolean; onClose: (
 
           {error && (
             <div className="bg-red-50 dark:bg-admin-error/10 border border-red-200 dark:border-admin-error/25 rounded-2xl p-5">
-              <div className="text-red-700 dark:text-red-300 text-sm font-semibold mb-1">Echec du test runner</div>
-              <p className="text-red-600 dark:text-red-400/80 text-[12px]">{error}</p>
-              <button onClick={runTests} className="mt-3 text-red-700 dark:text-red-300 text-[12px] underline">Reessayer</button>
+              <div className="text-red-700 dark:text-red-700 text-sm font-semibold mb-1">Echec du test runner</div>
+              <p className="text-red-600 dark:text-red-700/80 text-[12px]">{error}</p>
+              <button onClick={runTests} className="mt-3 text-red-700 dark:text-red-700 text-[12px] underline">Reessayer</button>
             </div>
           )}
 
@@ -107,15 +107,15 @@ export function Proph3tTestRunner({ open, onClose }: { open: boolean; onClose: (
                   <div className="text-[11px] text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Reussis</div>
                 </div>
                 <div className={`${report.summary.failed > 0 ? "bg-red-50 dark:bg-admin-error/15 border-red-100 dark:border-admin-error/25" : "bg-warm-bg dark:bg-admin-surface-alt/60 border-warm-border/60 dark:border-white/5"} border rounded-2xl p-4 text-center shadow-sm dark:shadow-premium`}>
-                  <div className={`text-3xl font-bold ${report.summary.failed > 0 ? "text-red-600 dark:text-red-300" : "text-neutral-muted dark:text-admin-muted"}`}>
+                  <div className={`text-3xl font-bold ${report.summary.failed > 0 ? "text-red-600 dark:text-red-700" : "text-neutral-muted dark:text-admin-muted"}`}>
                     {report.summary.failed}
                   </div>
-                  <div className={`text-[11px] uppercase tracking-wider ${report.summary.failed > 0 ? "text-red-700 dark:text-red-400" : "text-neutral-muted dark:text-admin-muted"}`}>
+                  <div className={`text-[11px] uppercase tracking-wider ${report.summary.failed > 0 ? "text-red-700 dark:text-red-700" : "text-neutral-muted dark:text-admin-muted"}`}>
                     Echoues
                   </div>
                 </div>
                 <div className={`${report.summary.success_rate >= 90 ? "bg-emerald-50 dark:bg-admin-success/15 border-emerald-100 dark:border-admin-success/25" : report.summary.success_rate >= 70 ? "bg-amber-50 dark:bg-admin-warning/15 border-amber-100 dark:border-admin-warning/25" : "bg-red-50 dark:bg-admin-error/15 border-red-100 dark:border-admin-error/25"} border rounded-2xl p-4 text-center shadow-sm dark:shadow-premium`}>
-                  <div className={`text-3xl font-bold ${report.summary.success_rate >= 90 ? "text-emerald-600 dark:text-emerald-300" : report.summary.success_rate >= 70 ? "text-amber-600 dark:text-amber-300" : "text-red-600 dark:text-red-300"}`}>
+                  <div className={`text-3xl font-bold ${report.summary.success_rate >= 90 ? "text-emerald-600 dark:text-emerald-300" : report.summary.success_rate >= 70 ? "text-amber-600 dark:text-amber-700" : "text-red-600 dark:text-red-700"}`}>
                     {report.summary.success_rate}%
                   </div>
                   <div className="text-[11px] uppercase tracking-wider text-neutral-muted dark:text-admin-muted">Taux</div>

@@ -70,7 +70,7 @@ function BarChart({ data, color = "", height = 140 }: {
   data: { label: string; value: number }[]; color?: string; height?: number;
 }) {
   // Map legacy colour hints to the premium accent (semantic red kept distinct).
-  const accent = /red/.test(color) ? "#C0635C" : "#A9B57E";
+  const accent = /red/.test(color) ? "#C0635C" : "var(--c-accent)";
   return <PremiumBarChart data={data} height={height} accent={accent} />;
 }
 
@@ -173,7 +173,7 @@ export default function AnalyticsPage() {
       byApp[id].total += Number(inv.amount) || 0;
       byApp[id].count++;
     });
-    const colors = ["#EF4444", "#0891B2", "#8E9A63", "#8B5CF6", "#F59E0B", "#EC4899"];
+    const colors = ["#EF4444", "#0891B2", "var(--c-accent-dark)", "#8B5CF6", "#F59E0B", "#EC4899"];
     return Object.entries(byApp)
       .map(([app_id, d], i) => ({
         app_id,
@@ -293,7 +293,7 @@ export default function AnalyticsPage() {
               selectedApp === app.id ? "bg-gold dark:bg-admin-accent text-onyx shadow-sm dark:shadow-gold" : "bg-white dark:bg-admin-surface-alt/40 border border-warm-border dark:border-white/10 text-neutral-text dark:text-admin-text/80 hover:border-gold/40 dark:hover:border-admin-accent/40 hover:shadow-sm"
             }`}
           >
-            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: (app as any).color || "#8E9A63" }} />
+            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: (app as any).color || "var(--c-accent-dark)" }} />
             {app.name}
           </button>
         ))}
@@ -424,12 +424,12 @@ export default function AnalyticsPage() {
                 {trialsExpiring.map((t, i) => {
                   const tone =
                     t.days_left <= 0
-                      ? "bg-red-50 text-red-700 border-red-200 dark:bg-admin-error/20 dark:text-red-400 dark:border-admin-error/30"
+                      ? "bg-red-50 text-red-700 border-red-200 dark:bg-admin-error/20 dark:text-red-700 dark:border-admin-error/30"
                       : t.days_left <= 3
-                        ? "bg-red-50 text-red-700 border-red-200 dark:bg-admin-error/15 dark:text-red-400 dark:border-admin-error/30"
+                        ? "bg-red-50 text-red-700 border-red-200 dark:bg-admin-error/15 dark:text-red-700 dark:border-admin-error/30"
                         : t.days_left <= 7
-                          ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-admin-warning/20 dark:text-orange-400 dark:border-admin-warning/30"
-                          : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-admin-success/20 dark:text-green-400 dark:border-admin-success/30";
+                          ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-admin-warning/20 dark:text-orange-700 dark:border-admin-warning/30"
+                          : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-admin-success/20 dark:text-green-700 dark:border-admin-success/30";
                   return (
                     <tr key={`${t.email}-${t.app_id}-${i}`} className="border-b border-warm-bg dark:border-admin-surface-alt/50 last:border-b-0">
                       <td className="py-3 pr-4">

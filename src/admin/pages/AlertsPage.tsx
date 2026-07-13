@@ -19,10 +19,10 @@ interface Alert {
 }
 
 const SEVERITY_COLORS: Record<string, string> = {
-  critical: "bg-red-500/20 text-red-400 border-red-500/30",
-  high: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-  medium: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  low: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  critical: "bg-red-500/20 text-red-700 border-red-500/30",
+  high: "bg-orange-500/20 text-orange-700 border-orange-500/30",
+  medium: "bg-amber-500/20 text-amber-700 border-amber-500/30",
+  low: "bg-blue-500/20 text-blue-700 border-blue-500/30",
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -159,8 +159,8 @@ export default function AlertsPage() {
           )},
           { key: "status", label: "Statut", render: (r: Alert) => (
             r.resolved_at
-              ? <span className="inline-flex items-center gap-1 text-[11px] text-green-600 dark:text-green-400"><CheckCircle2 size={12} /> Résolue</span>
-              : <span className="text-[11px] text-amber-600 dark:text-amber-400 font-medium">Active</span>
+              ? <span className="inline-flex items-center gap-1 text-[11px] text-green-600 dark:text-green-700"><CheckCircle2 size={12} /> Résolue</span>
+              : <span className="text-[11px] text-amber-600 dark:text-amber-700 font-medium">Active</span>
           )},
           { key: "actions", label: "", render: (r: Alert) => (
             !r.resolved_at ? (

@@ -34,7 +34,7 @@ export function AdminCard({ label, value, sub, icon: Icon, trend, loading, onCli
       <div className="text-gold dark:text-admin-accent text-2xl font-mono font-semibold">{value}</div>
       <div className="flex items-center gap-2 mt-1">
         {trend && (
-          <span className={`inline-flex items-center gap-0.5 text-[11px] font-semibold ${trend.value >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>
+          <span className={`inline-flex items-center gap-0.5 text-[11px] font-semibold ${trend.value >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-700"}`}>
             {trend.value >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
             {trend.value >= 0 ? "+" : ""}{trend.value}%
             {trend.label && <span className="text-neutral-muted dark:text-admin-muted font-normal ml-0.5">{trend.label}</span>}

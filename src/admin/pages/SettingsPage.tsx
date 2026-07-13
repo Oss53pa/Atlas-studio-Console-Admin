@@ -259,7 +259,7 @@ export default function SettingsPage() {
                 <Shield size={14} /> Email de recuperation
               </h3>
               <div className="p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-lg mb-3">
-                <p className="text-amber-800 dark:text-amber-300 text-[12px] leading-relaxed">
+                <p className="text-amber-800 dark:text-amber-700 text-[12px] leading-relaxed">
                   En cas de perte d'acces a votre email principal, un lien de reinitialisation de mot de passe sera envoye a cette adresse de secours.
                   <strong className="block mt-1">Choisissez une adresse a laquelle vous avez toujours acces (email perso, professionnel alternatif).</strong>
                 </p>
@@ -314,7 +314,7 @@ export default function SettingsPage() {
                     <div className="text-neutral-text dark:text-admin-text text-sm font-medium">TOTP Authenticator</div>
                     <div className="text-neutral-muted dark:text-admin-muted text-[12px]">Google Authenticator, Authy, etc.</div>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-[11px] font-semibold ${settings.totp_enabled ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400" : "bg-neutral-100 dark:bg-admin-surface text-neutral-500 dark:text-admin-muted"}`}>
+                  <span className={`px-3 py-1 rounded-full text-[11px] font-semibold ${settings.totp_enabled ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-700" : "bg-neutral-100 dark:bg-admin-surface text-neutral-500 dark:text-admin-muted"}`}>
                     {settings.totp_enabled ? "Activé" : "Désactivé"}
                   </span>
                 </div>
@@ -343,7 +343,7 @@ export default function SettingsPage() {
                   {settings.ip_whitelist.map((ip, i) => (
                     <div key={i} className="flex items-center justify-between px-3 py-2 bg-warm-bg dark:bg-admin-surface-alt rounded-lg">
                       <span className="font-mono text-[13px] text-neutral-text dark:text-admin-text">{ip}</span>
-                      <button onClick={() => removeIp(i)} className="text-red-400 hover:text-red-600 text-[11px] font-medium">Supprimer</button>
+                      <button onClick={() => removeIp(i)} className="text-red-700 hover:text-red-600 text-[11px] font-medium">Supprimer</button>
                     </div>
                   ))}
                 </div>

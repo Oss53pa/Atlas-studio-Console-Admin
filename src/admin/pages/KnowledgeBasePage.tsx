@@ -158,8 +158,8 @@ export default function KnowledgeBasePage() {
           { key: "views", label: "Vues", sortable: true, render: (r: KBArticle) => <span className="font-mono text-[13px]">{r.views}</span> },
           { key: "feedback", label: "Feedback", render: (r: KBArticle) => (
             <div className="flex items-center gap-3 text-[12px]">
-              <span className="flex items-center gap-1 text-green-600 dark:text-green-400"><ThumbsUp size={12} /> {r.helpful_count}</span>
-              <span className="flex items-center gap-1 text-red-500 dark:text-red-400"><ThumbsDown size={12} /> {r.not_helpful_count}</span>
+              <span className="flex items-center gap-1 text-green-600 dark:text-green-700"><ThumbsUp size={12} /> {r.helpful_count}</span>
+              <span className="flex items-center gap-1 text-red-500 dark:text-red-700"><ThumbsDown size={12} /> {r.not_helpful_count}</span>
             </div>
           )},
           { key: "actions", label: "", render: (r: KBArticle) => (

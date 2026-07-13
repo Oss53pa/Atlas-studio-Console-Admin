@@ -67,7 +67,7 @@ export default function AsvcContentPage() {
           <span className="font-semibold">{stats.drafts}</span>
           <span className="opacity-80">à valider</span>
         </span>
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-300">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-700">
           <span className="font-semibold">{stats.scheduled}</span>
           <span className="opacity-80">programmés</span>
         </span>
@@ -155,7 +155,7 @@ function ContentCard({ entry }: { entry: { id: string; channel: ContentChannel; 
             {entry.scheduled_at && (
               <>
                 <span>·</span>
-                <span className="text-blue-300">
+                <span className="text-blue-700">
                   programmé pour {new Date(entry.scheduled_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}
                 </span>
               </>
@@ -292,7 +292,7 @@ function NewPostModal({
         </label>
 
         {genError && (
-          <p className="mb-3 text-red-300 text-[11.5px] bg-red-500/10 border border-red-500/20 rounded px-2 py-1 flex items-center gap-1.5">
+          <p className="mb-3 text-red-700 text-[11.5px] bg-red-500/10 border border-red-500/20 rounded px-2 py-1 flex items-center gap-1.5">
             <AlertCircle size={11} />
             {genError}
           </p>

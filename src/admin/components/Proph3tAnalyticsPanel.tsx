@@ -82,7 +82,7 @@ export function Proph3tAnalyticsPanel({ open, onClose }: { open: boolean; onClos
           )}
 
           {error && (
-            <div className="bg-red-50 dark:bg-admin-error/10 border border-red-200 dark:border-admin-error/25 rounded-2xl p-5 text-red-700 dark:text-red-300 text-[13px]">
+            <div className="bg-red-50 dark:bg-admin-error/10 border border-red-200 dark:border-admin-error/25 rounded-2xl p-5 text-red-700 dark:text-red-700 text-[13px]">
               <strong>Erreur :</strong> {error}
             </div>
           )}

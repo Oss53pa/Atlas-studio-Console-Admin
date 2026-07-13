@@ -34,13 +34,13 @@ interface Recommendation {
 }
 
 const SEVERITY_COLORS = {
-  critical: { bg: "bg-red-50 dark:bg-admin-error/10", border: "border-red-200 dark:border-admin-error/25", text: "text-red-700 dark:text-red-300", dot: "bg-red-500" },
-  warning: { bg: "bg-amber-50 dark:bg-admin-warning/10", border: "border-amber-200 dark:border-admin-warning/25", text: "text-amber-700 dark:text-amber-300", dot: "bg-amber-500" },
-  info: { bg: "bg-blue-50 dark:bg-admin-info/10", border: "border-blue-200 dark:border-admin-info/25", text: "text-blue-700 dark:text-blue-300", dot: "bg-blue-500" },
+  critical: { bg: "bg-red-50 dark:bg-admin-error/10", border: "border-red-200 dark:border-admin-error/25", text: "text-red-700 dark:text-red-700", dot: "bg-red-500" },
+  warning: { bg: "bg-amber-50 dark:bg-admin-warning/10", border: "border-amber-200 dark:border-admin-warning/25", text: "text-amber-700 dark:text-amber-700", dot: "bg-amber-500" },
+  info: { bg: "bg-blue-50 dark:bg-admin-info/10", border: "border-blue-200 dark:border-admin-info/25", text: "text-blue-700 dark:text-blue-700", dot: "bg-blue-500" },
   success: { bg: "bg-emerald-50 dark:bg-admin-success/10", border: "border-emerald-200 dark:border-admin-success/25", text: "text-emerald-700 dark:text-emerald-300", dot: "bg-emerald-500" },
 };
 
-const PRIORITY_COLORS = { high: "text-red-600 bg-red-50 dark:text-red-300 dark:bg-admin-error/15", medium: "text-amber-600 bg-amber-50 dark:text-amber-300 dark:bg-admin-warning/15", low: "text-blue-600 bg-blue-50 dark:text-blue-300 dark:bg-admin-info/15" };
+const PRIORITY_COLORS = { high: "text-red-600 bg-red-50 dark:text-red-700 dark:bg-admin-error/15", medium: "text-amber-600 bg-amber-50 dark:text-amber-700 dark:bg-admin-warning/15", low: "text-blue-600 bg-blue-50 dark:text-blue-700 dark:bg-admin-info/15" };
 
 export default function Proph3tPage() {
   const { success: toastSuccess } = useToast();
@@ -291,7 +291,7 @@ export default function Proph3tPage() {
               max={100}
               size={104}
               thickness={10}
-              accent={healthScore >= 80 ? "#A9B57E" : healthScore >= 60 ? "#8E9A63" : "#C0635C"}
+              accent={healthScore >= 80 ? "var(--c-accent)" : healthScore >= 60 ? "var(--c-accent-dark)" : "#C0635C"}
               display={String(healthScore)}
             />
           </div>
@@ -397,7 +397,7 @@ export default function Proph3tPage() {
           <div className="space-y-3">
             <Link to="/admin/invoices" className="block bg-white dark:bg-admin-surface border border-warm-border dark:border-white/5 rounded-2xl shadow-sm dark:shadow-premium p-4 hover:-translate-y-0.5 hover:border-gold/30 dark:hover:border-admin-accent/30 hover:shadow-md dark:hover:shadow-elev-3 transition-all duration-300 group">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/15 flex items-center justify-center text-amber-600 dark:text-amber-400"><Receipt size={16} strokeWidth={1.8} /></div>
+                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/15 flex items-center justify-center text-amber-600 dark:text-amber-700"><Receipt size={16} strokeWidth={1.8} /></div>
                 <div>
                   <div className="text-neutral-text dark:text-admin-text text-sm font-medium group-hover:text-gold dark:group-hover:text-admin-accent transition-colors">Relancer les impayés</div>
                   <div className="text-neutral-muted dark:text-admin-muted text-[11px]">{pendingInvoices.length} factures en attente</div>
@@ -406,7 +406,7 @@ export default function Proph3tPage() {
             </Link>
             <Link to="/admin/subscriptions" className="block bg-white dark:bg-admin-surface border border-warm-border dark:border-white/5 rounded-2xl shadow-sm dark:shadow-premium p-4 hover:-translate-y-0.5 hover:border-gold/30 dark:hover:border-admin-accent/30 hover:shadow-md dark:hover:shadow-elev-3 transition-all duration-300 group">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/15 flex items-center justify-center text-blue-600 dark:text-blue-400"><Users size={16} strokeWidth={1.8} /></div>
+                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/15 flex items-center justify-center text-blue-600 dark:text-blue-700"><Users size={16} strokeWidth={1.8} /></div>
                 <div>
                   <div className="text-neutral-text dark:text-admin-text text-sm font-medium group-hover:text-gold dark:group-hover:text-admin-accent transition-colors">Convertir les essais</div>
                   <div className="text-neutral-muted dark:text-admin-muted text-[11px]">{trialSubs.length} essais actifs</div>
@@ -415,7 +415,7 @@ export default function Proph3tPage() {
             </Link>
             <Link to="/admin/tickets" className="block bg-white dark:bg-admin-surface border border-warm-border dark:border-white/5 rounded-2xl shadow-sm dark:shadow-premium p-4 hover:-translate-y-0.5 hover:border-gold/30 dark:hover:border-admin-accent/30 hover:shadow-md dark:hover:shadow-elev-3 transition-all duration-300 group">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-500/15 flex items-center justify-center text-purple-600 dark:text-purple-400"><MessageSquare size={16} strokeWidth={1.8} /></div>
+                <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-500/15 flex items-center justify-center text-purple-600 dark:text-purple-700"><MessageSquare size={16} strokeWidth={1.8} /></div>
                 <div>
                   <div className="text-neutral-text dark:text-admin-text text-sm font-medium group-hover:text-gold dark:group-hover:text-admin-accent transition-colors">Traiter les tickets</div>
                   <div className="text-neutral-muted dark:text-admin-muted text-[11px]">{openTickets.length} en attente</div>

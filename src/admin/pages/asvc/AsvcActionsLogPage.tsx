@@ -14,10 +14,10 @@ const STATUS_COLOR: Record<ActionStatus, string> = {
   proposed: 'text-neutral-400 bg-neutral-500/10',
   consolidated: 'text-neutral-300 bg-neutral-500/15',
   approved: 'text-emerald-400 bg-emerald-500/10',
-  modified: 'text-amber-400 bg-amber-500/10',
-  rejected: 'text-red-400 bg-red-500/10',
+  modified: 'text-amber-700 bg-amber-500/10',
+  rejected: 'text-red-700 bg-red-500/10',
   executed: 'text-admin-accent bg-admin-accent/10',
-  failed: 'text-red-300 bg-red-500/15',
+  failed: 'text-red-700 bg-red-500/15',
   cancelled: 'text-neutral-500 bg-neutral-500/5',
 };
 
@@ -51,7 +51,7 @@ export default function AsvcActionsLogPage() {
               <div className="text-admin-text truncate max-w-md">{a.title}</div>
               {silenced && (
                 <span
-                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] uppercase font-semibold border border-sky-500/30 bg-sky-500/10 text-sky-300"
+                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] uppercase font-semibold border border-sky-500/30 bg-sky-500/10 text-sky-700"
                   title="Action silencée pendant le mode vacances — non notifiée au CEO"
                 >
                   <Plane size={10} />

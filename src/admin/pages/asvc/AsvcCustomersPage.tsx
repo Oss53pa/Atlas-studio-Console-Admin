@@ -83,14 +83,14 @@ export default function AsvcCustomersPage() {
       </div>
 
       {outreachError && (
-        <div className="mb-4 text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
+        <div className="mb-4 text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
           <AlertCircle size={12} />
           Outreach échoué : {outreachError}
         </div>
       )}
 
       {error && (
-        <div className="mb-4 text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2">
+        <div className="mb-4 text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2">
           Erreur de chargement : {error}
         </div>
       )}
@@ -134,7 +134,7 @@ export default function AsvcCustomersPage() {
                   {daysSinceSignup !== null && <span>{daysSinceSignup}j depuis inscription</span>}
                   <span>{r.active_subs} sub{r.active_subs > 1 ? 's' : ''} active{r.active_subs > 1 ? 's' : ''}</span>
                   {sentiment !== null && (
-                    <span className={sentiment < -0.3 ? 'text-red-400' : sentiment > 0.3 ? 'text-emerald-400' : ''}>
+                    <span className={sentiment < -0.3 ? 'text-red-700' : sentiment > 0.3 ? 'text-emerald-400' : ''}>
                       sentiment ticket {sentiment.toFixed(2)}
                     </span>
                   )}

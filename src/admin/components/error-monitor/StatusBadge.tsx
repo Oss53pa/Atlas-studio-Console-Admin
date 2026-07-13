@@ -6,11 +6,11 @@ const STATUS_STYLES: Record<ErrorStatus, { className: string; label: string }> =
     label: 'Ouverte',
   },
   in_progress: {
-    className: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300',
+    className: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-700',
     label: 'En cours',
   },
   resolved: {
-    className: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
+    className: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-700',
     label: 'Résolue',
   },
   ignored: {

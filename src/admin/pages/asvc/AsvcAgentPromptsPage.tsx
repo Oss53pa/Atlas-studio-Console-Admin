@@ -152,7 +152,7 @@ function AgentPromptPanel({ agentCode, agentName }: { agentCode: string; agentNa
             <button
               onClick={handleDeactivate}
               disabled={saving}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-red-500/10 hover:bg-red-500/20 text-red-300 text-[11.5px] transition disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-red-500/10 hover:bg-red-500/20 text-red-700 text-[11.5px] transition disabled:opacity-50"
               title="Désactive la version DB → retour au prompt par défaut"
             >
               <Power size={12} />
@@ -163,7 +163,7 @@ function AgentPromptPanel({ agentCode, agentName }: { agentCode: string; agentNa
       </div>
 
       {error && (
-        <p className="text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-2 py-1">
+        <p className="text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-2 py-1">
           {error}
         </p>
       )}

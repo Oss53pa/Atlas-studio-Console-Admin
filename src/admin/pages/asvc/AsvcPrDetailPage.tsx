@@ -152,7 +152,7 @@ export default function AsvcPrDetailPage() {
                         t.status === 'passed'
                           ? 'bg-emerald-500/15 text-emerald-300'
                           : t.status === 'failed'
-                            ? 'bg-red-500/15 text-red-300'
+                            ? 'bg-red-500/15 text-red-700'
                             : 'bg-amber-500/15 text-admin-accent'
                       }`}
                     >
@@ -163,7 +163,7 @@ export default function AsvcPrDetailPage() {
                     {t.framework && <span className="text-neutral-500">{t.framework}</span>}
                     <span className="text-neutral-500">
                       {t.passed}/{t.total_tests} passed
-                      {t.failed > 0 && <span className="text-red-300"> · {t.failed} failed</span>}
+                      {t.failed > 0 && <span className="text-red-700"> · {t.failed} failed</span>}
                     </span>
                     <span className="ml-auto text-neutral-600 text-[10.5px]">
                       {timeAgoFr(t.started_at)}
@@ -195,7 +195,7 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
     : accent === 'amber'
       ? 'text-admin-accent'
       : accent === 'red'
-        ? 'text-red-300'
+        ? 'text-red-700'
         : 'text-neutral-300';
   return (
     <div className="text-[11.5px]">

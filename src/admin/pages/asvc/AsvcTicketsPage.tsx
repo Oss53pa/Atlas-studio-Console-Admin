@@ -189,7 +189,7 @@ function TicketDetail({ ticketId, onBack }: { ticketId: string; onBack: () => vo
         </div>
 
         {draftError && (
-          <p className="mb-2 text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-2 py-1 flex items-center gap-1.5">
+          <p className="mb-2 text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-2 py-1 flex items-center gap-1.5">
             <AlertCircle size={12} />
             {draftError}
           </p>

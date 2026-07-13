@@ -63,10 +63,10 @@ export default function AsvcDeploymentDetailPage() {
 
   const envColor = (env: string) =>
     env === 'production'
-      ? 'border-red-500/40 bg-red-500/10 text-red-200'
+      ? 'border-red-500/40 bg-red-500/10 text-red-700'
       : env === 'staging'
-        ? 'border-violet-500/40 bg-violet-500/10 text-violet-300'
-        : 'border-blue-500/40 bg-blue-500/10 text-blue-300';
+        ? 'border-violet-500/40 bg-violet-500/10 text-violet-700'
+        : 'border-blue-500/40 bg-blue-500/10 text-blue-700';
 
   return (
     <div className="max-w-5xl">
@@ -140,8 +140,8 @@ export default function AsvcDeploymentDetailPage() {
                         m.status === 'ok'
                           ? 'bg-emerald-500/15 text-emerald-300'
                           : m.status === 'warning'
-                            ? 'bg-amber-500/15 text-amber-300'
-                            : 'bg-red-500/15 text-red-300'
+                            ? 'bg-amber-500/15 text-amber-700'
+                            : 'bg-red-500/15 text-red-700'
                       }`}
                     >
                       {m.status === 'ok' ? <CheckCircle2 size={10} /> : <AlertOctagon size={10} />}
@@ -178,8 +178,8 @@ export default function AsvcDeploymentDetailPage() {
           {incidents.length > 0 && (
             <section className="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
               <div className="flex items-center gap-2 mb-3">
-                <AlertOctagon size={14} className="text-red-300" />
-                <h3 className="text-red-200 text-[12.5px] font-semibold">
+                <AlertOctagon size={14} className="text-red-700" />
+                <h3 className="text-red-700 text-[12.5px] font-semibold">
                   Incidents liés ({incidents.length})
                 </h3>
               </div>
@@ -187,7 +187,7 @@ export default function AsvcDeploymentDetailPage() {
                 {incidents.map((inc) => (
                   <div key={inc.id} className="rounded border border-red-500/20 bg-onyx-light/30 px-3 py-2 text-[11.5px]">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="text-red-300 font-semibold">{inc.severity}</span>
+                      <span className="text-red-700 font-semibold">{inc.severity}</span>
                       <span className="text-neutral-300">{inc.title}</span>
                       <span className="ml-auto text-neutral-600 text-[10.5px]">{timeAgoFr(inc.detected_at)}</span>
                     </div>
@@ -220,7 +220,7 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
     : accent === 'amber'
       ? 'text-admin-accent'
       : accent === 'red'
-        ? 'text-red-300'
+        ? 'text-red-700'
         : 'text-neutral-300';
   return (
     <div className="text-[11.5px]">

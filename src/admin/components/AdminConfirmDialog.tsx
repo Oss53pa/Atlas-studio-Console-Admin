@@ -19,9 +19,9 @@ export function AdminConfirmDialog({
   if (!open) return null;
 
   const colors = {
-    danger: { bg: "bg-admin-error/10", icon: "text-red-400", btn: "bg-admin-error hover:bg-red-700 text-white" },
-    warning: { bg: "bg-admin-warning/10", icon: "text-orange-400", btn: "bg-admin-warning hover:bg-orange-700 text-white" },
-    info: { bg: "bg-admin-info/10", icon: "text-blue-400", btn: "bg-admin-info hover:bg-blue-700 text-white" },
+    danger: { bg: "bg-admin-error/10", icon: "text-red-700", btn: "bg-admin-error hover:bg-red-700 text-white" },
+    warning: { bg: "bg-admin-warning/10", icon: "text-orange-700", btn: "bg-admin-warning hover:bg-orange-700 text-white" },
+    info: { bg: "bg-admin-info/10", icon: "text-blue-700", btn: "bg-admin-info hover:bg-blue-700 text-white" },
   }[variant];
 
   return (

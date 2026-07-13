@@ -341,8 +341,8 @@ export function AdminSidebar() {
             to="/admin/admins"
             className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[11px] transition-all ${
               isActive("/admin/admins")
-                ? "bg-purple-500/15 text-purple-400 font-medium"
-                : "text-white/50 hover:text-purple-400 hover:bg-white/5"
+                ? "bg-purple-500/15 text-purple-700 font-medium"
+                : "text-white/50 hover:text-purple-700 hover:bg-white/5"
             }`}
           >
             <Crown size={12} />
@@ -364,7 +364,7 @@ export function AdminSidebar() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-white text-[11px] font-medium truncate">{profile?.full_name || "Admin"}</div>
-            <div className={`text-[9px] flex items-center gap-1 ${isSuperAdmin ? "text-purple-400" : "text-admin-accent"}`}>
+            <div className={`text-[9px] flex items-center gap-1 ${isSuperAdmin ? "text-purple-700" : "text-admin-accent"}`}>
               {isSuperAdmin && <Crown size={9} />}
               {isSuperAdmin ? "Super Admin" : "Admin"}
             </div>
@@ -373,7 +373,7 @@ export function AdminSidebar() {
 
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-white/50 text-[11px] hover:text-red-400 hover:bg-white/5 transition-all"
+          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-white/50 text-[11px] hover:text-red-700 hover:bg-white/5 transition-all"
         >
           <LogOut size={12} />
           Déconnexion

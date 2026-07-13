@@ -34,15 +34,15 @@ type ContentMap = Partial<Record<SectionKey, { data: SectionData; updated_at: st
 
 /* ── style tokens ── */
 const cx = {
-  bg: "bg-[#131316]",
-  surface: "bg-[#1c1c20]",
-  alt: "bg-[#2a2a30]",
-  border: "border-[#2a2a30]",
-  accent: "text-[#A9B57E]",
-  accentBg: "bg-[#A9B57E]",
+  bg: "bg-p-surface",
+  surface: "bg-p-surface",
+  alt: "bg-p-surface",
+  border: "border-p-border",
+  accent: "text-p-accent",
+  accentBg: "bg-p-accent",
   text: "text-[#F5F5F5]",
   muted: "text-[#888]",
-  input: "w-full px-3 py-2 bg-[#2a2a30] border border-[#2a2a30] rounded-lg text-[#F5F5F5] text-sm outline-none focus:border-[#A9B57E] transition-colors placeholder-[#666]",
+  input: "w-full px-3 py-2 bg-p-surface border border-p-border rounded-lg text-[#F5F5F5] text-sm outline-none focus:border-p-accent transition-colors placeholder-[#666]",
   btn: "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
 };
 
@@ -69,7 +69,7 @@ function TagInput({ label, tags, onChange }: { label: string; tags: string[]; on
       <label className="block text-[#888] text-xs font-semibold mb-1">{label}</label>
       <div className="flex flex-wrap gap-1.5 mb-1.5">
         {tags.map((t, i) => (
-          <span key={i} className="flex items-center gap-1 px-2 py-0.5 bg-[#A9B57E]/15 text-[#A9B57E] rounded text-xs">
+          <span key={i} className="flex items-center gap-1 px-2 py-0.5 bg-p-accent/15 text-p-accent rounded text-xs">
             {t}<X className="w-3 h-3 cursor-pointer" onClick={() => onChange(tags.filter((_, j) => j !== i))} />
           </span>
         ))}
@@ -77,7 +77,7 @@ function TagInput({ label, tags, onChange }: { label: string; tags: string[]; on
       <div className="flex gap-2">
         <input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key === "Enter" && (e.preventDefault(), add())}
           className={cx.input} placeholder="Type and press Enter" />
-        <button onClick={add} className={`${cx.btn} ${cx.accentBg} text-[#131316]`}><Plus className="w-4 h-4" /></button>
+        <button onClick={add} className={`${cx.btn} ${cx.accentBg} text-p-surface`}><Plus className="w-4 h-4" /></button>
       </div>
     </div>
   );
@@ -107,7 +107,7 @@ function StatsEditor({ data, set }: { data: SectionData; set: (d: SectionData) =
       <div key={i} className="flex gap-2 mb-2 items-end">
         <Field label="Value" value={s.value} onChange={v => upd(items.map((x, j) => j === i ? { ...x, value: v } : x))} />
         <Field label="Label" value={s.label} onChange={v => upd(items.map((x, j) => j === i ? { ...x, label: v } : x))} />
-        <button onClick={() => upd(items.filter((_, j) => j !== i))} className="mb-3 p-2 text-red-400 hover:text-red-300"><Trash2 className="w-4 h-4" /></button>
+        <button onClick={() => upd(items.filter((_, j) => j !== i))} className="mb-3 p-2 text-red-700 hover:text-red-700"><Trash2 className="w-4 h-4" /></button>
       </div>
     ))}
     <button onClick={() => upd([...items, { value: "", label: "" }])} className={`${cx.btn} border ${cx.border} ${cx.muted} hover:${cx.text}`}>
@@ -124,7 +124,7 @@ function FeaturesEditor({ data, set }: { data: SectionData; set: (d: SectionData
       <div key={i} className={`p-3 ${cx.alt} rounded-lg mb-2`}>
         <div className="flex justify-between mb-2">
           <span className="text-xs text-[#888]">Feature {i + 1}</span>
-          <button onClick={() => upd(items.filter((_, j) => j !== i))} className="text-red-400 hover:text-red-300"><Trash2 className="w-3.5 h-3.5" /></button>
+          <button onClick={() => upd(items.filter((_, j) => j !== i))} className="text-red-700 hover:text-red-700"><Trash2 className="w-3.5 h-3.5" /></button>
         </div>
         <div className="grid grid-cols-2 gap-2">
           <Field label="Title" value={f.title} onChange={v => upd(items.map((x, j) => j === i ? { ...x, title: v } : x))} />
@@ -145,15 +145,15 @@ function PricingEditor({ data, set }: { data: SectionData; set: (d: SectionData)
   const patch = (i: number, k: string, v: any) => upd(plans.map((p, j) => j === i ? { ...p, [k]: v } : p));
   return (<>
     {plans.map((p, i) => (
-      <div key={i} className={`p-4 ${cx.alt} rounded-lg mb-3 ${p.is_popular ? "ring-1 ring-[#A9B57E]" : ""}`}>
+      <div key={i} className={`p-4 ${cx.alt} rounded-lg mb-3 ${p.is_popular ? "ring-1 ring-p-accent" : ""}`}>
         <div className="flex justify-between items-center mb-3">
           <span className="text-sm font-semibold text-[#F5F5F5]">{p.name || `Plan ${i + 1}`}</span>
           <div className="flex items-center gap-3">
             <label className="flex items-center gap-1.5 text-xs text-[#888] cursor-pointer">
-              <input type="checkbox" checked={!!p.is_popular} onChange={e => patch(i, "is_popular", e.target.checked)} className="accent-[#A9B57E]" />
+              <input type="checkbox" checked={!!p.is_popular} onChange={e => patch(i, "is_popular", e.target.checked)} className="accent-[var(--c-accent)]" />
               <Star className="w-3.5 h-3.5" />Popular
             </label>
-            <button onClick={() => upd(plans.filter((_, j) => j !== i))} className="text-red-400 hover:text-red-300"><Trash2 className="w-3.5 h-3.5" /></button>
+            <button onClick={() => upd(plans.filter((_, j) => j !== i))} className="text-red-700 hover:text-red-700"><Trash2 className="w-3.5 h-3.5" /></button>
           </div>
         </div>
         <div className="grid grid-cols-4 gap-2">
@@ -185,7 +185,7 @@ function TestimonialsEditor({ data, set }: { data: SectionData; set: (d: Section
       <div key={i} className={`p-3 ${cx.alt} rounded-lg mb-2`}>
         <div className="flex justify-between mb-2">
           <span className="text-xs text-[#888]">Testimonial {i + 1}</span>
-          <button onClick={() => upd(items.filter((_, j) => j !== i))} className="text-red-400 hover:text-red-300"><Trash2 className="w-3.5 h-3.5" /></button>
+          <button onClick={() => upd(items.filter((_, j) => j !== i))} className="text-red-700 hover:text-red-700"><Trash2 className="w-3.5 h-3.5" /></button>
         </div>
         <div className="grid grid-cols-3 gap-2">
           <Field label="Name" value={t.name || ""} onChange={v => patch(i, "name", v)} />
@@ -199,7 +199,7 @@ function TestimonialsEditor({ data, set }: { data: SectionData; set: (d: Section
             <label className="block text-[#888] text-xs font-semibold mb-1">Rating</label>
             <div className="flex gap-1 mt-1">
               {[1, 2, 3, 4, 5].map(n => (
-                <Star key={n} className={`w-5 h-5 cursor-pointer ${n <= (t.rating || 0) ? "text-[#A9B57E] fill-[#A9B57E]" : "text-[#2a2a30]"}`}
+                <Star key={n} className={`w-5 h-5 cursor-pointer ${n <= (t.rating || 0) ? "text-p-accent fill-p-accent" : "text-p-surface"}`}
                   onClick={() => patch(i, "rating", n)} />
               ))}
             </div>
@@ -224,7 +224,7 @@ function FAQEditor({ data, set }: { data: SectionData; set: (d: SectionData) => 
           <Field label={`Q${i + 1}`} value={f.question} onChange={v => upd(items.map((x, j) => j === i ? { ...x, question: v } : x))} />
           <Field label="Answer" value={f.answer} onChange={v => upd(items.map((x, j) => j === i ? { ...x, answer: v } : x))} multi />
         </div>
-        <button onClick={() => upd(items.filter((_, j) => j !== i))} className="mt-5 p-2 text-red-400 hover:text-red-300"><Trash2 className="w-4 h-4" /></button>
+        <button onClick={() => upd(items.filter((_, j) => j !== i))} className="mt-5 p-2 text-red-700 hover:text-red-700"><Trash2 className="w-4 h-4" /></button>
       </div>
     ))}
     <button onClick={() => upd([...items, { question: "", answer: "" }])} className={`${cx.btn} border ${cx.border} ${cx.muted} hover:${cx.text}`}>
@@ -311,7 +311,7 @@ export default function LandingPagesPage() {
           <p className={`text-sm ${cx.muted}`}>Manage landing page content for all apps</p>
         </div>
         <button onClick={() => window.open(appMeta.url, "_blank")}
-          className={`${cx.btn} ${cx.accentBg} text-[#131316] font-semibold flex items-center gap-2`}>
+          className={`${cx.btn} ${cx.accentBg} text-p-surface font-semibold flex items-center gap-2`}>
           <ExternalLink className="w-4 h-4" />Preview {appMeta.label}
         </button>
       </div>
@@ -320,14 +320,14 @@ export default function LandingPagesPage() {
       <div className={`flex gap-1 p-1 ${cx.surface} rounded-xl mb-6 w-fit`}>
         {APPS.map(a => (
           <button key={a.id} onClick={() => { setApp(a.id); setOpen("hero"); }}
-            className={`${cx.btn} ${app === a.id ? `${cx.accentBg} text-[#131316] font-semibold` : `${cx.muted} hover:text-[#F5F5F5]`}`}>
+            className={`${cx.btn} ${app === a.id ? `${cx.accentBg} text-p-surface font-semibold` : `${cx.muted} hover:text-[#F5F5F5]`}`}>
             {a.label}
           </button>
         ))}
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-[#A9B57E]" /></div>
+        <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-p-accent" /></div>
       ) : (
         <div className="space-y-2 max-w-4xl">
           {SECTIONS.map(sec => {
@@ -339,10 +339,10 @@ export default function LandingPagesPage() {
               <div key={sec.key} className={`${cx.surface} rounded-xl overflow-hidden`}>
                 {/* Accordion header */}
                 <button onClick={() => setOpen(isOpen ? null : sec.key)}
-                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-[#2a2a30]/40 transition-colors">
+                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-p-surface/40 transition-colors">
                   <div className="flex items-center gap-3">
-                    {isOpen ? <ChevronDown className="w-4 h-4 text-[#A9B57E]" /> : <ChevronRight className="w-4 h-4 text-[#888]" />}
-                    <Icon className={`w-4 h-4 ${isOpen ? "text-[#A9B57E]" : "text-[#888]"}`} />
+                    {isOpen ? <ChevronDown className="w-4 h-4 text-p-accent" /> : <ChevronRight className="w-4 h-4 text-[#888]" />}
+                    <Icon className={`w-4 h-4 ${isOpen ? "text-p-accent" : "text-[#888]"}`} />
                     <span className={`text-sm font-semibold ${isOpen ? "text-[#F5F5F5]" : "text-[#888]"}`}>{sec.label}</span>
                   </div>
                   {ts && (
@@ -353,13 +353,13 @@ export default function LandingPagesPage() {
                 </button>
                 {/* Accordion body */}
                 {isOpen && (
-                  <div className="px-5 pb-5 border-t border-[#2a2a30]">
+                  <div className="px-5 pb-5 border-t border-p-border">
                     <div className="pt-4">
                       <Editor data={getData(sec.key)} set={d => setData(sec.key, d)} />
                     </div>
                     <div className="flex justify-end mt-4">
                       <button onClick={() => save(sec.key)} disabled={saving === sec.key}
-                        className={`${cx.btn} ${cx.accentBg} text-[#131316] font-semibold flex items-center gap-2 disabled:opacity-50`}>
+                        className={`${cx.btn} ${cx.accentBg} text-p-surface font-semibold flex items-center gap-2 disabled:opacity-50`}>
                         {saving === sec.key ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                         Save {sec.label}
                       </button>

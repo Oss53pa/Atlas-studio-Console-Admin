@@ -465,7 +465,7 @@ export default function ClientsPage() {
             const marketing = (r as any).marketing_opt_in;
             return (
               <div className="flex flex-col gap-0.5 text-[11px]">
-                <span className={terms ? "text-green-500" : "text-red-400"}>
+                <span className={terms ? "text-green-500" : "text-red-700"}>
                   {terms ? "✓ CGU acceptées" : "✗ CGU manquantes"}
                 </span>
                 <span className={marketing ? "text-blue-500" : "text-neutral-muted dark:text-admin-muted"}>
@@ -482,8 +482,8 @@ export default function ClientsPage() {
               <button onClick={() => openEditForm(r)} className="p-1.5 rounded hover:bg-white dark:bg-admin-surface-alt text-neutral-muted dark:text-admin-muted hover:text-gold dark:text-admin-accent transition-colors" title="Modifier"><Pencil size={14} /></button>
               <button onClick={() => handleResetPassword(r)} className="p-1.5 rounded hover:bg-blue-50 text-neutral-muted dark:text-admin-muted hover:text-blue-600 transition-colors" title="Reset mot de passe"><KeyRound size={14} /></button>
               <button onClick={() => openTestAccess(r)} className="p-1.5 rounded hover:bg-emerald-50 text-neutral-muted dark:text-admin-muted hover:text-emerald-600 transition-colors" title="Accès test"><FlaskConical size={14} /></button>
-              {isSuperAdmin && <button onClick={() => openGrantModal(r)} className="p-1.5 rounded hover:bg-purple-500/10 text-neutral-muted dark:text-admin-muted hover:text-purple-400 transition-colors" title="Offrir un abonnement"><Gift size={14} /></button>}
-              <button onClick={() => toggleActive(r)} className={`p-1.5 rounded transition-colors ${r.is_active ? "hover:bg-red-50 text-red-400" : "hover:bg-green-50 text-green-600"}`} title={r.is_active ? "Suspendre" : "Réactiver"}>
+              {isSuperAdmin && <button onClick={() => openGrantModal(r)} className="p-1.5 rounded hover:bg-purple-500/10 text-neutral-muted dark:text-admin-muted hover:text-purple-700 transition-colors" title="Offrir un abonnement"><Gift size={14} /></button>}
+              <button onClick={() => toggleActive(r)} className={`p-1.5 rounded transition-colors ${r.is_active ? "hover:bg-red-50 text-red-700" : "hover:bg-green-50 text-green-600"}`} title={r.is_active ? "Suspendre" : "Réactiver"}>
                 {r.is_active ? <UserX size={14} /> : <UserCheck size={14} />}
               </button>
               <button onClick={() => handleDeleteClient(r)} className="p-1.5 rounded hover:bg-red-50 text-neutral-muted dark:text-admin-muted hover:text-red-500 transition-colors" title="Supprimer"><Trash2 size={14} /></button>
@@ -695,16 +695,16 @@ export default function ClientsPage() {
           <div className="space-y-5">
             {/* Client info */}
             <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-300 text-[13px] font-bold shrink-0">
+              <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-700 text-[13px] font-bold shrink-0">
                 {(grantClient.full_name || "?").split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
               </div>
               <div>
-                <p className="text-admin-text text-sm font-medium">{grantClient.full_name || <span className="text-amber-400">Profil incomplet — à compléter</span>}</p>
+                <p className="text-admin-text text-sm font-medium">{grantClient.full_name || <span className="text-amber-700">Profil incomplet — à compléter</span>}</p>
                 <p className="text-admin-muted text-[11px]">{grantClient.email}{grantClient.company_name ? ` · ${grantClient.company_name}` : ""}</p>
               </div>
             </div>
             {!grantClient.full_name && (
-              <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-300 text-[12px]">
+              <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-700 text-[12px]">
                 Ce client n'a pas de nom renseigné. Ferme ce modal, clique sur "Modifier" (crayon) pour compléter sa fiche avant d'offrir un abonnement.
               </div>
             )}

@@ -55,7 +55,7 @@ function VacationSection() {
       {loading && <p className="text-neutral-500 text-sm">Chargement...</p>}
 
       {error && (
-        <p className="mb-3 text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-2 py-1">
+        <p className="mb-3 text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-2 py-1">
           {error}
         </p>
       )}
@@ -80,7 +80,7 @@ function VacationSection() {
         </div>
       ) : status.enabled && status.start && status.end ? (
         <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-4 mb-4">
-          <div className="text-blue-200 text-[12.5px]">
+          <div className="text-blue-700 text-[12.5px]">
             Vacances programmées du {new Date(status.start).toLocaleString('fr-FR')} au{' '}
             {new Date(status.end).toLocaleString('fr-FR')} ({behaviorLabel(status.behavior)})
           </div>
@@ -88,7 +88,7 @@ function VacationSection() {
             type="button"
             onClick={disable}
             disabled={saving}
-            className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-200 text-[11.5px] rounded-md transition disabled:opacity-50"
+            className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 text-[11.5px] rounded-md transition disabled:opacity-50"
           >
             Annuler la programmation
           </button>
@@ -207,8 +207,8 @@ function AutoApproveSection() {
         (et exécutées si in-system) sans intervention.
       </p>
 
-      <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-[11.5px] text-red-200/80 flex items-start gap-2">
-        <ShieldCheck size={13} className="text-red-300 mt-0.5 flex-shrink-0" />
+      <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-[11.5px] text-red-700/80 flex items-start gap-2">
+        <ShieldCheck size={13} className="text-red-700 mt-0.5 flex-shrink-0" />
         <span>
           <strong>Garde-fou serveur :</strong> les actions criticality=<code>critical</code> ne
           peuvent JAMAIS être auto-approuvées (deploy production, rollback, etc.). Le RPC
@@ -289,7 +289,7 @@ function PatternRow({
         type="button"
         onClick={onDisable}
         disabled={saving}
-        className="text-[11px] text-neutral-500 hover:text-red-300 disabled:opacity-50 px-2 py-1"
+        className="text-[11px] text-neutral-500 hover:text-red-700 disabled:opacity-50 px-2 py-1"
       >
         Désactiver
       </button>

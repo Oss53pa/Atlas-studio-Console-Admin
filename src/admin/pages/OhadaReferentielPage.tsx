@@ -114,8 +114,8 @@ export default function OhadaReferentielPage() {
           { key: "verified", label: "Statut", render: (r: OhadaCountryTaxRow) => (
             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${
               r.rates_verified
-                ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400"
-                : "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400"
+                ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-700"
+                : "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-700"
             }`}>
               {r.rates_verified ? <ShieldCheck size={13} /> : <ShieldAlert size={13} />}
               {r.rates_verified ? "Vérifié" : "À confirmer"}
@@ -159,8 +159,8 @@ export default function OhadaReferentielPage() {
               <button onClick={() => setEdit({ ...edit, rates_verified: !edit.rates_verified })}
                 className={`w-full px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
                   edit.rates_verified
-                    ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/30"
-                    : "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30"
+                    ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-700 border border-green-200 dark:border-green-500/30"
+                    : "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-700 border border-amber-200 dark:border-amber-500/30"
                 }`}>
                 {edit.rates_verified ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
                 {edit.rates_verified ? "Vérifié & validé" : "À confirmer"}

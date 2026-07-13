@@ -126,7 +126,7 @@ export default function FeatureFlagsPage() {
           { key: "enabled_global", label: "Statut", render: (r: FeatureFlag) => (
             <button onClick={e => { e.stopPropagation(); toggleGlobal(r); }}
               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-colors ${
-                r.enabled_global ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400" : "bg-neutral-100 dark:bg-admin-surface-alt text-neutral-500 dark:text-admin-muted"
+                r.enabled_global ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-700" : "bg-neutral-100 dark:bg-admin-surface-alt text-neutral-500 dark:text-admin-muted"
               }`}>
               {r.enabled_global ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
               {r.enabled_global ? "Actif" : "Inactif"}
@@ -177,7 +177,7 @@ export default function FeatureFlagsPage() {
               <div><label className="block text-neutral-body dark:text-admin-text/80 text-[13px] font-semibold mb-1.5">Activé globalement</label>
                 <button onClick={() => setEditFlag({ ...editFlag, enabled_global: !editFlag.enabled_global })}
                   className={`w-full px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
-                    editFlag.enabled_global ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/30" : "bg-warm-bg dark:bg-admin-surface-alt text-neutral-muted dark:text-admin-muted border border-warm-border dark:border-admin-surface-alt"
+                    editFlag.enabled_global ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-700 border border-green-200 dark:border-green-500/30" : "bg-warm-bg dark:bg-admin-surface-alt text-neutral-muted dark:text-admin-muted border border-warm-border dark:border-admin-surface-alt"
                   }`}>
                   {editFlag.enabled_global ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
                   {editFlag.enabled_global ? "Activé" : "Désactivé"}

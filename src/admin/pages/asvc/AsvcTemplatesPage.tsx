@@ -85,7 +85,7 @@ export default function AsvcTemplatesPage() {
       />
 
       {error && (
-        <div className="mb-4 px-3 py-2 rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 text-[12px]">
+        <div className="mb-4 px-3 py-2 rounded-lg border border-red-500/30 bg-red-500/10 text-red-700 text-[12px]">
           {error}
         </div>
       )}

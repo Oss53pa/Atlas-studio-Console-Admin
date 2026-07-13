@@ -90,7 +90,7 @@ function Stat({
   danger?: boolean;
 }) {
   const cls = danger
-    ? 'border-red-500/30 bg-red-500/10 text-red-300'
+    ? 'border-red-500/30 bg-red-500/10 text-red-700'
     : accent
       ? 'border-admin-accent/30 bg-admin-accent/10 text-admin-accent'
       : 'border-white/10 bg-white/5 text-neutral-300';

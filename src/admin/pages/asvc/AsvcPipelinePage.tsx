@@ -51,13 +51,13 @@ export default function AsvcPipelinePage() {
       </AdminPageHeader>
 
       {error && (
-        <div className="mb-4 text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2">
+        <div className="mb-4 text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2">
           {error}
         </div>
       )}
 
       {actionError && (
-        <div className="mb-4 text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
+        <div className="mb-4 text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
           <AlertCircle size={12} />
           {actionError}
         </div>
@@ -200,11 +200,11 @@ function Column({
   children: React.ReactNode;
 }) {
   const accentClasses: Record<typeof accent, string> = {
-    blue: 'text-blue-300 border-blue-500/30',
-    cyan: 'text-cyan-300 border-cyan-500/30',
-    violet: 'text-violet-300 border-violet-500/30',
+    blue: 'text-blue-700 border-blue-500/30',
+    cyan: 'text-cyan-700 border-cyan-500/30',
+    violet: 'text-violet-700 border-violet-500/30',
     amber: 'text-admin-accent border-admin-accent/30',
-    fuchsia: 'text-fuchsia-300 border-fuchsia-500/30',
+    fuchsia: 'text-fuchsia-700 border-fuchsia-500/30',
     emerald: 'text-emerald-300 border-emerald-500/30',
   };
 
@@ -396,7 +396,7 @@ function PrCard({
             pr.qa_status === 'passed'
               ? 'border-emerald-500/30 text-emerald-300'
               : pr.qa_status === 'failed'
-                ? 'border-red-500/30 text-red-300'
+                ? 'border-red-500/30 text-red-700'
                 : pr.qa_status === 'running'
                   ? 'border-amber-500/30 text-admin-accent'
                   : 'border-white/10 text-neutral-500'
@@ -467,7 +467,7 @@ function QaCard({
               type="button"
               onClick={() => onPrepareDeploy('preview', appName)}
               disabled={pending || !appName}
-              className="bg-blue-500/20 text-blue-300 text-[10px] py-1 rounded disabled:opacity-50"
+              className="bg-blue-500/20 text-blue-700 text-[10px] py-1 rounded disabled:opacity-50"
             >
               Preview
             </button>
@@ -475,7 +475,7 @@ function QaCard({
               type="button"
               onClick={() => onPrepareDeploy('staging', appName)}
               disabled={pending || !appName}
-              className="bg-violet-500/20 text-violet-300 text-[10px] py-1 rounded disabled:opacity-50"
+              className="bg-violet-500/20 text-violet-700 text-[10px] py-1 rounded disabled:opacity-50"
             >
               Staging
             </button>
@@ -483,7 +483,7 @@ function QaCard({
               type="button"
               onClick={() => onPrepareDeploy('production', appName)}
               disabled={pending || !appName}
-              className="bg-red-500/25 text-red-200 text-[10px] py-1 rounded disabled:opacity-50"
+              className="bg-red-500/25 text-red-700 text-[10px] py-1 rounded disabled:opacity-50"
               title="Production = critical, validation typée"
             >
               🟣 Prod
@@ -497,9 +497,9 @@ function QaCard({
 
 function DeploymentCard({ deployment }: { deployment: PipelineDeployment }) {
   const envBadge = {
-    preview: 'border-blue-500/30 text-blue-300',
-    staging: 'border-violet-500/30 text-violet-300',
-    production: 'border-red-500/30 text-red-200 bg-red-500/10',
+    preview: 'border-blue-500/30 text-blue-700',
+    staging: 'border-violet-500/30 text-violet-700',
+    production: 'border-red-500/30 text-red-700 bg-red-500/10',
   }[deployment.environment] ?? 'border-white/10 text-neutral-400';
 
   return (
@@ -541,21 +541,21 @@ function IncidentsBanner({ incidents }: { incidents: PipelineIncident[] }) {
   return (
     <div className="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 p-4">
       <div className="flex items-center gap-2 mb-2">
-        <AlertOctagon size={16} className="text-red-300" />
-        <h3 className="text-red-200 font-semibold text-[13px]">
+        <AlertOctagon size={16} className="text-red-700" />
+        <h3 className="text-red-700 font-semibold text-[13px]">
           {incidents.length} incident{incidents.length > 1 ? 's' : ''} production actif
           {incidents.length > 1 ? 's' : ''}
         </h3>
       </div>
       <div className="space-y-1">
         {incidents.map((i) => (
-          <div key={i.id} className="text-red-200/80 text-[12px]">
+          <div key={i.id} className="text-red-700/80 text-[12px]">
             <span className="font-mono mr-2">{i.severity}</span>
             <span className="font-medium">{i.app_concerned}</span>
             <span className="mx-1">·</span>
             <span>{i.title}</span>
             <span className="mx-1">·</span>
-            <span className="text-red-300/60 text-[11px]">{timeAgoFr(i.detected_at)}</span>
+            <span className="text-red-700/60 text-[11px]">{timeAgoFr(i.detected_at)}</span>
           </div>
         ))}
       </div>

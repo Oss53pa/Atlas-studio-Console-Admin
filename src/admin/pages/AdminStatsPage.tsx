@@ -131,7 +131,7 @@ export default function AdminStatsPage() {
 
   if (error || !stats) {
     return (
-      <div className="bg-red-50 dark:bg-admin-error/10 border border-red-200 dark:border-admin-error/30 text-red-700 dark:text-red-400 rounded-2xl p-6 shadow-sm dark:shadow-premium">
+      <div className="bg-red-50 dark:bg-admin-error/10 border border-red-200 dark:border-admin-error/30 text-red-700 dark:text-red-700 rounded-2xl p-6 shadow-sm dark:shadow-premium">
         {error || "Impossible de charger les statistiques."}
       </div>
     );
@@ -240,12 +240,12 @@ export default function AdminStatsPage() {
               <tbody>
                 {stats.trials_expiring.map((t, i) => {
                   const tone = t.days_left <= 0
-                    ? "bg-red-50 text-red-700 border-red-200 dark:bg-admin-error/20 dark:text-red-400 dark:border-admin-error/30"
+                    ? "bg-red-50 text-red-700 border-red-200 dark:bg-admin-error/20 dark:text-red-700 dark:border-admin-error/30"
                     : t.days_left <= 3
-                      ? "bg-red-50 text-red-700 border-red-200 dark:bg-admin-error/15 dark:text-red-400 dark:border-admin-error/30"
+                      ? "bg-red-50 text-red-700 border-red-200 dark:bg-admin-error/15 dark:text-red-700 dark:border-admin-error/30"
                       : t.days_left <= 7
-                        ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-admin-warning/20 dark:text-orange-400 dark:border-admin-warning/30"
-                        : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-admin-success/20 dark:text-green-400 dark:border-admin-success/30";
+                        ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-admin-warning/20 dark:text-orange-700 dark:border-admin-warning/30"
+                        : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-admin-success/20 dark:text-green-700 dark:border-admin-success/30";
                   return (
                     <tr key={`${t.user_email}-${t.app_id}-${i}`} className="border-b border-warm-bg dark:border-admin-surface-alt/50 last:border-b-0">
                       <td className="py-3 pr-4">

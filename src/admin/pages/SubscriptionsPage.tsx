@@ -203,14 +203,14 @@ export default function SubscriptionsPage() {
           { key: "plan", label: "Plan", sortable: true, render: (r: SubWithProfile) => <span className="capitalize">{r.plan || "—"}</span> },
           { key: "price_at_subscription", label: "Prix", sortable: true, render: (r: SubWithProfile) => (
             (r as any).is_granted
-              ? <span className="text-purple-400 text-[12px] font-semibold">Gratuit</span>
+              ? <span className="text-purple-700 text-[12px] font-semibold">Gratuit</span>
               : <span className="font-mono">{Number(r.price_at_subscription || 0).toLocaleString("fr-FR")} FCFA</span>
           )},
           { key: "status", label: "Statut", render: (r: SubWithProfile) => (
           <div className="flex items-center gap-1.5">
             <AdminBadge status={r.status} />
             {(r as any).is_granted && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 text-[10px] font-semibold" title="Abonnement offert par un super_admin">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-700 border border-purple-500/20 text-[10px] font-semibold" title="Abonnement offert par un super_admin">
                 <Gift size={10} /> Offert
               </span>
             )}

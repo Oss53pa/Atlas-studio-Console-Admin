@@ -82,7 +82,7 @@ function BillingTab() {
   return (
     <>
       {actionError && (
-        <div className="mb-4 text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
+        <div className="mb-4 text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
           <AlertCircle size={12} />
           {actionError}
         </div>
@@ -128,9 +128,9 @@ function InvoiceCard({
           <div className="text-neutral-600 text-[10.5px] mt-1 flex flex-wrap gap-x-3">
             <span>échéance {inv.due_date}</span>
             {inv.days_overdue > 0 ? (
-              <span className="text-red-300/80">{inv.days_overdue}j de retard</span>
+              <span className="text-red-700/80">{inv.days_overdue}j de retard</span>
             ) : (
-              <span className="text-blue-300/80">avant échéance</span>
+              <span className="text-blue-700/80">avant échéance</span>
             )}
             <span>{inv.reminder_count} relance{inv.reminder_count > 1 ? 's' : ''}</span>
             {inv.last_reminder_at && <span>dernière {timeAgoFr(inv.last_reminder_at)}</span>}
@@ -166,7 +166,7 @@ function AccountingTab() {
       </div>
 
       {actionError && (
-        <div className="mb-4 text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
+        <div className="mb-4 text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
           <AlertCircle size={12} />
           {actionError}
         </div>
@@ -242,7 +242,7 @@ function TreasuryTab() {
       </div>
 
       {genError && (
-        <div className="mb-4 text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
+        <div className="mb-4 text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2 flex items-center gap-2">
           <AlertCircle size={12} />
           {genError}
         </div>
@@ -306,7 +306,7 @@ function TreasuryTab() {
                     <td className="px-3 py-2 text-neutral-500 font-mono text-[11px]">{o.invoice_number}</td>
                     <td className="px-3 py-2 text-neutral-300">{o.client_name}</td>
                     <td className="px-3 py-2 text-right font-mono text-neutral-300">{fcfaFmt(o.amount_ttc_fcfa)}</td>
-                    <td className="px-3 py-2 text-right text-red-300/80">{o.days_overdue}j</td>
+                    <td className="px-3 py-2 text-right text-red-700/80">{o.days_overdue}j</td>
                   </tr>
                 ))}
               </tbody>

@@ -8,8 +8,8 @@ interface ErrorStatsCardsProps {
 
 const SEVERITY_COLORS: Record<ErrorSeverity, string> = {
   critical: 'bg-[#C0635C]',
-  error:    'bg-[#A9B57E]',
-  warning:  'bg-[#C2CC92]',
+  error:    'bg-p-accent',
+  warning:  'bg-p-accent',
   info:     'bg-[#378ADD]',
 };
 

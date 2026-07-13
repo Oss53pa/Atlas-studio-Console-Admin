@@ -47,10 +47,10 @@ function severityFromAction(action: string): NotifSeverity {
 
 function severityStyles(sev: NotifSeverity) {
   switch (sev) {
-    case "critical": return { dot: "bg-red-500", icon: AlertTriangle, color: "text-red-400" };
+    case "critical": return { dot: "bg-red-500", icon: AlertTriangle, color: "text-red-700" };
     case "success": return { dot: "bg-emerald-500", icon: UserPlus, color: "text-emerald-400" };
-    case "warning": return { dot: "bg-amber-500", icon: FileText, color: "text-amber-400" };
-    default: return { dot: "bg-blue-500", icon: Activity, color: "text-blue-400" };
+    case "warning": return { dot: "bg-amber-500", icon: FileText, color: "text-amber-700" };
+    default: return { dot: "bg-blue-500", icon: Activity, color: "text-blue-700" };
   }
 }
 
@@ -241,7 +241,7 @@ export function NotificationCenter() {
           {/* Backdrop to close on click outside */}
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div
-            className="fixed bg-[#131316] border border-white/15 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col"
+            className="fixed bg-p-surface border border-white/15 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col"
             style={{
               top: dropdownPos.top,
               left: dropdownPos.left,
@@ -250,11 +250,11 @@ export function NotificationCenter() {
             }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#1c1c20]">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-p-surface">
               <div className="flex items-center gap-2">
                 <span className="text-white text-sm font-semibold">Notifications</span>
                 {unreadCount > 0 && (
-                  <span className="px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 text-[10px] font-bold">
+                  <span className="px-2 py-0.5 rounded-full bg-red-500/15 text-red-700 text-[10px] font-bold">
                     {unreadCount} nouveaux
                   </span>
                 )}
@@ -262,7 +262,7 @@ export function NotificationCenter() {
               {unreadCount > 0 && (
                 <button
                   onClick={markAllRead}
-                  className="flex items-center gap-1 text-[11px] text-[#A9B57E] hover:text-[#C2CC92] transition-colors font-medium"
+                  className="flex items-center gap-1 text-[11px] text-p-accent hover:text-p-accent transition-colors font-medium"
                 >
                   <CheckCheck size={12} /> Tout lu
                 </button>
@@ -308,7 +308,7 @@ export function NotificationCenter() {
                             {item.title}
                           </div>
                           {!isRead && (
-                            <span className="flex-shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-[#A9B57E]" />
+                            <span className="flex-shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-p-accent" />
                           )}
                         </div>
                         {item.subtitle && (
@@ -332,7 +332,7 @@ export function NotificationCenter() {
             <Link
               to="/admin/activity"
               onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-1.5 px-4 py-2.5 border-t border-white/10 bg-[#1c1c20] text-[#A9B57E] text-[12px] font-medium hover:bg-[#1c1c20] transition-colors"
+              className="flex items-center justify-center gap-1.5 px-4 py-2.5 border-t border-white/10 bg-p-surface text-p-accent text-[12px] font-medium hover:bg-p-surface transition-colors"
             >
               Voir tous les logs <ExternalLink size={12} />
             </Link>

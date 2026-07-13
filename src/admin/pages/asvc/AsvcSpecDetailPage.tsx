@@ -70,7 +70,7 @@ export default function AsvcSpecDetailPage() {
 
       {loading && <p className="text-neutral-500 text-sm">Chargement...</p>}
       {error && (
-        <p className="text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2">{error}</p>
+        <p className="text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-3 py-2">{error}</p>
       )}
       {!loading && !spec && (
         <p className="text-neutral-500 text-sm">Spec introuvable.</p>
@@ -126,9 +126,9 @@ export default function AsvcSpecDetailPage() {
                       Story #{ac.story_idx ?? i + 1}
                     </div>
                     <div className="text-neutral-300">
-                      <strong className="text-blue-300">GIVEN</strong> {ac.given}<br />
-                      <strong className="text-blue-300">WHEN</strong> {ac.when}<br />
-                      <strong className="text-blue-300">THEN</strong> {ac.then}
+                      <strong className="text-blue-700">GIVEN</strong> {ac.given}<br />
+                      <strong className="text-blue-700">WHEN</strong> {ac.when}<br />
+                      <strong className="text-blue-700">THEN</strong> {ac.then}
                     </div>
                   </div>
                 ))}
@@ -218,7 +218,7 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
     : accent === 'amber'
       ? 'text-admin-accent'
       : accent === 'red'
-        ? 'text-red-300'
+        ? 'text-red-700'
         : 'text-neutral-300';
   return (
     <div className="text-[11.5px]">

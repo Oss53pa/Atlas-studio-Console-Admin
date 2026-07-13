@@ -306,7 +306,7 @@ function ConnectorCard({
               </span>
             )}
             {meta.auth_kind === 'pat' && (
-              <span className="inline-flex items-center gap-1 text-[10px] text-blue-300 bg-blue-500/10 border border-blue-500/30 px-1.5 py-0.5 rounded">
+              <span className="inline-flex items-center gap-1 text-[10px] text-blue-700 bg-blue-500/10 border border-blue-500/30 px-1.5 py-0.5 rounded">
                 <Key size={9} />
                 PAT
               </span>
@@ -357,7 +357,7 @@ function ConnectorCard({
                 type="button"
                 onClick={() => onRevoke(t.account_email)}
                 disabled={revoking}
-                className="inline-flex items-center gap-1 text-neutral-500 hover:text-red-300 text-[11px] disabled:opacity-50"
+                className="inline-flex items-center gap-1 text-neutral-500 hover:text-red-700 text-[11px] disabled:opacity-50"
                 title="Révoquer ce compte"
               >
                 {revoking ? <Loader2 size={11} className="animate-spin" /> : <X size={11} />}
@@ -408,7 +408,7 @@ function EnvConnectorCard({
                 À venir
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-[10px] text-amber-300 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded">
+              <span className="inline-flex items-center gap-1 text-[10px] text-amber-700 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded">
                 <AlertCircle size={10} /> À configurer
               </span>
             )}
@@ -533,7 +533,7 @@ function PatModal({
         </p>
 
         {error && (
-          <p className="mb-3 text-red-300 text-[11.5px] bg-red-500/10 border border-red-500/20 rounded px-2 py-1 flex items-center gap-1.5">
+          <p className="mb-3 text-red-700 text-[11.5px] bg-red-500/10 border border-red-500/20 rounded px-2 py-1 flex items-center gap-1.5">
             <AlertCircle size={11} />
             {error}
           </p>

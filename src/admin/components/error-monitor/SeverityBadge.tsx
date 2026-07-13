@@ -2,8 +2,8 @@ import type { ErrorSeverity } from '../../hooks/useErrorLogs';
 
 const SEVERITY_STYLES: Record<ErrorSeverity, { bg: string; text: string; label: string }> = {
   critical: { bg: 'bg-[#C0635C]',  text: 'text-white',            label: 'Critical' },
-  error:    { bg: 'bg-[#A9B57E]',  text: 'text-white',            label: 'Error' },
-  warning:  { bg: 'bg-[#C2CC92]',  text: 'text-neutral-900',      label: 'Warning' },
+  error:    { bg: 'bg-p-accent',  text: 'text-white',            label: 'Error' },
+  warning:  { bg: 'bg-p-accent',  text: 'text-neutral-900',      label: 'Warning' },
   info:     { bg: 'bg-[#378ADD]',  text: 'text-white',            label: 'Info' },
 };
 

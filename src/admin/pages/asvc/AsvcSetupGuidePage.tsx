@@ -93,8 +93,8 @@ export default function AsvcSetupGuidePage() {
         subtitle="Les étapes concrètes pour passer du framework technique à une entreprise qui tourne"
       />
 
-      <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 text-[12.5px] text-amber-200">
-        <strong className="text-amber-300">⚠ ASVC ne crée pas ton business — il l'opère.</strong>
+      <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 text-[12.5px] text-amber-700">
+        <strong className="text-amber-700">⚠ ASVC ne crée pas ton business — il l'opère.</strong>
         <p className="mt-1 text-amber-100/80 leading-relaxed">
           Le code est prêt. Mais les agents ne peuvent rien faire sans : (1) clés API configurées,
           (2) comptes connectés, (3) données réelles (leads, clients, tickets) à traiter.
@@ -351,7 +351,7 @@ function Step({
   link?: { label: string; url: string };
 }) {
   const StatusIcon = status === 'done' ? CheckCircle2 : status === 'manual' ? AlertCircle : Circle;
-  const statusColor = status === 'done' ? 'text-emerald-300' : status === 'manual' ? 'text-amber-300' : 'text-neutral-500';
+  const statusColor = status === 'done' ? 'text-emerald-300' : status === 'manual' ? 'text-amber-700' : 'text-neutral-500';
   const statusLabel = status === 'done' ? 'OK' : status === 'manual' ? 'À faire' : 'En attente';
 
   const isExternal = link?.url.startsWith('http');
@@ -418,7 +418,7 @@ function AgentDept({ title, agents }: { title: string; agents: AgentInfo[] }) {
                   Prêt
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-[10px] text-blue-300 bg-blue-500/10 border border-blue-500/30 px-1.5 py-0.5 rounded">
+                <span className="inline-flex items-center gap-1 text-[10px] text-blue-700 bg-blue-500/10 border border-blue-500/30 px-1.5 py-0.5 rounded">
                   <Plug size={9} />
                   Ship nécessite connecteur
                 </span>

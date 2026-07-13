@@ -18,7 +18,7 @@ const STATUS_LABELS: Record<string, string> = { available: "Disponible", coming_
 const emptyApp: Partial<AppRow> = {
   id: "", name: "", type: "App", tagline: "", description: "",
   features: [], categories: [], pricing: {}, pricing_period: "mois",
-  color: "#8E9A63", icon: "receipt", highlights: [],
+  color: "var(--c-accent-dark)", icon: "receipt", highlights: [],
   status: "available", visible: true, sort_order: 0, external_url: null,
 };
 
@@ -105,7 +105,7 @@ export default function AdminAppsTable() {
       features: featuresStr.split("\n").map(s => s.trim()).filter(Boolean),
       categories: categoriesStr.split(",").map(s => s.trim()).filter(Boolean),
       pricing, pricing_period: editApp.pricing_period || "mois",
-      color: editApp.color || "#8E9A63", icon: editApp.icon || "receipt",
+      color: editApp.color || "var(--c-accent-dark)", icon: editApp.icon || "receipt",
       highlights: highlightsStr.split(",").map(s => s.trim()).filter(Boolean),
       external_url: editApp.external_url || null,
       status: editApp.status as AppStatus || "available",
@@ -155,7 +155,7 @@ export default function AdminAppsTable() {
     const rows = DEFAULT_CONTENT.apps.map((a, i) => ({
       id: a.id, name: a.name, type: a.type as AppType, tagline: a.tagline, description: a.desc,
       features: a.features, categories: a.categories, pricing: a.pricing,
-      pricing_period: a.pricingPeriod || "mois", color: a.color || "#8E9A63",
+      pricing_period: a.pricingPeriod || "mois", color: a.color || "var(--c-accent-dark)",
       icon: a.icon || "receipt", highlights: a.highlights || [],
       status: "available" as AppStatus, visible: true, sort_order: i,
     }));
@@ -202,7 +202,7 @@ export default function AdminAppsTable() {
         columns={[
           { key: "name", label: "Application", sortable: true, render: (r: AppRow) => (
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-[11px] font-bold" style={{ backgroundColor: r.color || "#8E9A63" }}>
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-[11px] font-bold" style={{ backgroundColor: r.color || "var(--c-accent-dark)" }}>
                 {r.name.slice(0, 2).toUpperCase()}
               </div>
               <div>
@@ -224,7 +224,7 @@ export default function AdminAppsTable() {
               title={r.visible ? "Visible sur atlas-studio.org — cliquer pour masquer" : "Masquée du site public — cliquer pour afficher"}
               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-colors ${
                 r.visible
-                  ? "bg-admin-success/20 text-green-400 border-admin-success/30 hover:bg-admin-success/30"
+                  ? "bg-admin-success/20 text-green-700 border-admin-success/30 hover:bg-admin-success/30"
                   : "bg-admin-surface-alt text-admin-muted border-admin-surface-alt hover:bg-admin-surface-alt/80"
               }`}
             >
@@ -325,7 +325,7 @@ export default function AdminAppsTable() {
                 onClick={() => setEditApp({ ...editApp, visible: !(editApp.visible ?? true) })}
                 className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-[13px] font-medium border transition-colors ${
                   (editApp.visible ?? true)
-                    ? "bg-admin-success/15 text-green-400 border-admin-success/30 hover:bg-admin-success/25"
+                    ? "bg-admin-success/15 text-green-700 border-admin-success/30 hover:bg-admin-success/25"
                     : "bg-admin-surface-alt text-admin-muted border-admin-surface-alt hover:bg-admin-surface-alt/80"
                 }`}
               >
@@ -360,7 +360,7 @@ export default function AdminAppsTable() {
                         className={ADMIN_INPUT_CLASS} />
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-muted dark:text-admin-muted text-[11px]">FCFA</span>
                     </div>
-                    <button onClick={() => setPricingRows(pricingRows.filter((_, j) => j !== i))} className="p-2 text-red-400 hover:text-red-600 transition-colors"><Trash2 size={14} /></button>
+                    <button onClick={() => setPricingRows(pricingRows.filter((_, j) => j !== i))} className="p-2 text-red-700 hover:text-red-600 transition-colors"><Trash2 size={14} /></button>
                   </div>
                 ))}
               </div>
@@ -375,9 +375,9 @@ export default function AdminAppsTable() {
                 <div>
                   <label className="block text-neutral-text dark:text-admin-text/80 text-[13px] font-semibold mb-1.5">Couleur</label>
                   <div className="flex items-center gap-2">
-                    <input type="color" value={editApp.color || "#8E9A63"} onChange={e => setEditApp({ ...editApp, color: e.target.value })}
+                    <input type="color" value={editApp.color || "var(--c-accent-dark)"} onChange={e => setEditApp({ ...editApp, color: e.target.value })}
                       className="w-10 h-10 rounded border border-warm-border dark:border-admin-surface-alt cursor-pointer bg-transparent" />
-                    <input value={editApp.color || "#8E9A63"} onChange={e => setEditApp({ ...editApp, color: e.target.value })}
+                    <input value={editApp.color || "var(--c-accent-dark)"} onChange={e => setEditApp({ ...editApp, color: e.target.value })}
                       className={`flex-1 ${ADMIN_INPUT_CLASS} font-mono`} />
                   </div>
                 </div>

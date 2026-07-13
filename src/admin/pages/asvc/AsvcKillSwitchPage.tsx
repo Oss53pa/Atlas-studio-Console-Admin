@@ -34,15 +34,15 @@ export default function AsvcKillSwitchPage() {
       {globalKill && (
         <div className="mb-6 rounded-xl border border-red-500/40 bg-red-500/10 p-4">
           <div className="flex items-start gap-3">
-            <AlertOctagon size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
+            <AlertOctagon size={18} className="text-red-700 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <h3 className="text-red-300 font-semibold text-sm mb-1">
+              <h3 className="text-red-700 font-semibold text-sm mb-1">
                 Tous les agents sont actuellement à l'arrêt
               </h3>
               {globalKill.reason && (
-                <p className="text-red-200/80 text-[12px]">{globalKill.reason}</p>
+                <p className="text-red-700/80 text-[12px]">{globalKill.reason}</p>
               )}
-              <p className="text-red-300/60 text-[11px] mt-1">
+              <p className="text-red-700/60 text-[11px] mt-1">
                 Activé {timeAgoFr(globalKill.activated_at)}
                 {globalKill.activated_by ? ` par ${globalKill.activated_by}` : ''}
               </p>
@@ -50,7 +50,7 @@ export default function AsvcKillSwitchPage() {
             <button
               type="button"
               onClick={() => deactivate(globalKill.id)}
-              className="px-3 py-1.5 text-[12px] bg-red-500/20 hover:bg-red-500/30 text-red-200 rounded-lg border border-red-500/30"
+              className="px-3 py-1.5 text-[12px] bg-red-500/20 hover:bg-red-500/30 text-red-700 rounded-lg border border-red-500/30"
             >
               Réactiver
             </button>
@@ -61,7 +61,7 @@ export default function AsvcKillSwitchPage() {
       {!globalKill && (
         <div className="mb-6 rounded-xl border border-white/10 bg-onyx-light/30 p-5">
           <h2 className="text-neutral-light text-sm font-semibold mb-1 flex items-center gap-2">
-            <Power size={14} className="text-red-400" />
+            <Power size={14} className="text-red-700" />
             Arrêt global
           </h2>
           <p className="text-neutral-400 text-[12px] mb-3">
@@ -79,7 +79,7 @@ export default function AsvcKillSwitchPage() {
             type="button"
             disabled={!reason.trim() || busy}
             onClick={triggerGlobal}
-            className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 disabled:opacity-50 disabled:cursor-not-allowed text-red-200 text-[12px] rounded-lg border border-red-500/30 transition"
+            className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 disabled:opacity-50 disabled:cursor-not-allowed text-red-700 text-[12px] rounded-lg border border-red-500/30 transition"
           >
             <Power size={13} />
             Tout arrêter

@@ -22,13 +22,13 @@ export function RequireSuperAdmin({ children }: { children: React.ReactNode }) {
       <div className="min-h-[60vh] flex items-center justify-center px-6">
         <div className="max-w-md text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center">
-            <ShieldOff size={26} className="text-red-400" />
+            <ShieldOff size={26} className="text-red-700" />
           </div>
           <h2 className="text-white dark:text-admin-text text-xl font-bold mb-2">
             Accès restreint
           </h2>
           <p className="text-white/50 dark:text-admin-muted text-sm leading-relaxed">
-            Cette section est réservée au <strong className="text-[#A9B57E]">Super Admin</strong>.
+            Cette section est réservée au <strong className="text-p-accent">Super Admin</strong>.
             Seule Pamela peut gérer les administrateurs et leurs accès.
           </p>
           <p className="text-white/30 dark:text-admin-muted/60 text-[11px] mt-4">

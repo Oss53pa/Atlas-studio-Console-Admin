@@ -139,7 +139,7 @@ export function BriefMatinalCard({ brief, generating, error, onGenerate }: Props
       </div>
 
       {error && (
-        <p className="mb-2 text-red-300 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-2 py-1">
+        <p className="mb-2 text-red-700 text-[12px] bg-red-500/10 border border-red-500/20 rounded px-2 py-1">
           Erreur génération brief : {error}
         </p>
       )}
@@ -184,7 +184,7 @@ function KpiSection({ section }: { section: SectionKpi }) {
             <span
               className={`font-mono whitespace-nowrap ${
                 r.accent === 'red'
-                  ? 'text-red-300'
+                  ? 'text-red-700'
                   : r.accent === 'emerald'
                     ? 'text-emerald-300'
                     : r.accent === 'amber'

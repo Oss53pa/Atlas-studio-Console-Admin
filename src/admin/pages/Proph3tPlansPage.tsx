@@ -53,9 +53,9 @@ interface MessageWithFb {
 }
 
 const SEVERITY_COLORS: Record<string, string> = {
-  P0: "bg-red-500/20 text-red-400 border-red-500/30",
-  P1: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  P2: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  P0: "bg-red-500/20 text-red-700 border-red-500/30",
+  P1: "bg-amber-500/20 text-amber-700 border-amber-500/30",
+  P2: "bg-blue-500/20 text-blue-700 border-blue-500/30",
 };
 
 export default function Proph3tPlansPage() {
@@ -159,7 +159,7 @@ export default function Proph3tPlansPage() {
           onRowClick={openDetail}
           columns={[
             { key: "product", label: "Produit", render: (r: Conversation) => (
-              <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-500/20 text-purple-400">{r.product}</span>
+              <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-500/20 text-purple-700">{r.product}</span>
             )},
             { key: "summary", label: "Résumé", render: (r: Conversation) => (
               <div className="text-neutral-text dark:text-admin-text text-[13px] truncate max-w-[400px]">{r.summary || <span className="text-neutral-muted dark:text-admin-muted italic">— en cours —</span>}</div>
@@ -193,8 +193,8 @@ export default function Proph3tPlansPage() {
             { key: "alert_type", label: "Type", render: (r: Alert) => <span className="text-[12px] font-mono">{r.alert_type}</span> },
             { key: "status", label: "Statut", render: (r: Alert) => (
               r.resolved ? <span className="text-emerald-400 text-[11px]">Résolue</span>
-              : r.acknowledged ? <span className="text-blue-400 text-[11px]">Accusée</span>
-              : <span className="text-amber-400 text-[11px]">Ouverte</span>
+              : r.acknowledged ? <span className="text-blue-700 text-[11px]">Accusée</span>
+              : <span className="text-amber-700 text-[11px]">Ouverte</span>
             )},
             { key: "created_at", label: "Créée", sortable: true, render: (r: Alert) => (
               <span className="text-[12px] text-neutral-muted dark:text-admin-muted">{new Date(r.created_at).toLocaleString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
@@ -230,8 +230,8 @@ export default function Proph3tPlansPage() {
                       {(m.feedback || []).map((f, i) => (
                         <span key={i} className="inline-flex items-center">
                           {f.rating === "up" && <ThumbsUp size={10} className="text-emerald-400" />}
-                          {f.rating === "down" && <ThumbsDown size={10} className="text-red-400" />}
-                          {f.rating === "correction" && <Edit3 size={10} className="text-amber-400" />}
+                          {f.rating === "down" && <ThumbsDown size={10} className="text-red-700" />}
+                          {f.rating === "correction" && <Edit3 size={10} className="text-amber-700" />}
                         </span>
                       ))}
                     </span>

@@ -70,11 +70,11 @@ export const TEST_CATEGORY_LABELS: Record<TestCategory, string> = {
 
 export const TEST_CATEGORY_CLASSES: Record<TestCategory, string> = {
   nominal: 'bg-white/5 text-neutral-400 border-white/10',
-  edge: 'bg-blue-500/10 text-blue-300 border-blue-500/30',
-  security: 'bg-red-500/15 text-red-300 border-red-500/30',
-  compliance: 'bg-violet-500/10 text-violet-300 border-violet-500/30',
+  edge: 'bg-blue-500/10 text-blue-700 border-blue-500/30',
+  security: 'bg-red-500/15 text-red-700 border-red-500/30',
+  compliance: 'bg-violet-500/10 text-violet-700 border-violet-500/30',
   syscohada: 'bg-admin-accent/20 text-admin-accent border-admin-accent/30',
-  resilience: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30',
+  resilience: 'bg-cyan-500/10 text-cyan-700 border-cyan-500/30',
   performance: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30',
 };
 
@@ -89,9 +89,9 @@ export const TEST_STATUS_LABELS: Record<TestStatus, string> = {
 export const TEST_STATUS_CLASSES: Record<TestStatus, string> = {
   pending: 'bg-white/5 text-neutral-500 border-white/10',
   passed: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-  failed: 'bg-red-500/15 text-red-300 border-red-500/30',
+  failed: 'bg-red-500/15 text-red-700 border-red-500/30',
   skipped: 'bg-neutral-500/10 text-neutral-400 border-neutral-500/20',
-  flaky: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+  flaky: 'bg-amber-500/15 text-amber-700 border-amber-500/30',
 };
 
 export const READINESS_STAGE_LABELS: Record<ReadinessStage, string> = {
@@ -103,8 +103,8 @@ export const READINESS_STAGE_LABELS: Record<ReadinessStage, string> = {
 
 export const READINESS_STAGE_CLASSES: Record<ReadinessStage, string> = {
   no_tests_defined: 'bg-white/5 text-neutral-500 border-white/10',
-  needs_work: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
-  ready_for_shadow: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+  needs_work: 'bg-amber-500/15 text-amber-700 border-amber-500/30',
+  ready_for_shadow: 'bg-blue-500/15 text-blue-700 border-blue-500/30',
   ready_for_production: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
 };
 
@@ -441,12 +441,12 @@ export const REMINDER_LEVEL_LABELS: Record<ReminderLevel, string> = {
 };
 
 export const REMINDER_LEVEL_CLASSES: Record<ReminderLevel, string> = {
-  pre_due: 'bg-blue-500/10 text-blue-300 border-blue-500/30',
+  pre_due: 'bg-blue-500/10 text-blue-700 border-blue-500/30',
   level_1_friendly: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30',
-  level_2_firm: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
-  level_3_formal: 'bg-orange-500/15 text-orange-300 border-orange-500/30',
-  level_4_final: 'bg-red-500/15 text-red-300 border-red-500/30',
-  level_5_legal: 'bg-red-500/25 text-red-200 border-red-500/40',
+  level_2_firm: 'bg-amber-500/15 text-amber-700 border-amber-500/30',
+  level_3_formal: 'bg-orange-500/15 text-orange-700 border-orange-500/30',
+  level_4_final: 'bg-red-500/15 text-red-700 border-red-500/30',
+  level_5_legal: 'bg-red-500/25 text-red-700 border-red-500/40',
 };
 
 export type LeadStage =
@@ -507,14 +507,14 @@ export const LEAD_STAGE_LABELS: Record<LeadStage, string> = {
 
 export const LEAD_STAGE_CLASSES: Record<LeadStage, string> = {
   prospect: 'bg-white/5 text-neutral-400 border-white/10',
-  mql: 'bg-blue-500/10 text-blue-300 border-blue-500/30',
-  sql: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30',
-  demo_scheduled: 'bg-violet-500/10 text-violet-300 border-violet-500/30',
-  demo_done: 'bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/30',
+  mql: 'bg-blue-500/10 text-blue-700 border-blue-500/30',
+  sql: 'bg-cyan-500/10 text-cyan-700 border-cyan-500/30',
+  demo_scheduled: 'bg-violet-500/10 text-violet-700 border-violet-500/30',
+  demo_done: 'bg-fuchsia-500/10 text-fuchsia-700 border-fuchsia-500/30',
   proposal_sent: 'bg-admin-accent/15 text-admin-accent border-admin-accent/30',
-  negotiation: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+  negotiation: 'bg-amber-500/15 text-amber-700 border-amber-500/30',
   won: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30',
-  lost: 'bg-red-500/10 text-red-400 border-red-500/20',
+  lost: 'bg-red-500/10 text-red-700 border-red-500/20',
 };
 
 export const NEXT_ACTION_LABELS: Record<SuggestedNextAction, string> = {
@@ -570,9 +570,9 @@ export const CONTENT_STATUS_LABELS: Record<ContentStatus, string> = {
 export const CONTENT_STATUS_CLASSES: Record<ContentStatus, string> = {
   draft: 'bg-white/5 text-neutral-400 border-white/10',
   pending_approval: 'bg-admin-accent/15 text-admin-accent border-admin-accent/30',
-  scheduled: 'bg-blue-500/10 text-blue-300 border-blue-500/30',
+  scheduled: 'bg-blue-500/10 text-blue-700 border-blue-500/30',
   published: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30',
-  rejected: 'bg-red-500/10 text-red-300 border-red-500/30',
+  rejected: 'bg-red-500/10 text-red-700 border-red-500/30',
 };
 
 export type LifecycleStage =
@@ -627,12 +627,12 @@ export const LIFECYCLE_LABELS: Record<LifecycleStage, string> = {
 };
 
 export const LIFECYCLE_CLASSES: Record<LifecycleStage, string> = {
-  churn_risk: 'bg-red-500/15 text-red-300 border-red-500/30',
+  churn_risk: 'bg-red-500/15 text-red-700 border-red-500/30',
   trial_ending: 'bg-admin-accent/20 text-admin-accent border-admin-accent/30',
   d1: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30',
-  d7: 'bg-blue-500/10 text-blue-300 border-blue-500/30',
-  d30: 'bg-violet-500/10 text-violet-300 border-violet-500/30',
-  upsell: 'bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/30',
+  d7: 'bg-blue-500/10 text-blue-700 border-blue-500/30',
+  d30: 'bg-violet-500/10 text-violet-700 border-violet-500/30',
+  upsell: 'bg-fuchsia-500/10 text-fuchsia-700 border-fuchsia-500/30',
   steady: 'bg-white/5 text-neutral-400 border-white/10',
   churned: 'bg-white/5 text-neutral-600 border-white/10',
 };
@@ -775,7 +775,7 @@ export const TICKET_PRIORITY_LABELS: Record<TicketPriority, string> = {
 };
 
 export const TICKET_PRIORITY_CLASSES: Record<TicketPriority, string> = {
-  urgent: 'bg-red-500/15 text-red-300 border-red-500/30',
+  urgent: 'bg-red-500/15 text-red-700 border-red-500/30',
   high: 'bg-admin-accent/15 text-admin-accent border-admin-accent/30',
   normal: 'bg-white/5 text-neutral-400 border-white/10',
   low: 'bg-white/5 text-neutral-500 border-white/10',
@@ -854,10 +854,10 @@ export const CRITICALITY_CLASSES: Record<Criticality, string> = {
 };
 
 export const CRITICALITY_BADGE_CLASSES: Record<Criticality, string> = {
-  critical: 'bg-red-500/20 text-red-300 border-red-500/30',
-  purple: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+  critical: 'bg-red-500/20 text-red-700 border-red-500/30',
+  purple: 'bg-purple-500/20 text-purple-700 border-purple-500/30',
   high: 'bg-admin-accent/20 text-admin-accent border-admin-accent/30',
-  orange: 'bg-orange-500/15 text-orange-300 border-orange-500/30',
+  orange: 'bg-orange-500/15 text-orange-700 border-orange-500/30',
   normal: 'bg-white/10 text-neutral-300 border-white/20',
   low: 'bg-white/5 text-neutral-500 border-white/10',
 };
@@ -977,16 +977,16 @@ export const TECH_DEBT_CATEGORY_LABELS: Record<TechDebtCategory, string> = {
 };
 
 export const TECH_DEBT_PRIORITY_CLASSES: Record<TechDebtPriority, string> = {
-  P0: 'bg-red-500/20 text-red-300 border-red-500/40',
+  P0: 'bg-red-500/20 text-red-700 border-red-500/40',
   P1: 'bg-admin-accent/20 text-admin-accent border-admin-accent/40',
-  P2: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+  P2: 'bg-blue-500/15 text-blue-700 border-blue-500/30',
   P3: 'bg-white/5 text-neutral-400 border-white/10',
 };
 
 export const TECH_DEBT_SEVERITY_CLASSES: Record<TechDebtSeverity, string> = {
-  critical: 'bg-red-500/20 text-red-300 border-red-500/40',
-  high: 'bg-orange-500/15 text-orange-300 border-orange-500/30',
-  medium: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+  critical: 'bg-red-500/20 text-red-700 border-red-500/40',
+  high: 'bg-orange-500/15 text-orange-700 border-orange-500/30',
+  medium: 'bg-amber-500/15 text-amber-700 border-amber-500/30',
   low: 'bg-white/5 text-neutral-400 border-white/10',
 };
 
@@ -1002,8 +1002,8 @@ export const TECH_DEBT_STATUS_LABELS: Record<TechDebtStatus, string> = {
 
 export const TECH_DEBT_STATUS_CLASSES: Record<TechDebtStatus, string> = {
   detected: 'bg-white/5 text-neutral-400 border-white/10',
-  qualified: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
-  in_backlog: 'bg-violet-500/10 text-violet-300 border-violet-500/30',
+  qualified: 'bg-blue-500/15 text-blue-700 border-blue-500/30',
+  in_backlog: 'bg-violet-500/10 text-violet-700 border-violet-500/30',
   in_progress: 'bg-admin-accent/15 text-admin-accent border-admin-accent/30',
   fixed: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
   wont_fix: 'bg-neutral-500/10 text-neutral-500 border-neutral-500/20',
@@ -1019,5 +1019,5 @@ export const TREND_LABELS: Record<CodeHealthTrend, string> = {
 export const TREND_CLASSES: Record<CodeHealthTrend, string> = {
   improving: 'text-emerald-300',
   stable: 'text-neutral-400',
-  degrading: 'text-red-300',
+  degrading: 'text-red-700',
 };
