@@ -35,6 +35,7 @@ const HomePage = lazyRetry(() => import('./admin/pages/HomePage'));
 const DashboardPage = lazyRetry(() => import('./admin/pages/DashboardPage'));
 const ContentManagementPage = lazyRetry(() => import('./admin/pages/ContentManagementPage'));
 const AdminAppsTable = lazyRetry(() => import('./admin/pages/AdminAppsTable'));
+const AppCockpitPage = lazyRetry(() => import('./admin/pages/AppCockpitPage'));
 const ClientsPage = lazyRetry(() => import('./admin/pages/ClientsPage'));
 const SubscriptionsPage = lazyRetry(() => import('./admin/pages/SubscriptionsPage'));
 const InvoicesPage = lazyRetry(() => import('./admin/pages/InvoicesPage'));
@@ -154,6 +155,7 @@ root.render(
                 <Route path="dashboard" element={S(<DashboardPage />)} />
                 <Route path="content" element={S(<ContentManagementPage />)} />
                 <Route path="apps" element={S(<AdminAppsTable />)} />
+                <Route path="apps/:appId" element={S(<AppCockpitPage />)} />
                 <Route path="clients" element={S(<ClientsPage />)} />
                 <Route path="subscriptions" element={S(<SubscriptionsPage />)} />
                 <Route path="invoices" element={S(<InvoicesPage />)} />

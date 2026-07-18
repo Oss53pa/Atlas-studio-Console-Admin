@@ -19,14 +19,6 @@ import { SITE_URL } from "../config/site";
 interface NavItem { to: string; icon: LucideIcon; label: string; }
 interface NavGroup { id: string; label: string; icon: LucideIcon; items: NavItem[]; }
 
-const PINNED: NavItem[] = [
-  { to: "/", icon: LayoutDashboard, label: "Accueil" },
-  { to: "/admin/dashboard", icon: BarChart3, label: "Tableau de bord" },
-  { to: "/admin/proph3t", icon: Brain, label: "Proph3t IA" },
-  { to: "/admin/clients", icon: Users, label: "Clients" },
-  { to: "/admin/invoices", icon: Receipt, label: "Facturation" },
-];
-
 const NAV_GROUPS: NavGroup[] = [
   {
     id: "overview",
@@ -201,58 +193,36 @@ export function AdminSidebar() {
         <div className="text-admin-accent text-[9px] font-bold uppercase tracking-widest mt-1">Admin Console</div>
       </div>
 
-      {/* Pinned shortcuts at the very top */}
-      <div className="px-2 pt-3 pb-2 border-b border-white/5">
-        <div className="px-2 mb-1.5 text-[9px] font-bold uppercase tracking-widest text-white/40">Épinglés</div>
-        <div className="space-y-0.5">
-          {PINNED.map(item => {
-            const active = isActive(item.to);
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[12px] transition-all ${
-                  active
-                    ? "bg-admin-accent/15 text-admin-accent font-medium"
-                    : "text-white/70 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <item.icon size={13} strokeWidth={1.5} />
-                <span className="truncate">{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Sections list — avec petit trait vertical entre les icones */}
+      {/* Sections list */}
       <nav className="flex-1 overflow-y-auto px-2 py-3 scrollbar-thin">
-        <div className="px-2 mb-1.5 text-[9px] font-bold uppercase tracking-widest text-white/40">Sections</div>
-        <div>
-          {NAV_GROUPS.map((group, idx) => {
+        <div className="px-2 mb-2 text-[9px] font-bold uppercase tracking-widest text-white/40">Sections</div>
+        <div className="space-y-0.5">
+          {NAV_GROUPS.map((group) => {
             const isActiveSection = activeSection === group.id;
             const hasActivePage = group.items.some(it => isActive(it.to));
             return (
-              <div key={group.id}>
-                {idx > 0 && (
-                  // Petit trait vertical entre les icones (aligne sur la colonne icone)
-                  <div className="h-2.5 w-px bg-white/15 ml-[19.5px] my-0.5" aria-hidden="true" />
-                )}
-                <button
-                  onClick={() => { setActiveSection(group.id); if (!secondaryOpen) setSecondaryOpen(true); }}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12.5px] transition-all ${
-                    isActiveSection
-                      ? "bg-white/10 text-white font-semibold ring-1 ring-white/10"
-                      : hasActivePage
-                        ? "text-admin-accent hover:bg-white/5"
-                        : "text-white/70 hover:bg-white/5 hover:text-white"
+              <button
+                key={group.id}
+                onClick={() => { setActiveSection(group.id); if (!secondaryOpen) setSecondaryOpen(true); }}
+                className={`group relative w-full flex items-center gap-2.5 pl-3.5 pr-3 py-2 rounded-lg text-[12.5px] transition-all duration-200 ${
+                  isActiveSection
+                    ? "bg-white/[0.08] text-white font-semibold"
+                    : hasActivePage
+                      ? "text-admin-accent hover:bg-white/5"
+                      : "text-white/65 hover:bg-white/5 hover:text-white"
+                }`}
+              >
+                {/* Barre d'accent active (glisse) */}
+                <span
+                  className={`absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full bg-admin-accent transition-all duration-200 ${
+                    isActiveSection ? "h-5 opacity-100" : "h-0 opacity-0"
                   }`}
-                >
-                  <group.icon size={15} strokeWidth={1.75} />
-                  <span className="flex-1 text-left">{group.label}</span>
-                  {hasActivePage && <span className="w-1.5 h-1.5 rounded-full bg-admin-accent" />}
-                </button>
-              </div>
+                  aria-hidden="true"
+                />
+                <group.icon size={15} strokeWidth={1.75} className="flex-shrink-0" />
+                <span className="flex-1 text-left truncate">{group.label}</span>
+                {hasActivePage && !isActiveSection && <span className="w-1.5 h-1.5 rounded-full bg-admin-accent flex-shrink-0" />}
+              </button>
             );
           })}
         </div>
@@ -302,22 +272,22 @@ export function AdminSidebar() {
         </select>
       </div>
 
-      {/* Items list — avec ligne verticale guide a gauche (style arbre) */}
+      {/* Items list — révélation fluide au changement de section */}
       <nav className="flex-1 overflow-y-auto py-3 px-3 scrollbar-thin">
-        <div className="ml-2 pl-3 border-l border-white/10 space-y-0.5">
+        <div key={activeGroup.id} className="ml-2 pl-3 border-l border-white/10 space-y-0.5 animate-fade-in-up">
           {activeGroup.items.map(item => {
             const active = isActive(item.to);
             return (
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[12px] transition-all ${
+                className={`relative flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[12px] transition-all duration-200 ${
                   active
                     ? "bg-admin-accent/15 text-admin-accent font-medium"
-                    : "text-white/70 hover:bg-white/5 hover:text-white"
+                    : "text-white/70 hover:bg-white/5 hover:text-white hover:translate-x-0.5"
                 }`}
               >
-                <item.icon size={14} strokeWidth={1.5} />
+                <item.icon size={14} strokeWidth={1.5} className="flex-shrink-0" />
                 <span className="truncate">{item.label}</span>
               </Link>
             );

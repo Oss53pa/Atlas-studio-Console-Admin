@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, Search, ExternalLink, Eye, EyeOff } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Plus, Pencil, Trash2, Search, ExternalLink, Eye, EyeOff, LayoutDashboard } from "lucide-react";
 import { ADMIN_INPUT_CLASS } from "../components/AdminFormField";
 import { supabase } from "../../lib/supabase";
 import { AdminTable } from "../components/AdminTable";
@@ -26,6 +27,8 @@ interface PricingRow { plan: string; price: number }
 
 export default function AdminAppsTable() {
   const { success, error: showError } = useToast();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [apps, setApps] = useState<AppRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -74,6 +77,16 @@ export default function AdminAppsTable() {
     const pricing = app.pricing as Record<string, number> || {};
     setPricingRows(Object.entries(pricing).map(([plan, price]) => ({ plan, price })));
   };
+
+  // Deep-link « Modifier » depuis le cockpit : /admin/apps?edit=<id>
+  useEffect(() => {
+    const editId = searchParams.get("edit");
+    if (editId && apps.length) {
+      const found = apps.find(a => a.id === editId);
+      if (found) { openEdit(found); setSearchParams({}, { replace: true }); }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apps, searchParams]);
 
   const openCreate = () => {
     setEditApp({ ...emptyApp }); setIsNew(true);
@@ -254,13 +267,14 @@ export default function AdminAppsTable() {
           )},
           { key: "actions", label: "", render: (r: AppRow) => (
             <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-              <button onClick={() => openEdit(r)} className="p-1.5 rounded hover:bg-white dark:bg-admin-surface-alt text-neutral-muted dark:text-admin-muted hover:text-gold dark:text-admin-accent transition-colors" title="Modifier"><Pencil size={14} /></button>
+              <button onClick={() => navigate(`/admin/apps/${r.id}`)} className="p-1.5 rounded hover:bg-admin-surface-alt text-neutral-muted dark:text-admin-muted hover:text-gold dark:hover:text-admin-accent transition-colors" title="Ouvrir le cockpit"><LayoutDashboard size={14} /></button>
+              <button onClick={() => openEdit(r)} className="p-1.5 rounded hover:bg-admin-surface-alt text-neutral-muted dark:text-admin-muted hover:text-gold dark:hover:text-admin-accent transition-colors" title="Modifier"><Pencil size={14} /></button>
               <button onClick={() => handleDelete(r)} className="p-1.5 rounded hover:bg-red-50 text-neutral-muted dark:text-admin-muted hover:text-red-500 transition-colors" title="Supprimer"><Trash2 size={14} /></button>
             </div>
           )},
         ]}
         data={filtered}
-        onRowClick={(r) => openEdit(r)}
+        onRowClick={(r) => navigate(`/admin/apps/${r.id}`)}
       />
 
       {/* Edit/Create modal */}
