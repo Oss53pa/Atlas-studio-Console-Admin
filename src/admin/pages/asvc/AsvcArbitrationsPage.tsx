@@ -34,7 +34,7 @@ export default function AsvcArbitrationsPage() {
         subtitle="Actions proposées par les agents — validation puis exécution"
       />
 
-      <div className="flex gap-1 border-b border-white/10 mb-5">
+      <div className="flex gap-1 border-b border-p-border mb-5">
         <TabButton
           active={tab === 'pending_validation'}
           onClick={() => setTab('pending_validation')}
@@ -98,7 +98,7 @@ function TabButton({
       className={`inline-flex items-center gap-1.5 px-4 py-2 text-[12.5px] border-b-2 -mb-px transition ${
         active
           ? 'border-admin-accent text-admin-accent font-semibold'
-          : 'border-transparent text-neutral-400 hover:text-neutral-200'
+          : 'border-transparent text-p-muted hover:text-p-text'
       }`}
     >
       {icon}
@@ -109,7 +109,7 @@ function TabButton({
             ? 'bg-admin-accent/15'
             : accent && count > 0
               ? 'bg-emerald-500/15 text-emerald-300'
-              : 'bg-white/5'
+              : 'bg-p-surface-alt'
         }`}
       >
         {count}
@@ -153,7 +153,7 @@ function ValidationTab({
               className={`px-3 py-1.5 rounded-lg text-[12px] border transition ${
                 active
                   ? 'bg-admin-accent/15 text-admin-accent border-admin-accent/30'
-                  : 'border-white/10 text-neutral-400 hover:bg-white/5'
+                  : 'border-p-border text-p-muted hover:bg-p-surface-alt'
               }`}
             >
               {f.label}
@@ -207,7 +207,7 @@ function ExecutionTab({
 
   return (
     <>
-      <div className="mb-4 rounded-lg border border-white/5 bg-onyx-light/20 p-3 text-[12px] text-neutral-400">
+      <div className="mb-4 rounded-lg border border-p-border bg-p-surface-alt/50 p-3 text-[12px] text-p-muted">
         <Play size={13} className="inline mr-1.5" />
         Une fois <span className="text-emerald-300 font-medium">approuvée</span>, une action passe ici pour <span className="text-admin-accent font-medium">exécution</span>.
         Les actions <em>internal</em> s'exécutent intégralement en base (réponse ticket → insérée dans le fil, lead → score mis à jour, etc.).
@@ -239,9 +239,9 @@ function ExecutionTab({
       {loading && <p className="text-neutral-500 text-sm">Chargement...</p>}
 
       {!loading && rows.length === 0 && (
-        <div className="rounded-xl border border-white/5 bg-onyx-light/20 py-12 px-6 text-center">
+        <div className="rounded-xl border border-p-border bg-p-surface-alt/50 py-12 px-6 text-center">
           <CheckCircle2 size={20} className="text-emerald-300 mx-auto mb-2" />
-          <p className="text-neutral-400 text-sm">Aucune action en attente d'exécution.</p>
+          <p className="text-p-muted text-sm">Aucune action en attente d'exécution.</p>
           <p className="text-neutral-600 text-[11px] mt-1">
             Tout ce qui est approuvé a déjà été exécuté ou attend un connecteur externe.
           </p>
@@ -311,7 +311,7 @@ function ExecutionRow({
   disabled?: boolean;
 }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-onyx-light/30 px-3 py-2.5 flex flex-wrap items-center gap-3">
+    <div className="rounded-lg border border-p-border bg-p-surface-alt px-3 py-2.5 flex flex-wrap items-center gap-3">
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2 mb-0.5 flex-wrap">
           <span className={`text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded border ${CRITICALITY_BADGE_CLASSES[row.criticality]}`}>

@@ -72,7 +72,7 @@ export default function AsvcCustomersPage() {
               className={`px-3 py-1.5 rounded-lg text-[12px] border transition ${
                 active
                   ? 'bg-admin-accent/15 text-admin-accent border-admin-accent/30'
-                  : 'border-white/10 text-neutral-400 hover:bg-white/5'
+                  : 'border-p-border text-p-muted hover:bg-p-surface-alt'
               }`}
             >
               {f.label}
@@ -98,9 +98,9 @@ export default function AsvcCustomersPage() {
       {loading && <CardListSkeleton />}
 
       {!loading && filtered.length === 0 && (
-        <div className="rounded-xl border border-white/5 bg-onyx-light/20 py-12 px-6 text-center">
+        <div className="rounded-xl border border-p-border bg-p-surface-alt/50 py-12 px-6 text-center">
           <Users size={20} className="text-neutral-600 mx-auto mb-2" />
-          <p className="text-neutral-400 text-sm">Aucun client pour ce filtre.</p>
+          <p className="text-p-muted text-sm">Aucun client pour ce filtre.</p>
         </div>
       )}
 
@@ -113,7 +113,7 @@ export default function AsvcCustomersPage() {
           return (
             <div
               key={r.client_id}
-              className="rounded-xl border border-white/10 bg-onyx-light/30 p-4 flex flex-wrap items-start gap-4"
+              className="rounded-xl border border-p-border bg-p-surface-alt p-4 flex flex-wrap items-start gap-4"
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">

@@ -11,8 +11,8 @@ import {
 import type { AgentAction } from './types';
 
 const STATUS_COLOR: Record<ActionStatus, string> = {
-  proposed: 'text-neutral-400 bg-neutral-500/10',
-  consolidated: 'text-neutral-300 bg-neutral-500/15',
+  proposed: 'text-p-muted bg-neutral-500/10',
+  consolidated: 'text-p-text-2 bg-neutral-500/15',
   approved: 'text-emerald-400 bg-emerald-500/10',
   modified: 'text-amber-700 bg-amber-500/10',
   rejected: 'text-red-700 bg-red-500/10',

@@ -69,7 +69,7 @@ export default function AsvcPrDetailPage() {
     <div className="max-w-5xl">
       <Link
         to="/admin/asvc/pipeline"
-        className="inline-flex items-center gap-1.5 text-neutral-500 hover:text-neutral-300 text-[12px] mb-4 transition"
+        className="inline-flex items-center gap-1.5 text-neutral-500 hover:text-p-text-2 text-[12px] mb-4 transition"
       >
         <ArrowLeft size={13} />
         Retour au Pipeline
@@ -85,7 +85,7 @@ export default function AsvcPrDetailPage() {
 
       {pr && (
         <div className="space-y-6">
-          <section className="rounded-xl border border-white/10 bg-onyx-light/30 p-4 flex flex-wrap gap-4">
+          <section className="rounded-xl border border-p-border bg-p-surface-alt p-4 flex flex-wrap gap-4">
             <Stat label="Status" value={pr.status} />
             <Stat label="QA" value={pr.qa_status} accent={pr.qa_status === 'passed' ? 'emerald' : pr.qa_status === 'failed' ? 'red' : undefined} />
             <Stat label="Approuvée CEO" value={pr.approved_by_ceo ? 'Oui' : 'Non'} accent={pr.approved_by_ceo ? 'emerald' : undefined} />
@@ -97,7 +97,7 @@ export default function AsvcPrDetailPage() {
           </section>
 
           {(pr.github_pr_url || pr.preview_url) && (
-            <section className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+            <section className="rounded-xl border border-p-border bg-p-surface-alt p-4">
               <h3 className="text-neutral-light text-[12.5px] font-semibold mb-2">Liens externes</h3>
               <div className="flex flex-wrap gap-3 text-[12px]">
                 {pr.github_pr_url && (
@@ -128,16 +128,16 @@ export default function AsvcPrDetailPage() {
           )}
 
           {pr.description && (
-            <section className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+            <section className="rounded-xl border border-p-border bg-p-surface-alt p-4">
               <h3 className="text-neutral-light text-[12.5px] font-semibold mb-2">Description</h3>
-              <pre className="text-[12px] text-neutral-300 whitespace-pre-wrap font-mono bg-black/30 p-3 rounded max-h-96 overflow-auto">
+              <pre className="text-[12px] text-p-text-2 whitespace-pre-wrap font-mono bg-black/30 p-3 rounded max-h-96 overflow-auto">
                 {pr.description}
               </pre>
             </section>
           )}
 
           {tests.length > 0 && (
-            <section className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+            <section className="rounded-xl border border-p-border bg-p-surface-alt p-4">
               <div className="flex items-center gap-2 mb-3">
                 <FlaskConical size={14} className="text-admin-accent" />
                 <h3 className="text-neutral-light text-[12.5px] font-semibold">
@@ -146,7 +146,7 @@ export default function AsvcPrDetailPage() {
               </div>
               <div className="space-y-1.5">
                 {tests.map((t) => (
-                  <div key={t.id} className="rounded border border-white/5 bg-onyx-light/40 px-3 py-2 flex flex-wrap items-center gap-3 text-[11.5px]">
+                  <div key={t.id} className="rounded border border-p-border bg-p-surface-alt px-3 py-2 flex flex-wrap items-center gap-3 text-[11.5px]">
                     <span
                       className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] ${
                         t.status === 'passed'
@@ -159,7 +159,7 @@ export default function AsvcPrDetailPage() {
                       {t.status === 'passed' && <CheckCircle2 size={9} />}
                       {t.status}
                     </span>
-                    <span className="text-neutral-300 font-mono">{t.test_type}</span>
+                    <span className="text-p-text-2 font-mono">{t.test_type}</span>
                     {t.framework && <span className="text-neutral-500">{t.framework}</span>}
                     <span className="text-neutral-500">
                       {t.passed}/{t.total_tests} passed
@@ -196,7 +196,7 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
       ? 'text-admin-accent'
       : accent === 'red'
         ? 'text-red-700'
-        : 'text-neutral-300';
+        : 'text-p-text-2';
   return (
     <div className="text-[11.5px]">
       <div className="text-neutral-500 text-[10.5px]">{label}</div>

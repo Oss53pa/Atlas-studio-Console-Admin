@@ -89,7 +89,7 @@ export default function AsvcContentPage() {
               className={`px-3 py-1.5 rounded-lg text-[12px] border transition ${
                 active
                   ? 'bg-admin-accent/15 text-admin-accent border-admin-accent/30'
-                  : 'border-white/10 text-neutral-400 hover:bg-white/5'
+                  : 'border-p-border text-p-muted hover:bg-p-surface-alt'
               }`}
             >
               {f.label}
@@ -102,9 +102,9 @@ export default function AsvcContentPage() {
       {loading && <CardListSkeleton />}
 
       {!loading && filtered.length === 0 && (
-        <div className="rounded-xl border border-white/5 bg-onyx-light/20 py-12 px-6 text-center">
+        <div className="rounded-xl border border-p-border bg-p-surface-alt/50 py-12 px-6 text-center">
           <Calendar size={20} className="text-neutral-600 mx-auto mb-2" />
-          <p className="text-neutral-400 text-sm">Aucun contenu pour ce filtre.</p>
+          <p className="text-p-muted text-sm">Aucun contenu pour ce filtre.</p>
           <p className="text-neutral-600 text-[11px] mt-1">
             Clique sur "Nouveau post" pour que l'agent Content draft son premier post.
           </p>
@@ -143,11 +143,11 @@ function ContentCard({ entry }: { entry: { id: string; channel: ContentChannel; 
   const preview = entry.content.slice(0, 180);
   const truncated = entry.content.length > 180;
   return (
-    <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+    <div className="rounded-xl border border-p-border bg-p-surface-alt p-4">
       <div className="flex items-start justify-between gap-3 mb-2 flex-wrap">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-[11px] text-neutral-500 mb-0.5">
-            <span className="font-semibold text-neutral-400">
+            <span className="font-semibold text-p-muted">
               {CONTENT_CHANNEL_LABELS[entry.channel]}
             </span>
             <span>·</span>
@@ -172,7 +172,7 @@ function ContentCard({ entry }: { entry: { id: string; channel: ContentChannel; 
         </span>
       </div>
 
-      <div className="text-neutral-300 text-[12.5px] leading-relaxed whitespace-pre-wrap bg-black/30 border border-white/5 rounded-lg p-3">
+      <div className="text-p-text-2 text-[12.5px] leading-relaxed whitespace-pre-wrap bg-black/30 border border-p-border rounded-lg p-3">
         {expanded ? entry.content : preview}
         {truncated && !expanded && '...'}
         {truncated && (
@@ -189,7 +189,7 @@ function ContentCard({ entry }: { entry: { id: string; channel: ContentChannel; 
       {entry.hashtags && entry.hashtags.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2">
           {entry.hashtags.map((h) => (
-            <span key={h} className="inline-flex items-center gap-0.5 text-[10.5px] text-neutral-500 bg-white/5 px-1.5 py-0.5 rounded">
+            <span key={h} className="inline-flex items-center gap-0.5 text-[10.5px] text-neutral-500 bg-p-surface-alt px-1.5 py-0.5 rounded">
               <Hash size={9} />
               {h.replace(/^#/, '')}
             </span>
@@ -234,24 +234,24 @@ function NewPostModal({
       <form
         onSubmit={submit}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg bg-onyx border border-white/10 rounded-2xl p-5"
+        className="w-full max-w-lg bg-p-surface border border-p-border rounded-2xl p-5"
       >
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-neutral-light text-sm font-semibold">Nouveau post — demande à l'agent Content</h2>
-          <button type="button" onClick={onClose} className="text-neutral-500 hover:text-neutral-300">
+          <button type="button" onClick={onClose} className="text-neutral-500 hover:text-p-text-2">
             <XIcon size={16} />
           </button>
         </div>
 
         <label className="block mb-3">
-          <span className="text-neutral-400 text-[11px] mb-1 block">Canal</span>
+          <span className="text-p-muted text-[11px] mb-1 block">Canal</span>
           <select
             value={channel}
             onChange={(e) => setChannel(e.target.value as ContentChannel)}
-            className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-[12.5px] text-neutral-light outline-none focus:border-admin-accent/50"
+            className="w-full bg-black/30 border border-p-border rounded-lg px-3 py-2 text-[12.5px] text-neutral-light outline-none focus:border-admin-accent/50"
           >
             {Object.entries(CONTENT_CHANNEL_LABELS).map(([k, v]) => (
-              <option key={k} value={k} className="bg-onyx">
+              <option key={k} value={k} className="bg-p-surface">
                 {v}
               </option>
             ))}
@@ -259,35 +259,35 @@ function NewPostModal({
         </label>
 
         <label className="block mb-3">
-          <span className="text-neutral-400 text-[11px] mb-1 block">Sujet / angle</span>
+          <span className="text-p-muted text-[11px] mb-1 block">Sujet / angle</span>
           <textarea
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="ex: Nouvelle TVA UEMOA 2026 — impact pour les PME ; ou : retour d'expérience client cabinet compta..."
             rows={3}
-            className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-[12.5px] text-neutral-light placeholder:text-neutral-600 outline-none focus:border-admin-accent/50"
+            className="w-full bg-black/30 border border-p-border rounded-lg px-3 py-2 text-[12.5px] text-neutral-light placeholder:text-neutral-600 outline-none focus:border-admin-accent/50"
             required
           />
         </label>
 
         <label className="block mb-3">
-          <span className="text-neutral-400 text-[11px] mb-1 block">Programmation (optionnel)</span>
+          <span className="text-p-muted text-[11px] mb-1 block">Programmation (optionnel)</span>
           <input
             type="datetime-local"
             value={scheduledAt}
             onChange={(e) => setScheduledAt(e.target.value)}
-            className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-[12.5px] text-neutral-light outline-none focus:border-admin-accent/50"
+            className="w-full bg-black/30 border border-p-border rounded-lg px-3 py-2 text-[12.5px] text-neutral-light outline-none focus:border-admin-accent/50"
           />
         </label>
 
         <label className="block mb-4">
-          <span className="text-neutral-400 text-[11px] mb-1 block">Contexte complémentaire (optionnel)</span>
+          <span className="text-p-muted text-[11px] mb-1 block">Contexte complémentaire (optionnel)</span>
           <textarea
             value={context}
             onChange={(e) => setContext(e.target.value)}
             placeholder="ex: faire référence à l'étude Banque Mondiale 2025 ; tonalité plus directe..."
             rows={2}
-            className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-[12.5px] text-neutral-light placeholder:text-neutral-600 outline-none focus:border-admin-accent/50"
+            className="w-full bg-black/30 border border-p-border rounded-lg px-3 py-2 text-[12.5px] text-neutral-light placeholder:text-neutral-600 outline-none focus:border-admin-accent/50"
           />
         </label>
 
@@ -302,7 +302,7 @@ function NewPostModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-3 py-2 border border-white/10 text-neutral-300 hover:bg-white/5 text-[12px] rounded-lg transition"
+            className="px-3 py-2 border border-p-border text-p-text-2 hover:bg-p-surface-alt text-[12px] rounded-lg transition"
           >
             Annuler
           </button>

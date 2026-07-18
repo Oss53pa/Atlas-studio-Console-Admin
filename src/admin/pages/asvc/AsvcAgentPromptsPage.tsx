@@ -28,7 +28,7 @@ export default function AsvcAgentPromptsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
         {/* Sidebar agents */}
-        <aside className="rounded-xl border border-white/10 bg-onyx-light/30 p-2">
+        <aside className="rounded-xl border border-p-border bg-p-surface-alt p-2">
           {agentsLoading && <p className="text-neutral-500 text-[12px] p-2">Chargement...</p>}
           <ul className="space-y-0.5">
             {sortedAgents.map((a) => {
@@ -40,7 +40,7 @@ export default function AsvcAgentPromptsPage() {
                     className={`w-full text-left px-2.5 py-1.5 rounded text-[12px] transition ${
                       active
                         ? 'bg-admin-accent/15 text-admin-accent border border-admin-accent/30'
-                        : 'hover:bg-white/[0.04] text-neutral-300 border border-transparent'
+                        : 'hover:bg-white/[0.04] text-p-text-2 border border-transparent'
                     }`}
                   >
                     <div className="font-semibold truncate">{a.name}</div>
@@ -57,7 +57,7 @@ export default function AsvcAgentPromptsPage() {
         {/* Panel */}
         <main>
           {!selected && (
-            <div className="rounded-xl border border-white/10 bg-onyx-light/20 p-8 text-center text-neutral-500 text-[13px]">
+            <div className="rounded-xl border border-p-border bg-p-surface-alt/50 p-8 text-center text-neutral-500 text-[13px]">
               <BookOpen size={28} className="mx-auto mb-2 text-neutral-600" />
               Sélectionne un agent pour éditer son system prompt.
             </div>
@@ -121,7 +121,7 @@ function AgentPromptPanel({ agentCode, agentName }: { agentCode: string; agentNa
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-4 flex items-start justify-between gap-3">
+      <div className="rounded-xl border border-p-border bg-p-surface-alt p-4 flex items-start justify-between gap-3">
         <div>
           <div className="text-neutral-light text-[13px] font-semibold">{agentName}</div>
           <div className="text-neutral-500 text-[11px] font-mono">{agentCode}</div>
@@ -170,7 +170,7 @@ function AgentPromptPanel({ agentCode, agentName }: { agentCode: string; agentNa
 
       {/* Editor */}
       {showEditor && (
-        <div className="rounded-xl border border-admin-accent/30 bg-onyx-light/40 p-4 space-y-3">
+        <div className="rounded-xl border border-admin-accent/30 bg-p-surface-alt p-4 space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-neutral-light text-[12.5px] font-semibold">
               Nouvelle version (deviendra active immédiatement)
@@ -181,7 +181,7 @@ function AgentPromptPanel({ agentCode, agentName }: { agentCode: string; agentNa
                 setDraft('');
                 setNotes('');
               }}
-              className="text-neutral-500 hover:text-neutral-300"
+              className="text-neutral-500 hover:text-p-text-2"
             >
               <X size={14} />
             </button>
@@ -191,7 +191,7 @@ function AgentPromptPanel({ agentCode, agentName }: { agentCode: string; agentNa
             onChange={(e) => setDraft(e.target.value)}
             rows={20}
             spellCheck={false}
-            className="w-full bg-onyx border border-white/10 rounded p-2.5 text-[12.5px] text-neutral-200 font-mono leading-relaxed focus:outline-none focus:border-admin-accent/50"
+            className="w-full bg-p-surface border border-p-border rounded p-2.5 text-[12.5px] text-p-text font-mono leading-relaxed focus:outline-none focus:border-admin-accent/50"
             placeholder="Tu es ... Agent de Atlas Studio..."
           />
           <input
@@ -199,7 +199,7 @@ function AgentPromptPanel({ agentCode, agentName }: { agentCode: string; agentNa
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Notes (changelog) — ex: ajout règle anti-emoji"
-            className="w-full bg-onyx border border-white/10 rounded px-2.5 py-1.5 text-[12px] text-neutral-200 focus:outline-none focus:border-admin-accent/50"
+            className="w-full bg-p-surface border border-p-border rounded px-2.5 py-1.5 text-[12px] text-p-text focus:outline-none focus:border-admin-accent/50"
           />
           <div className="flex justify-end gap-2">
             <button
@@ -208,7 +208,7 @@ function AgentPromptPanel({ agentCode, agentName }: { agentCode: string; agentNa
                 setDraft('');
                 setNotes('');
               }}
-              className="px-3 py-1.5 rounded text-[12px] text-neutral-400 hover:bg-white/[0.04]"
+              className="px-3 py-1.5 rounded text-[12px] text-p-muted hover:bg-white/[0.04]"
             >
               Annuler
             </button>
@@ -225,7 +225,7 @@ function AgentPromptPanel({ agentCode, agentName }: { agentCode: string; agentNa
       )}
 
       {/* Historique */}
-      <section className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+      <section className="rounded-xl border border-p-border bg-p-surface-alt p-4">
         <h3 className="text-neutral-light text-[12.5px] font-semibold mb-2">
           Historique ({versions.length})
         </h3>
@@ -242,27 +242,27 @@ function AgentPromptPanel({ agentCode, agentName }: { agentCode: string; agentNa
               className={`flex items-center gap-2 px-3 py-2 rounded border ${
                 v.is_active
                   ? 'border-emerald-500/30 bg-emerald-500/5'
-                  : 'border-white/10 bg-onyx-light/20'
+                  : 'border-p-border bg-p-surface-alt/50'
               }`}
             >
               <span
                 className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
                   v.is_active
                     ? 'bg-emerald-500/20 text-emerald-300'
-                    : 'bg-neutral-500/15 text-neutral-400'
+                    : 'bg-neutral-500/15 text-p-muted'
                 }`}
               >
                 v{v.version}
               </span>
               <div className="flex-1 min-w-0">
-                <div className="text-[11.5px] text-neutral-300 truncate">
+                <div className="text-[11.5px] text-p-text-2 truncate">
                   {v.notes ?? <span className="text-neutral-500 italic">sans note</span>}
                 </div>
                 <div className="text-[10.5px] text-neutral-600">{timeAgoFr(v.created_at)}</div>
               </div>
               <button
                 onClick={() => setViewing(v)}
-                className="text-[11px] text-neutral-400 hover:text-admin-accent px-2 py-1 rounded"
+                className="text-[11px] text-p-muted hover:text-admin-accent px-2 py-1 rounded"
               >
                 Voir
               </button>
@@ -295,9 +295,9 @@ function AgentPromptPanel({ agentCode, agentName }: { agentCode: string; agentNa
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-onyx border border-white/10 rounded-xl max-w-3xl w-full max-h-[80vh] flex flex-col"
+            className="bg-p-surface border border-p-border rounded-xl max-w-3xl w-full max-h-[80vh] flex flex-col"
           >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-p-border">
               <div>
                 <div className="text-neutral-light text-[13px] font-semibold">
                   {agentName} — v{viewing.version}
@@ -308,12 +308,12 @@ function AgentPromptPanel({ agentCode, agentName }: { agentCode: string; agentNa
               </div>
               <button
                 onClick={() => setViewing(null)}
-                className="text-neutral-500 hover:text-neutral-300"
+                className="text-neutral-500 hover:text-p-text-2"
               >
                 <X size={16} />
               </button>
             </div>
-            <pre className="flex-1 overflow-auto p-4 text-[12px] text-neutral-200 font-mono whitespace-pre-wrap leading-relaxed">
+            <pre className="flex-1 overflow-auto p-4 text-[12px] text-p-text font-mono whitespace-pre-wrap leading-relaxed">
               {viewing.content}
             </pre>
           </div>

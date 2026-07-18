@@ -32,7 +32,7 @@ export default function AsvcHealthPage() {
         <button
           type="button"
           onClick={refresh}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 border border-white/10 hover:bg-white/5 text-neutral-300 text-[11px] rounded-md transition"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 border border-p-border hover:bg-p-surface-alt text-p-text-2 text-[11px] rounded-md transition"
         >
           <Activity size={11} />
           Rafraîchir
@@ -58,7 +58,7 @@ export default function AsvcHealthPage() {
                 <p className="text-red-700 text-[12px]">{scanError}</p>
               ) : scanResult ? (
                 <>
-                  <p className="text-neutral-400 text-[12px] leading-snug mb-2">{scanResult.summary}</p>
+                  <p className="text-p-muted text-[12px] leading-snug mb-2">{scanResult.summary}</p>
                   <div className="flex items-center gap-2 flex-wrap text-[11px]">
                     <span className="pill pill-neutral">Posture {scanResult.posture_score}/100</span>
                     <span className="pill">{scanResult.findings_count} findings</span>
@@ -126,14 +126,14 @@ export default function AsvcHealthPage() {
           </div>
 
           {/* Audit chain verification */}
-          <section className="rounded-xl border border-white/10 bg-onyx-light/30 p-5">
+          <section className="rounded-xl border border-p-border bg-p-surface-alt p-5">
             <div className="flex items-center gap-2 mb-2">
               <Shield size={15} className="text-admin-accent" />
               <h2 className="text-neutral-light text-sm font-semibold">
                 Intégrité hash chain audit log
               </h2>
             </div>
-            <p className="text-neutral-400 text-[12px] mb-3">
+            <p className="text-p-muted text-[12px] mb-3">
               Recalcule les hashes SHA-256 du chain pour détecter une éventuelle altération.
               Une altération = signal d'incident sécurité, à investiguer manuellement (les
               RULES Postgres empêchent UPDATE/DELETE, donc un mismatch ne devrait jamais arriver).
@@ -212,7 +212,7 @@ function Card({
     ? 'border-red-500/30 bg-red-500/5'
     : accent
       ? 'border-amber-500/30 bg-amber-500/5'
-      : 'border-white/10 bg-onyx-light/30';
+      : 'border-p-border bg-p-surface-alt';
   return (
     <div className={`rounded-xl border p-4 ${cls}`}>
       <div className="text-neutral-500 text-[10.5px] uppercase tracking-wider mb-1">{title}</div>

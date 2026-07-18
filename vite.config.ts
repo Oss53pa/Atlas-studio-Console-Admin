@@ -9,4 +9,8 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  // Honore la variable PORT (utilisée par l'outil de preview) ; défaut 5173 en dev normal.
+  server: {
+    port: Number(process.env.PORT) || 5173,
+  },
 });

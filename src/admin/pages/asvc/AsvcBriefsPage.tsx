@@ -55,7 +55,7 @@ export default function AsvcBriefsPage() {
               className={`px-3 py-1.5 rounded-lg text-[12px] border transition ${
                 active
                   ? 'bg-admin-accent/15 text-admin-accent border-admin-accent/30'
-                  : 'border-white/10 text-neutral-400 hover:bg-white/5'
+                  : 'border-p-border text-p-muted hover:bg-p-surface-alt'
               }`}
             >
               {f === 'all' ? 'Tout' : BRIEF_LABELS[f]}
@@ -68,9 +68,9 @@ export default function AsvcBriefsPage() {
       {loading && <CardListSkeleton />}
 
       {!loading && filtered.length === 0 && (
-        <div className="rounded-xl border border-white/5 bg-onyx-light/20 py-12 px-6 text-center">
+        <div className="rounded-xl border border-p-border bg-p-surface-alt/50 py-12 px-6 text-center">
           <Sunrise size={20} className="text-neutral-600 mx-auto mb-2" />
-          <p className="text-neutral-400 text-sm">Aucun brief pour ce filtre.</p>
+          <p className="text-p-muted text-sm">Aucun brief pour ce filtre.</p>
           <p className="text-neutral-600 text-[11px] mt-1">
             Les briefs sont produits par le COO Agent. Déclenche-en un depuis le Hub.
           </p>
@@ -91,7 +91,7 @@ export default function AsvcBriefsPage() {
 function BriefCard({ brief }: { brief: CooBrief }) {
   const [expanded, setExpanded] = useState(false);
   const Icon = BRIEF_ICONS[brief.brief_type] ?? Sunrise;
-  const color = BRIEF_COLORS[brief.brief_type] ?? 'text-neutral-300';
+  const color = BRIEF_COLORS[brief.brief_type] ?? 'text-p-text-2';
   const label = BRIEF_LABELS[brief.brief_type] ?? brief.brief_type;
 
   const dateFmt = new Date(brief.brief_date).toLocaleDateString('fr-FR', {
@@ -102,7 +102,7 @@ function BriefCard({ brief }: { brief: CooBrief }) {
   });
 
   return (
-    <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+    <div className="rounded-xl border border-p-border bg-p-surface-alt p-4">
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}
@@ -112,7 +112,7 @@ function BriefCard({ brief }: { brief: CooBrief }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap mb-0.5">
             <span className={`text-[10px] uppercase font-semibold ${color}`}>{label}</span>
-            <span className="text-neutral-300 text-[13px] font-medium">{dateFmt}</span>
+            <span className="text-p-text-2 text-[13px] font-medium">{dateFmt}</span>
             <span className="text-neutral-600 text-[10.5px]">· créé {timeAgoFr(brief.created_at)}</span>
           </div>
           <div className="flex gap-3 text-[10.5px] text-neutral-500">
@@ -132,16 +132,16 @@ function BriefCard({ brief }: { brief: CooBrief }) {
       </button>
 
       {expanded && (
-        <div className="mt-3 pt-3 border-t border-white/5">
-          <p className="text-neutral-300 text-[13px] leading-relaxed whitespace-pre-line">
+        <div className="mt-3 pt-3 border-t border-p-border">
+          <p className="text-p-text-2 text-[13px] leading-relaxed whitespace-pre-line">
             {brief.summary}
           </p>
           {brief.kpis && Object.keys(brief.kpis).length > 0 && (
             <details className="mt-3">
-              <summary className="text-neutral-500 text-[10.5px] cursor-pointer hover:text-neutral-300">
+              <summary className="text-neutral-500 text-[10.5px] cursor-pointer hover:text-p-text-2">
                 Voir les KPIs source
               </summary>
-              <pre className="text-[10px] text-neutral-400 font-mono whitespace-pre-wrap break-words max-h-64 overflow-auto bg-black/30 p-2 rounded mt-1">
+              <pre className="text-[10px] text-p-muted font-mono whitespace-pre-wrap break-words max-h-64 overflow-auto bg-black/30 p-2 rounded mt-1">
                 {JSON.stringify(brief.kpis, null, 2)}
               </pre>
             </details>

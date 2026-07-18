@@ -59,12 +59,12 @@ export default function AsvcKillSwitchPage() {
       )}
 
       {!globalKill && (
-        <div className="mb-6 rounded-xl border border-white/10 bg-onyx-light/30 p-5">
+        <div className="mb-6 rounded-xl border border-p-border bg-p-surface-alt p-5">
           <h2 className="text-neutral-light text-sm font-semibold mb-1 flex items-center gap-2">
             <Power size={14} className="text-red-700" />
             Arrêt global
           </h2>
-          <p className="text-neutral-400 text-[12px] mb-3">
+          <p className="text-p-muted text-[12px] mb-3">
             Désactive immédiatement les 11 agents. Aucune action externe ne sera proposée
             tant que le switch reste actif.
           </p>
@@ -73,7 +73,7 @@ export default function AsvcKillSwitchPage() {
             onChange={(e) => setReason(e.target.value)}
             placeholder="Raison (obligatoire) — ex: incident en cours, audit, congés..."
             rows={2}
-            className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-[12.5px] text-neutral-light placeholder:text-neutral-600 outline-none focus:border-red-500/40"
+            className="w-full bg-black/30 border border-p-border rounded-lg px-3 py-2 text-[12.5px] text-neutral-light placeholder:text-neutral-600 outline-none focus:border-red-500/40"
           />
           <button
             type="button"
@@ -98,10 +98,10 @@ export default function AsvcKillSwitchPage() {
         {historyKills.map((k) => (
           <div
             key={k.id}
-            className="rounded-lg border border-white/5 bg-onyx-light/20 px-3 py-2 text-[11.5px]"
+            className="rounded-lg border border-p-border bg-p-surface-alt/50 px-3 py-2 text-[11.5px]"
           >
             <div className="flex items-center justify-between">
-              <span className="text-neutral-300">
+              <span className="text-p-text-2">
                 {k.scope === 'all'
                   ? 'Arrêt global'
                   : `${k.scope}: ${k.target}`}

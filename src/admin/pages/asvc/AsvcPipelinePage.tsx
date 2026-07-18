@@ -209,7 +209,7 @@ function Column({
   };
 
   return (
-    <div className="bg-onyx-light/20 border border-white/5 rounded-xl p-3 flex flex-col max-h-[calc(100vh-220px)]">
+    <div className="bg-p-surface-alt/50 border border-p-border rounded-xl p-3 flex flex-col max-h-[calc(100vh-220px)]">
       <div className={`flex items-center gap-2 mb-3 pb-2 border-b flex-shrink-0 ${accentClasses[accent]}`}>
         <Icon size={14} />
         <span className="text-[12px] font-semibold uppercase tracking-wider">{title}</span>
@@ -236,7 +236,7 @@ function IdeaCard({
   onLaunchResearch: () => void;
 }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-onyx-light/40 p-2.5 text-[11.5px]">
+    <div className="rounded-lg border border-p-border bg-p-surface-alt p-2.5 text-[11.5px]">
       <div className="text-neutral-light font-medium leading-snug mb-1">{idea.title}</div>
       <div className="flex flex-wrap gap-2 text-neutral-600 text-[10px] mb-2">
         {idea.category && <span>{idea.category}</span>}
@@ -268,7 +268,7 @@ function ResearchCard({
   onDraftSpec: () => void;
 }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-onyx-light/40 p-2.5 text-[11.5px]">
+    <div className="rounded-lg border border-p-border bg-p-surface-alt p-2.5 text-[11.5px]">
       <div className="text-neutral-light font-medium leading-snug mb-1">{research.title}</div>
       <div className="flex flex-wrap gap-2 text-neutral-600 text-[10px] mb-2">
         {research.has_brief ? (
@@ -305,7 +305,7 @@ function SpecCard({
   const [repo, setRepo] = useState('atlas-studio/');
 
   return (
-    <div className="rounded-lg border border-white/10 bg-onyx-light/40 p-2.5 text-[11.5px]">
+    <div className="rounded-lg border border-p-border bg-p-surface-alt p-2.5 text-[11.5px]">
       <Link
         to={`/admin/asvc/specs/${spec.id}`}
         className="text-neutral-light font-medium leading-snug mb-1 block hover:text-admin-accent transition"
@@ -341,7 +341,7 @@ function SpecCard({
             value={repo}
             onChange={(e) => setRepo(e.target.value)}
             placeholder="owner/repo"
-            className="w-full bg-black/30 border border-white/10 rounded px-2 py-1 text-[10.5px] text-neutral-light"
+            className="w-full bg-black/30 border border-p-border rounded px-2 py-1 text-[10.5px] text-neutral-light"
           />
           <div className="flex gap-1">
             <button
@@ -379,7 +379,7 @@ function PrCard({
   onRunQa: () => void;
 }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-onyx-light/40 p-2.5 text-[11.5px]">
+    <div className="rounded-lg border border-p-border bg-p-surface-alt p-2.5 text-[11.5px]">
       <Link
         to={`/admin/asvc/prs/${pr.id}`}
         className="text-neutral-light font-medium leading-snug mb-1 block hover:text-admin-accent transition"
@@ -399,7 +399,7 @@ function PrCard({
                 ? 'border-red-500/30 text-red-700'
                 : pr.qa_status === 'running'
                   ? 'border-amber-500/30 text-admin-accent'
-                  : 'border-white/10 text-neutral-500'
+                  : 'border-p-border text-neutral-500'
           }`}
         >
           QA {pr.qa_status}
@@ -433,7 +433,7 @@ function QaCard({
   const [appName, setAppName] = useState(pr.repo.split('/').pop() ?? '');
 
   return (
-    <div className="rounded-lg border border-white/10 bg-onyx-light/40 p-2.5 text-[11.5px]">
+    <div className="rounded-lg border border-p-border bg-p-surface-alt p-2.5 text-[11.5px]">
       <div className="text-neutral-light font-medium leading-snug mb-1">{pr.title}</div>
       <div className="text-neutral-600 text-[10px] font-mono mb-1 truncate">{pr.repo}</div>
       <div className="flex items-center gap-1 mb-2">
@@ -460,7 +460,7 @@ function QaCard({
             value={appName}
             onChange={(e) => setAppName(e.target.value)}
             placeholder="app-name"
-            className="w-full bg-black/30 border border-white/10 rounded px-2 py-1 text-[10.5px] text-neutral-light"
+            className="w-full bg-black/30 border border-p-border rounded px-2 py-1 text-[10.5px] text-neutral-light"
           />
           <div className="grid grid-cols-3 gap-1">
             <button
@@ -500,10 +500,10 @@ function DeploymentCard({ deployment }: { deployment: PipelineDeployment }) {
     preview: 'border-blue-500/30 text-blue-700',
     staging: 'border-violet-500/30 text-violet-700',
     production: 'border-red-500/30 text-red-700 bg-red-500/10',
-  }[deployment.environment] ?? 'border-white/10 text-neutral-400';
+  }[deployment.environment] ?? 'border-p-border text-p-muted';
 
   return (
-    <div className="rounded-lg border border-white/10 bg-onyx-light/40 p-2.5 text-[11.5px]">
+    <div className="rounded-lg border border-p-border bg-p-surface-alt p-2.5 text-[11.5px]">
       <Link
         to={`/admin/asvc/deployments/${deployment.id}`}
         className="text-neutral-light font-medium leading-snug mb-1 block hover:text-admin-accent transition"
@@ -586,24 +586,24 @@ function NewSignalModal({
       <form
         onSubmit={submit}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg bg-onyx border border-white/10 rounded-2xl p-5"
+        className="w-full max-w-lg bg-p-surface border border-p-border rounded-2xl p-5"
       >
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-neutral-light text-sm font-semibold">Nouveau signal — Veille Agent</h2>
-          <button type="button" onClick={onClose} className="text-neutral-500 hover:text-neutral-300">
+          <button type="button" onClick={onClose} className="text-neutral-500 hover:text-p-text-2">
             <XIcon size={16} />
           </button>
         </div>
 
         <label className="block mb-3">
-          <span className="text-neutral-400 text-[11px] mb-1 block">Source du signal</span>
+          <span className="text-p-muted text-[11px] mb-1 block">Source du signal</span>
           <select
             value={source}
             onChange={(e) => setSource(e.target.value as SignalSource)}
-            className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-[12.5px] text-neutral-light outline-none focus:border-admin-accent/50"
+            className="w-full bg-black/30 border border-p-border rounded-lg px-3 py-2 text-[12.5px] text-neutral-light outline-none focus:border-admin-accent/50"
           >
             {Object.entries(SIGNAL_SOURCE_LABELS).map(([k, v]) => (
-              <option key={k} value={k} className="bg-onyx">
+              <option key={k} value={k} className="bg-p-surface">
                 {v}
               </option>
             ))}
@@ -611,13 +611,13 @@ function NewSignalModal({
         </label>
 
         <label className="block mb-4">
-          <span className="text-neutral-400 text-[11px] mb-1 block">Description du signal</span>
+          <span className="text-p-muted text-[11px] mb-1 block">Description du signal</span>
           <textarea
             value={signalText}
             onChange={(e) => setSignalText(e.target.value)}
             placeholder="ex: 5 clients ont demandé une feature de suivi inventaire ce mois ; ou : Sage Africa lance une offre concurrente sur les cabinets compta..."
             rows={5}
-            className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-[12.5px] text-neutral-light placeholder:text-neutral-600 outline-none focus:border-admin-accent/50"
+            className="w-full bg-black/30 border border-p-border rounded-lg px-3 py-2 text-[12.5px] text-neutral-light placeholder:text-neutral-600 outline-none focus:border-admin-accent/50"
             required
           />
         </label>
@@ -626,7 +626,7 @@ function NewSignalModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-3 py-2 border border-white/10 text-neutral-300 hover:bg-white/5 text-[12px] rounded-lg transition"
+            className="px-3 py-2 border border-p-border text-p-text-2 hover:bg-p-surface-alt text-[12px] rounded-lg transition"
           >
             Annuler
           </button>

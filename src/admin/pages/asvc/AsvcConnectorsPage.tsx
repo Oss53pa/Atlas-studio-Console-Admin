@@ -97,7 +97,7 @@ export default function AsvcConnectorsPage() {
         subtitle="Connexions OAuth aux services externes — refresh tokens / PATs chiffrés AES-256, jamais exposés"
       />
 
-      <div className="mb-5 rounded-lg border border-white/5 bg-onyx-light/20 p-3 text-[12px] text-neutral-400">
+      <div className="mb-5 rounded-lg border border-p-border bg-p-surface-alt/50 p-3 text-[12px] text-p-muted">
         <Plug size={13} className="inline mr-1.5" />
         Les actions approuvées par la CEO restent en base tant qu'aucun connecteur n'est configuré.
         L'orchestrateur d'exécution route automatiquement vers le bon connecteur selon l'<code>action_type</code>.
@@ -139,7 +139,7 @@ export default function AsvcConnectorsPage() {
             Connecteurs configurés côté serveur (env vars)
           </h2>
         </div>
-        <p className="text-neutral-400 text-[12px] mb-3">
+        <p className="text-p-muted text-[12px] mb-3">
           Pour les services à API key fixe (paiements, monitoring), la configuration
           se fait dans <em>Supabase Edge Functions → Secrets</em>. Le statut ci-dessous
           reflète ce que le serveur voit en ce moment.
@@ -181,11 +181,11 @@ export default function AsvcConnectorsPage() {
         </div>
       </section>
 
-      <section className="mt-6 rounded-xl border border-white/10 bg-onyx-light/20 p-5">
+      <section className="mt-6 rounded-xl border border-p-border bg-p-surface-alt/50 p-5">
         <h2 className="text-neutral-light text-[13px] font-semibold mb-2">
           Connecteurs à venir
         </h2>
-        <ul className="text-neutral-400 text-[12px] space-y-1.5 list-disc list-inside marker:text-admin-accent">
+        <ul className="text-p-muted text-[12px] space-y-1.5 list-disc list-inside marker:text-admin-accent">
           <li><strong>X (ex-Twitter)</strong> — API payante depuis 2023 ($200/mois min), reportée tant que le ROI n'est pas démontré sur les autres canaux</li>
           <li><strong>LinkedIn Sales Navigator</strong> — enrichissement avancé en complément d'Apollo</li>
         </ul>
@@ -287,7 +287,7 @@ function ConnectorCard({
   const BtnIcon = meta.auth_kind === 'pat' ? Key : Plug;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-5">
+    <div className="rounded-xl border border-p-border bg-p-surface-alt p-5">
       <div className="flex items-start gap-3 mb-3">
         <div className="w-10 h-10 rounded-lg bg-admin-accent/15 text-admin-accent flex items-center justify-center flex-shrink-0">
           <meta.Icon size={18} />
@@ -301,7 +301,7 @@ function ConnectorCard({
                 {tokens.length} compte{tokens.length > 1 ? 's' : ''}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-[10px] text-neutral-500 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded">
+              <span className="inline-flex items-center gap-1 text-[10px] text-neutral-500 bg-p-surface-alt border border-p-border px-1.5 py-0.5 rounded">
                 Non connecté
               </span>
             )}
@@ -312,7 +312,7 @@ function ConnectorCard({
               </span>
             )}
           </div>
-          <p className="text-neutral-400 text-[12px] leading-relaxed mb-1">{meta.description}</p>
+          <p className="text-p-muted text-[12px] leading-relaxed mb-1">{meta.description}</p>
           <p className="text-neutral-600 text-[10.5px]">
             Scopes : <code className="text-admin-accent/80">{meta.scopes}</code>
           </p>
@@ -334,11 +334,11 @@ function ConnectorCard({
       </p>
 
       {connected && (
-        <div className="space-y-1.5 pt-3 border-t border-white/5">
+        <div className="space-y-1.5 pt-3 border-t border-p-border">
           {tokens.map((t) => (
             <div
               key={t.account_email}
-              className="flex items-center justify-between gap-2 bg-onyx-light/50 px-2.5 py-1.5 rounded-md"
+              className="flex items-center justify-between gap-2 bg-p-surface-alt px-2.5 py-1.5 rounded-md"
             >
               <div className="min-w-0">
                 <div className="text-neutral-light text-[12px] font-mono truncate">
@@ -389,10 +389,10 @@ function EnvConnectorCard({
   soon?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+    <div className="rounded-xl border border-p-border bg-p-surface-alt p-4">
       <div className="flex items-start gap-3">
         <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-          configured ? 'bg-emerald-500/15 text-emerald-300' : 'bg-white/5 text-neutral-500'
+          configured ? 'bg-emerald-500/15 text-emerald-300' : 'bg-p-surface-alt text-neutral-500'
         }`}>
           <Icon size={16} />
         </div>
@@ -404,7 +404,7 @@ function EnvConnectorCard({
                 <CheckCircle2 size={10} /> Configuré
               </span>
             ) : soon ? (
-              <span className="inline-flex items-center gap-1 text-[10px] text-neutral-500 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded">
+              <span className="inline-flex items-center gap-1 text-[10px] text-neutral-500 bg-p-surface-alt border border-p-border px-1.5 py-0.5 rounded">
                 À venir
               </span>
             ) : (
@@ -413,7 +413,7 @@ function EnvConnectorCard({
               </span>
             )}
           </div>
-          <p className="text-neutral-400 text-[12px] leading-relaxed mb-2">{description}</p>
+          <p className="text-p-muted text-[12px] leading-relaxed mb-2">{description}</p>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {envKeys.map((k) => (
               <span
@@ -421,7 +421,7 @@ function EnvConnectorCard({
                 className={`inline-flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 rounded border ${
                   configured
                     ? 'border-emerald-500/30 text-emerald-300 bg-emerald-500/5'
-                    : 'border-white/10 text-neutral-500'
+                    : 'border-p-border text-neutral-500'
                 }`}
               >
                 {configured ? '✓' : '○'} {k}
@@ -494,18 +494,18 @@ function PatModal({
       <form
         onSubmit={submit}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md bg-onyx border border-white/10 rounded-2xl p-5"
+        className="w-full max-w-md bg-p-surface border border-p-border rounded-2xl p-5"
       >
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-neutral-light text-sm font-semibold">{title}</h2>
-          <button type="button" onClick={onClose} className="text-neutral-500 hover:text-neutral-300">
+          <button type="button" onClick={onClose} className="text-neutral-500 hover:text-p-text-2">
             <X size={16} />
           </button>
         </div>
-        <p className="text-neutral-400 text-[12px] mb-3">{subtitle}</p>
+        <p className="text-p-muted text-[12px] mb-3">{subtitle}</p>
 
         <label className="block mb-3">
-          <span className="text-neutral-400 text-[11px] mb-1 block">
+          <span className="text-p-muted text-[11px] mb-1 block">
             Personal Access Token ({provider})
           </span>
           <input
@@ -515,7 +515,7 @@ function PatModal({
             placeholder={provider === 'github' ? 'github_pat_...' : '...'}
             autoComplete="off"
             spellCheck={false}
-            className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-[12.5px] text-neutral-light font-mono outline-none focus:border-admin-accent/50"
+            className="w-full bg-black/30 border border-p-border rounded-lg px-3 py-2 text-[12.5px] text-neutral-light font-mono outline-none focus:border-admin-accent/50"
             required
           />
         </label>
@@ -543,7 +543,7 @@ function PatModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-3 py-2 border border-white/10 text-neutral-300 hover:bg-white/5 text-[12px] rounded-lg transition"
+            className="px-3 py-2 border border-p-border text-p-text-2 hover:bg-p-surface-alt text-[12px] rounded-lg transition"
           >
             Annuler
           </button>

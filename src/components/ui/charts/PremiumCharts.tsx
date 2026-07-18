@@ -197,7 +197,7 @@ export function PremiumAreaChart({
             y2={g * 100}
             stroke="currentColor"
             strokeWidth="0.5"
-            className="text-black/[0.06] dark:text-white/[0.05]"
+            className="text-black/[0.06] dark:text-black/[0.05]"
             vectorEffect="non-scaling-stroke"
           />
         ))}
@@ -309,7 +309,7 @@ export function RadialGauge({
           fill="none"
           stroke="currentColor"
           strokeWidth={thickness}
-          className="text-black/[0.07] dark:text-white/[0.06]"
+          className="text-black/[0.07] dark:text-black/[0.06]"
         />
         {/* value arc */}
         <circle

@@ -4,7 +4,7 @@ import { SITE_URL } from '../../config/site';
 
 function Screen({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-onyx px-6 text-center">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-p-surface px-6 text-center">
       {children}
     </div>
   );
@@ -50,7 +50,7 @@ export function RequireAdmin({ children }: { children: React.ReactNode }) {
           <button onClick={signOut} className="px-4 py-2 rounded-lg bg-admin-accent text-onyx text-sm font-semibold hover:brightness-110 transition-all">
             Se déconnecter
           </button>
-          <a href={SITE_URL} className="px-4 py-2 rounded-lg border border-white/15 text-neutral-light text-sm hover:bg-white/5 transition-all">
+          <a href={SITE_URL} className="px-4 py-2 rounded-lg border border-p-border text-neutral-light text-sm hover:bg-p-surface-alt transition-all">
             Aller au site
           </a>
         </div>

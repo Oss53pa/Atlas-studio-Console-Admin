@@ -49,7 +49,7 @@ export function ArbitrationCard({ action, onApprove, onReject, onModify }: Props
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-[11px] text-neutral-500">
-            <span className="font-medium text-neutral-400">
+            <span className="font-medium text-p-muted">
               {action.agent?.name ?? action.agent_id.slice(0, 8)}
             </span>
             {action.agent?.department && (
@@ -73,21 +73,21 @@ export function ArbitrationCard({ action, onApprove, onReject, onModify }: Props
       </div>
 
       {action.description && (
-        <p className="text-neutral-400 text-[12.5px] leading-relaxed mb-3">
+        <p className="text-p-muted text-[12.5px] leading-relaxed mb-3">
           {action.description}
         </p>
       )}
 
-      <div className="bg-black/30 border border-white/5 rounded-lg p-3 mb-3">
+      <div className="bg-black/30 border border-p-border rounded-lg p-3 mb-3">
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="text-[11px] text-neutral-500 hover:text-neutral-300 transition mb-1"
+          className="text-[11px] text-neutral-500 hover:text-p-text-2 transition mb-1"
         >
           {expanded ? '— Réduire le payload' : '+ Voir le payload proposé'}
         </button>
         {expanded && (
-          <pre className="text-[11px] text-neutral-300 font-mono whitespace-pre-wrap break-words max-h-64 overflow-auto">
+          <pre className="text-[11px] text-p-text-2 font-mono whitespace-pre-wrap break-words max-h-64 overflow-auto">
             {JSON.stringify(action.proposed_payload, null, 2)}
           </pre>
         )}
@@ -127,7 +127,7 @@ export function ArbitrationCard({ action, onApprove, onReject, onModify }: Props
             type="button"
             disabled={pending !== null}
             onClick={() => onModify(action.id)}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-white/10 text-neutral-300 hover:bg-white/5 disabled:opacity-50 text-[12px] rounded-lg transition"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-p-border text-p-text-2 hover:bg-p-surface-alt disabled:opacity-50 text-[12px] rounded-lg transition"
           >
             <Edit3 size={13} />
             Modifier
@@ -138,7 +138,7 @@ export function ArbitrationCard({ action, onApprove, onReject, onModify }: Props
           type="button"
           disabled={pending !== null}
           onClick={() => runAction(() => onReject(action.id), 'reject')}
-          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-white/10 text-neutral-500 hover:bg-white/5 hover:text-red-700 disabled:opacity-50 text-[12px] rounded-lg transition"
+          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-p-border text-neutral-500 hover:bg-p-surface-alt hover:text-red-700 disabled:opacity-50 text-[12px] rounded-lg transition"
         >
           {pending === 'reject' ? (
             <Loader2 size={13} className="animate-spin" />

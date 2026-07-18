@@ -13,9 +13,9 @@ interface AdminButtonProps {
 }
 
 const VARIANTS = {
-  primary: "bg-gold dark:bg-admin-accent text-black font-semibold rounded-full shadow-sm hover:bg-gold-dark dark:hover:bg-admin-accent-dark dark:shadow-gold dark:hover:shadow-gold-glow transition-all duration-300",
-  secondary: "bg-white dark:bg-admin-surface-alt/40 border border-warm-border dark:border-white/10 rounded-full text-neutral-body dark:text-admin-text font-medium shadow-sm dark:shadow-none hover:border-gold/40 dark:hover:border-admin-accent/40 hover:shadow-md dark:hover:bg-admin-surface-alt/70 transition-all duration-300",
-  danger: "bg-red-600 text-white font-semibold rounded-full shadow-sm hover:bg-red-700 hover:shadow-md transition-all duration-300",
+  primary: "bg-gold dark:bg-admin-accent text-p-on-accent font-semibold rounded-full shadow-gold-sm hover:bg-gold-dark dark:hover:bg-admin-accent-dark hover:shadow-gold transition-all duration-300",
+  secondary: "bg-white dark:bg-admin-surface border border-warm-border dark:border-admin-surface-alt rounded-full text-neutral-body dark:text-admin-text font-medium shadow-elev-1 hover:border-gold/45 dark:hover:border-admin-accent/45 hover:shadow-elev-2 dark:hover:bg-admin-surface-alt/60 transition-all duration-300",
+  danger: "bg-red-600 text-white font-semibold rounded-full shadow-gold-sm hover:bg-red-700 hover:shadow-md transition-all duration-300",
 };
 
 export function AdminButton({ children, onClick, variant = "primary", icon: Icon, loading, disabled, className = "", type = "button" }: AdminButtonProps) {

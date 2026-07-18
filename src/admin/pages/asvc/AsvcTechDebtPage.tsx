@@ -222,7 +222,7 @@ export default function AsvcTechDebtPage() {
               className={`px-2.5 py-1 rounded-md text-[11.5px] border transition ${
                 active
                   ? 'bg-admin-accent/15 text-admin-accent border-admin-accent/30'
-                  : 'border-white/10 text-neutral-400 hover:bg-white/5'
+                  : 'border-p-border text-p-muted hover:bg-p-surface-alt'
               }`}
             >
               {p === 'all' ? 'Toutes' : p}
@@ -237,7 +237,7 @@ export default function AsvcTechDebtPage() {
             <select
               value={appFilter}
               onChange={(e) => setAppFilter(e.target.value)}
-              className="px-2 py-1 rounded-md border border-white/10 bg-onyx-light/30 text-neutral-300 text-[11.5px] focus:border-admin-accent focus:outline-none"
+              className="px-2 py-1 rounded-md border border-p-border bg-p-surface-alt text-p-text-2 text-[11.5px] focus:border-admin-accent focus:outline-none"
             >
               <option value="all">Toutes les apps</option>
               {stats.apps.map((app) => (
@@ -285,7 +285,7 @@ export default function AsvcTechDebtPage() {
               <button
                 type="button"
                 onClick={() => setSelected(null)}
-                className="px-3 py-1.5 rounded-lg border border-white/10 text-neutral-300 hover:bg-white/5 text-[12px]"
+                className="px-3 py-1.5 rounded-lg border border-p-border text-p-text-2 hover:bg-p-surface-alt text-[12px]"
               >
                 Fermer
               </button>
@@ -293,7 +293,7 @@ export default function AsvcTechDebtPage() {
                 type="button"
                 disabled={pendingId === selected.id || selected.status === 'wont_fix'}
                 onClick={() => handleUpdate('wont_fix')}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-neutral-400 hover:bg-white/5 disabled:opacity-40 text-[12px]"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-p-border text-p-muted hover:bg-p-surface-alt disabled:opacity-40 text-[12px]"
               >
                 <XCircle size={12} />
                 Ne pas corriger
@@ -333,12 +333,12 @@ function AppDebtGroup({
   const [expanded, setExpanded] = useState(true);
 
   return (
-    <section className="rounded-xl border border-white/10 bg-onyx-light/30 overflow-hidden">
+    <section className="rounded-xl border border-p-border bg-p-surface-alt overflow-hidden">
       {/* App header — cliquable pour replier/déplier */}
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}
-        className="w-full px-4 py-3 flex items-center justify-between gap-3 bg-onyx-light/20 border-b border-white/5 hover:bg-onyx-light/30 transition-colors text-left"
+        className="w-full px-4 py-3 flex items-center justify-between gap-3 bg-p-surface-alt/50 border-b border-p-border hover:bg-p-surface-alt transition-colors text-left"
       >
         <div className="flex items-center gap-2 min-w-0">
           {expanded ? (
@@ -354,7 +354,7 @@ function AppDebtGroup({
         </div>
         {audit && (
           <div className="flex items-center gap-3 text-[11px]">
-            <span className="text-neutral-400">
+            <span className="text-p-muted">
               Score{' '}
               <span
                 className={`font-mono font-semibold ${
@@ -409,7 +409,7 @@ function TechDebtRow({
       <button
         type="button"
         onClick={onClick}
-        className="w-full text-left px-4 py-3 hover:bg-white/5 transition-colors group"
+        className="w-full text-left px-4 py-3 hover:bg-p-surface-alt transition-colors group"
       >
         <div className="flex items-center gap-3">
           <span
@@ -426,7 +426,7 @@ function TechDebtRow({
             {TECH_DEBT_CATEGORY_LABELS[item.category]}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-neutral-200 text-[12.5px] truncate">{item.title}</p>
+            <p className="text-p-text text-[12.5px] truncate">{item.title}</p>
             {item.description && (
               <p className="text-neutral-500 text-[11px] truncate">{item.description}</p>
             )}
@@ -463,7 +463,7 @@ function DetailContent({ item }: { item: TechDebtPriorityRow }) {
         <Badge label={`Severity ${item.severity}`} className={TECH_DEBT_SEVERITY_CLASSES[item.severity]} />
         <Badge
           label={TECH_DEBT_CATEGORY_LABELS[item.category]}
-          className="bg-white/5 border-white/10 text-neutral-300"
+          className="bg-p-surface-alt border-p-border text-p-text-2"
         />
         <Badge
           label={TECH_DEBT_STATUS_LABELS[item.status]}
@@ -472,7 +472,7 @@ function DetailContent({ item }: { item: TechDebtPriorityRow }) {
         {item.effort_estimate && (
           <Badge
             label={`Effort ${item.effort_estimate}`}
-            className="bg-white/5 border-white/10 text-neutral-400"
+            className="bg-p-surface-alt border-p-border text-p-muted"
           />
         )}
       </div>
@@ -481,7 +481,7 @@ function DetailContent({ item }: { item: TechDebtPriorityRow }) {
       {item.description && (
         <div>
           <Label>Description</Label>
-          <p className="text-neutral-300 text-[13px] leading-relaxed whitespace-pre-line">
+          <p className="text-p-text-2 text-[13px] leading-relaxed whitespace-pre-line">
             {item.description}
           </p>
         </div>
@@ -491,8 +491,8 @@ function DetailContent({ item }: { item: TechDebtPriorityRow }) {
       {item.detected_metric && Object.keys(item.detected_metric).length > 0 && (
         <div>
           <Label>Métriques détectées</Label>
-          <div className="rounded-lg border border-white/10 bg-onyx-light/30 p-3">
-            <pre className="text-[11.5px] text-neutral-300 font-mono whitespace-pre-wrap break-all">
+          <div className="rounded-lg border border-p-border bg-p-surface-alt p-3">
+            <pre className="text-[11.5px] text-p-text-2 font-mono whitespace-pre-wrap break-all">
               {JSON.stringify(item.detected_metric, null, 2)}
             </pre>
           </div>
@@ -503,11 +503,11 @@ function DetailContent({ item }: { item: TechDebtPriorityRow }) {
       {item.file_paths && item.file_paths.length > 0 && (
         <div>
           <Label>Fichiers concernés ({item.file_paths.length})</Label>
-          <ul className="rounded-lg border border-white/10 bg-onyx-light/30 divide-y divide-white/5">
+          <ul className="rounded-lg border border-p-border bg-p-surface-alt divide-y divide-white/5">
             {item.file_paths.map((path) => (
               <li
                 key={path}
-                className="px-3 py-1.5 text-[11.5px] text-neutral-300 font-mono break-all"
+                className="px-3 py-1.5 text-[11.5px] text-p-text-2 font-mono break-all"
               >
                 {path}
               </li>
@@ -520,14 +520,14 @@ function DetailContent({ item }: { item: TechDebtPriorityRow }) {
       {item.fix_branch && (
         <div>
           <Label>Branche de correction</Label>
-          <code className="inline-block px-2 py-1 rounded bg-white/5 border border-white/10 text-[11.5px] text-admin-accent font-mono">
+          <code className="inline-block px-2 py-1 rounded bg-p-surface-alt border border-p-border text-[11.5px] text-admin-accent font-mono">
             {item.fix_branch}
           </code>
         </div>
       )}
 
       {/* Timestamps */}
-      <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/5 text-[11px] text-neutral-500">
+      <div className="grid grid-cols-2 gap-3 pt-2 border-t border-p-border text-[11px] text-neutral-500">
         <div>
           <Label>Détecté</Label>
           {timeAgoFr(item.created_at)}
@@ -555,13 +555,13 @@ function StatTile({
   accent?: 'neutral' | 'emerald' | 'amber' | 'red';
 }) {
   const valueColor = {
-    neutral: 'text-neutral-300',
+    neutral: 'text-p-text-2',
     emerald: 'text-emerald-300',
     amber: 'text-amber-700',
     red: 'text-red-700',
   }[accent];
   return (
-    <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-3">
+    <div className="rounded-xl border border-p-border bg-p-surface-alt p-3">
       <div className="flex items-center gap-1.5 mb-1 text-[10px] text-neutral-500 uppercase tracking-wider">
         <Icon size={10} />
         {label}
@@ -588,7 +588,7 @@ function Label({ children }: { children: React.ReactNode }) {
 
 function EmptyState({ auditsLoading }: { auditsLoading: boolean }) {
   return (
-    <div className="rounded-2xl border border-dashed border-white/10 bg-onyx-light/20 py-16 text-center px-6">
+    <div className="rounded-2xl border border-dashed border-p-border bg-p-surface-alt/50 py-16 text-center px-6">
       <div className="mx-auto w-12 h-12 rounded-2xl bg-admin-accent/15 text-admin-accent flex items-center justify-center mb-4">
         {auditsLoading ? <Clock size={20} /> : <Shield size={20} />}
       </div>

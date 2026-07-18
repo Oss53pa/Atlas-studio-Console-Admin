@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, FileText, Users, Repeat, Receipt,
   ClipboardList, MessageSquare, Mail, BarChart3, ArrowLeft, LogOut,
-  CreditCard, Megaphone, Layers, Search, Brain, Activity, Sun, Moon, Menu, Flag, Bell, Tag, Rocket, BookOpen, KeyRound, Settings, ShieldCheck, Send, ListChecks, Database, AlertTriangle,
+  CreditCard, Megaphone, Layers, Search, Brain, Activity, Menu, Flag, Bell, Tag, Rocket, BookOpen, KeyRound, Settings, ShieldCheck, Send, ListChecks, Database, AlertTriangle,
   Crown, Home, Package, Wrench, PanelLeftClose, PanelLeftOpen,
   Bot, Inbox, ScrollText, Power, SlidersHorizontal, LifeBuoy, UserCheck, Calendar, Target, Wallet,
   Workflow, Shield, Plug, History, CheckSquare, Files, Globe2,
@@ -12,7 +12,6 @@ import {
 import { Logo } from "../components/ui/Logo";
 import { useAuth } from "../lib/auth";
 import { useAppFilter } from "./contexts/AppFilterContext";
-import { useTheme } from "./contexts/ThemeContext";
 import { useAppCatalog } from "../hooks/useAppCatalog";
 import { NotificationCenter } from "./components/NotificationCenter";
 import { SITE_URL } from "../config/site";
@@ -147,7 +146,6 @@ export function AdminSidebar() {
   const navigate = useNavigate();
   const { profile, signOut, isSuperAdmin } = useAuth();
   const { selectedApp, setSelectedApp } = useAppFilter();
-  const { toggleTheme, isDark } = useTheme();
   const { appList } = useAppCatalog();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -260,15 +258,8 @@ export function AdminSidebar() {
         </div>
       </nav>
 
-      {/* Footer: theme + retract */}
+      {/* Footer: retract */}
       <div className="border-t border-white/5 px-2 py-2 space-y-0.5">
-        <button
-          onClick={toggleTheme}
-          className="w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-white/50 text-[11px] hover:text-white/80 hover:bg-white/5 transition-all"
-        >
-          {isDark ? <Sun size={13} /> : <Moon size={13} />}
-          {isDark ? "Mode clair" : "Mode sombre"}
-        </button>
         <button
           onClick={() => setSecondaryOpen(v => !v)}
           className="hidden md:flex w-full items-center gap-2 px-3 py-1.5 rounded-md text-white/50 text-[11px] hover:text-white/80 hover:bg-white/5 transition-all"

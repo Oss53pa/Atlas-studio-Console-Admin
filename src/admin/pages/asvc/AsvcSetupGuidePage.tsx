@@ -102,7 +102,7 @@ export default function AsvcSetupGuidePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-1 mb-6 border-b border-white/10">
+      <div className="flex flex-wrap gap-1 mb-6 border-b border-p-border">
         {TABS.map((t) => {
           const active = tab === t.id;
           return (
@@ -113,7 +113,7 @@ export default function AsvcSetupGuidePage() {
               className={`px-4 py-2 text-[12.5px] font-semibold rounded-t-lg transition-colors -mb-px border-b-2 ${
                 active
                   ? 'text-admin-accent border-admin-accent bg-admin-accent/5'
-                  : 'text-neutral-400 border-transparent hover:text-neutral-light hover:bg-white/[0.03]'
+                  : 'text-p-muted border-transparent hover:text-neutral-light hover:bg-white/[0.03]'
               }`}
             >
               {t.label}
@@ -172,7 +172,7 @@ export default function AsvcSetupGuidePage() {
 
       {tab === 'connectors' && (
         <TabBody subtitle="Chaque connecteur débloque des capacités d'exécution. Sans connecteur, les agents restent en mode 'draft'.">
-          <div className="rounded-lg border border-white/10 bg-onyx-light/20 p-3">
+          <div className="rounded-lg border border-p-border bg-p-surface-alt/50 p-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {envLoading && <p className="text-neutral-500 text-[12px]">Chargement statuts...</p>}
               {!envLoading && connectors.map((c) => (
@@ -181,11 +181,11 @@ export default function AsvcSetupGuidePage() {
                   className={`flex items-center gap-2 px-2.5 py-2 rounded border ${
                     c.configured
                       ? 'border-emerald-500/30 bg-emerald-500/5'
-                      : 'border-white/10 bg-onyx-light/30'
+                      : 'border-p-border bg-p-surface-alt'
                   }`}
                 >
                   <c.Icon size={14} className={c.configured ? 'text-emerald-300' : 'text-neutral-500'} />
-                  <span className={`text-[12px] font-semibold ${c.configured ? 'text-emerald-300' : 'text-neutral-400'}`}>
+                  <span className={`text-[12px] font-semibold ${c.configured ? 'text-emerald-300' : 'text-p-muted'}`}>
                     {c.label}
                   </span>
                   {c.configured ? (
@@ -271,7 +271,7 @@ export default function AsvcSetupGuidePage() {
 
       {tab === 'agents' && (
         <div>
-          <p className="text-neutral-400 text-[12.5px] mb-4 leading-relaxed">
+          <p className="text-p-muted text-[12.5px] mb-4 leading-relaxed">
             Statut "✅ Prêt" = peut générer un draft maintenant (LLM + DB). Statut "🔌 Ship" = peut
             réellement exécuter une action externe (envoyer email, push GitHub, etc.) — dépend des
             connecteurs configurés.
@@ -315,7 +315,7 @@ export default function AsvcSetupGuidePage() {
       {/* Footer rapide visible sur tous les onglets */}
       <div className="mt-10 rounded-xl border border-admin-accent/30 bg-admin-accent/5 p-5">
         <h3 className="text-admin-accent text-[14px] font-semibold mb-2">Checklist rapide</h3>
-        <ol className="text-neutral-300 text-[12.5px] space-y-1.5 list-decimal list-inside leading-relaxed">
+        <ol className="text-p-text-2 text-[12.5px] space-y-1.5 list-decimal list-inside leading-relaxed">
           <li>Configure les <strong>3 secrets Supabase critiques</strong> (clé LLM, Encryption, Cron) — onglet Infrastructure.</li>
           <li>Pousse les <strong>migrations</strong> et <strong>déploie les edge functions</strong> via la CI.</li>
           <li>Connecte <strong>1 connecteur</strong> pour commencer (Gmail recommandé : active SAV + SDR + Facturation).</li>
@@ -357,7 +357,7 @@ function Step({
   const isExternal = link?.url.startsWith('http');
 
   return (
-    <div className="rounded-lg border border-white/10 bg-onyx-light/30 p-3 flex items-start gap-3">
+    <div className="rounded-lg border border-p-border bg-p-surface-alt p-3 flex items-start gap-3">
       <div className="w-8 h-8 rounded bg-admin-accent/10 text-admin-accent flex items-center justify-center flex-shrink-0">
         <Icon size={14} />
       </div>
@@ -369,7 +369,7 @@ function Step({
             {statusLabel}
           </span>
         </div>
-        <p className="text-neutral-400 text-[11.5px] leading-relaxed">{desc}</p>
+        <p className="text-p-muted text-[11.5px] leading-relaxed">{desc}</p>
         {link && (
           isExternal ? (
             <a
@@ -408,7 +408,7 @@ function AgentDept({ title, agents }: { title: string; agents: AgentInfo[] }) {
       <h3 className="text-neutral-light text-[13px] font-semibold mb-2">{title}</h3>
       <div className="space-y-1.5">
         {agents.map((a) => (
-          <div key={a.code} className="rounded-lg border border-white/10 bg-onyx-light/30 p-3">
+          <div key={a.code} className="rounded-lg border border-p-border bg-p-surface-alt p-3">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="text-neutral-light text-[12.5px] font-semibold">{a.name}</span>
               <code className="text-[10px] text-neutral-500 font-mono">{a.code}</code>
@@ -424,7 +424,7 @@ function AgentDept({ title, agents }: { title: string; agents: AgentInfo[] }) {
                 </span>
               )}
             </div>
-            <p className="text-neutral-400 text-[11.5px] leading-relaxed">{a.does}</p>
+            <p className="text-p-muted text-[11.5px] leading-relaxed">{a.does}</p>
             <p className="text-neutral-500 text-[10.5px] italic mt-1">→ {a.needs}</p>
           </div>
         ))}

@@ -72,7 +72,7 @@ export default function AsvcDeploymentDetailPage() {
     <div className="max-w-5xl">
       <Link
         to="/admin/asvc/pipeline"
-        className="inline-flex items-center gap-1.5 text-neutral-500 hover:text-neutral-300 text-[12px] mb-4 transition"
+        className="inline-flex items-center gap-1.5 text-neutral-500 hover:text-p-text-2 text-[12px] mb-4 transition"
       >
         <ArrowLeft size={13} />
         Retour au Pipeline
@@ -88,7 +88,7 @@ export default function AsvcDeploymentDetailPage() {
 
       {deployment && (
         <div className="space-y-6">
-          <section className="rounded-xl border border-white/10 bg-onyx-light/30 p-4 flex flex-wrap gap-4">
+          <section className="rounded-xl border border-p-border bg-p-surface-alt p-4 flex flex-wrap gap-4">
             <div className="text-[11.5px]">
               <div className="text-neutral-500 text-[10.5px]">Environnement</div>
               <div className={`inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] uppercase font-semibold ${envColor(deployment.environment)}`}>
@@ -112,7 +112,7 @@ export default function AsvcDeploymentDetailPage() {
           </section>
 
           {deployment.deployment_url && (
-            <section className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+            <section className="rounded-xl border border-p-border bg-p-surface-alt p-4">
               <a
                 href={deployment.deployment_url}
                 target="_blank"
@@ -128,7 +128,7 @@ export default function AsvcDeploymentDetailPage() {
 
           {/* Migrations */}
           {deployment.supabase_migrations && deployment.supabase_migrations.length > 0 && (
-            <section className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+            <section className="rounded-xl border border-p-border bg-p-surface-alt p-4">
               <h3 className="text-neutral-light text-[12.5px] font-semibold mb-2">
                 Migrations Supabase ({deployment.supabase_migrations.length})
               </h3>
@@ -147,7 +147,7 @@ export default function AsvcDeploymentDetailPage() {
                       {m.status === 'ok' ? <CheckCircle2 size={10} /> : <AlertOctagon size={10} />}
                       {m.status}
                     </span>
-                    <span className="text-neutral-300 font-mono">{m.file}</span>
+                    <span className="text-p-text-2 font-mono">{m.file}</span>
                     {m.notes && <span className="text-neutral-500 text-[10.5px]">{m.notes}</span>}
                   </div>
                 ))}
@@ -161,14 +161,14 @@ export default function AsvcDeploymentDetailPage() {
 
           {/* Rollback */}
           {deployment.rollback_plan && (
-            <section className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+            <section className="rounded-xl border border-p-border bg-p-surface-alt p-4">
               <h3 className="text-neutral-light text-[12.5px] font-semibold mb-2">Plan de rollback</h3>
               {deployment.previous_version_tag && (
-                <div className="text-neutral-400 text-[11.5px] mb-2">
+                <div className="text-p-muted text-[11.5px] mb-2">
                   Tag previous : <code className="text-admin-accent font-mono">{deployment.previous_version_tag}</code>
                 </div>
               )}
-              <pre className="text-[11px] text-neutral-300 whitespace-pre-wrap font-mono bg-black/30 p-3 rounded max-h-72 overflow-auto">
+              <pre className="text-[11px] text-p-text-2 whitespace-pre-wrap font-mono bg-black/30 p-3 rounded max-h-72 overflow-auto">
                 {deployment.rollback_plan}
               </pre>
             </section>
@@ -185,13 +185,13 @@ export default function AsvcDeploymentDetailPage() {
               </div>
               <div className="space-y-2">
                 {incidents.map((inc) => (
-                  <div key={inc.id} className="rounded border border-red-500/20 bg-onyx-light/30 px-3 py-2 text-[11.5px]">
+                  <div key={inc.id} className="rounded border border-red-500/20 bg-p-surface-alt px-3 py-2 text-[11.5px]">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span className="text-red-700 font-semibold">{inc.severity}</span>
-                      <span className="text-neutral-300">{inc.title}</span>
+                      <span className="text-p-text-2">{inc.title}</span>
                       <span className="ml-auto text-neutral-600 text-[10.5px]">{timeAgoFr(inc.detected_at)}</span>
                     </div>
-                    {inc.description && <p className="text-neutral-400 text-[11px]">{inc.description}</p>}
+                    {inc.description && <p className="text-p-muted text-[11px]">{inc.description}</p>}
                     <div className="text-neutral-500 text-[10.5px] mt-0.5">Status : {inc.status}</div>
                   </div>
                 ))}
@@ -221,7 +221,7 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
       ? 'text-admin-accent'
       : accent === 'red'
         ? 'text-red-700'
-        : 'text-neutral-300';
+        : 'text-p-text-2';
   return (
     <div className="text-[11.5px]">
       <div className="text-neutral-500 text-[10.5px]">{label}</div>

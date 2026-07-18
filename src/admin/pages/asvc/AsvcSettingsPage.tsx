@@ -36,7 +36,7 @@ function VacationSection() {
   };
 
   return (
-    <section className="mb-8 rounded-2xl border border-white/10 bg-onyx-light/30 p-6">
+    <section className="mb-8 rounded-2xl border border-p-border bg-p-surface-alt p-6">
       <div className="flex items-center gap-2 mb-1">
         <Palmtree size={16} className="text-admin-accent" />
         <h2 className="text-neutral-light text-sm font-semibold">Mode vacances</h2>
@@ -46,7 +46,7 @@ function VacationSection() {
           </span>
         )}
       </div>
-      <p className="text-neutral-400 text-[12px] mb-4">
+      <p className="text-p-muted text-[12px] mb-4">
         Pendant la période, les agents ne te notifient que selon le mode choisi.
         Les actions retenues s'accumulent pour validation à ton retour. Les actions
         🟣 production et ⚫ critical te sont TOUJOURS notifiées en temps réel.
@@ -97,27 +97,27 @@ function VacationSection() {
 
       <div className="grid sm:grid-cols-2 gap-3 mb-3">
         <label className="block">
-          <span className="text-neutral-400 text-[11px] mb-1 block">Début</span>
+          <span className="text-p-muted text-[11px] mb-1 block">Début</span>
           <input
             type="datetime-local"
             value={start}
             onChange={(e) => setStart(e.target.value)}
-            className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-[12.5px] text-neutral-light outline-none focus:border-admin-accent/50"
+            className="w-full bg-black/30 border border-p-border rounded-lg px-3 py-2 text-[12.5px] text-neutral-light outline-none focus:border-admin-accent/50"
           />
         </label>
         <label className="block">
-          <span className="text-neutral-400 text-[11px] mb-1 block">Fin</span>
+          <span className="text-p-muted text-[11px] mb-1 block">Fin</span>
           <input
             type="datetime-local"
             value={end}
             onChange={(e) => setEnd(e.target.value)}
-            className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-[12.5px] text-neutral-light outline-none focus:border-admin-accent/50"
+            className="w-full bg-black/30 border border-p-border rounded-lg px-3 py-2 text-[12.5px] text-neutral-light outline-none focus:border-admin-accent/50"
           />
         </label>
       </div>
 
       <fieldset className="mb-4">
-        <legend className="text-neutral-400 text-[11px] mb-2">Comportement</legend>
+        <legend className="text-p-muted text-[11px] mb-2">Comportement</legend>
         <div className="space-y-1.5">
           <BehaviorOption
             value="strict"
@@ -175,14 +175,14 @@ function BehaviorOption({
       type="button"
       onClick={() => onSelect(value)}
       className={`w-full text-left rounded-lg border p-3 transition ${
-        active ? 'border-admin-accent/40 bg-admin-accent/5' : 'border-white/10 bg-onyx-light/30 hover:bg-onyx-light/50'
+        active ? 'border-admin-accent/40 bg-admin-accent/5' : 'border-p-border bg-p-surface-alt hover:bg-p-surface-alt'
       }`}
     >
       <div className="flex items-center gap-2 mb-0.5">
         <div className={`w-3 h-3 rounded-full border ${active ? 'bg-admin-accent border-admin-accent' : 'border-neutral-500'}`} />
         <span className="text-neutral-light text-[12.5px] font-semibold">{label}</span>
       </div>
-      <p className="text-neutral-400 text-[11px] pl-5">{desc}</p>
+      <p className="text-p-muted text-[11px] pl-5">{desc}</p>
     </button>
   );
 }
@@ -195,12 +195,12 @@ function AutoApproveSection() {
   const nonAutoCandidates = candidates.filter((c) => !c.already_auto_approved);
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-onyx-light/30 p-6">
+    <section className="rounded-2xl border border-p-border bg-p-surface-alt p-6">
       <div className="flex items-center gap-2 mb-1">
         <Zap size={16} className="text-admin-accent" />
         <h2 className="text-neutral-light text-sm font-semibold">Auto-approve patterns</h2>
       </div>
-      <p className="text-neutral-400 text-[12px] mb-4">
+      <p className="text-p-muted text-[12px] mb-4">
         Quand un agent te propose 5+ fois <strong>de suite</strong> le même type d'action avec
         la même criticité (sans aucun rejet entre temps), ASVC te suggère d'auto-approuver
         ce pattern. Les actions matching seront ensuite approuvées <em>instantanément</em>{' '}
@@ -276,7 +276,7 @@ function PatternRow({
         <div className="flex items-center gap-1.5 text-[11.5px] flex-wrap">
           <span className="text-emerald-300 font-semibold">{pattern.agent_code}</span>
           <span className="text-neutral-600">→</span>
-          <code className="text-neutral-300 font-mono">{pattern.action_type}</code>
+          <code className="text-p-text-2 font-mono">{pattern.action_type}</code>
           <span className={`text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded border ${CRITICALITY_BADGE_CLASSES[crit]}`}>
             {CRITICALITY_LABELS[crit]}
           </span>
@@ -306,12 +306,12 @@ function CandidateRow({
 }) {
   const crit = candidate.criticality as Criticality;
   return (
-    <div className="rounded-lg border border-white/10 bg-onyx-light/40 px-3 py-2 flex flex-wrap items-center gap-3">
+    <div className="rounded-lg border border-p-border bg-p-surface-alt px-3 py-2 flex flex-wrap items-center gap-3">
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5 text-[11.5px] flex-wrap">
           <span className="text-neutral-light font-medium">{candidate.agent_code}</span>
           <span className="text-neutral-600">→</span>
-          <code className="text-neutral-300 font-mono">{candidate.action_type}</code>
+          <code className="text-p-text-2 font-mono">{candidate.action_type}</code>
           <span className={`text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded border ${CRITICALITY_BADGE_CLASSES[crit]}`}>
             {CRITICALITY_LABELS[crit]}
           </span>

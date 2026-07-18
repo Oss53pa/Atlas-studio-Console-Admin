@@ -51,7 +51,7 @@ export default function AsvcSpecDetailPage() {
     <div className="max-w-5xl">
       <Link
         to="/admin/asvc/pipeline"
-        className="inline-flex items-center gap-1.5 text-neutral-500 hover:text-neutral-300 text-[12px] mb-4 transition"
+        className="inline-flex items-center gap-1.5 text-neutral-500 hover:text-p-text-2 text-[12px] mb-4 transition"
       >
         <ArrowLeft size={13} />
         Retour au Pipeline
@@ -79,7 +79,7 @@ export default function AsvcSpecDetailPage() {
       {spec && (
         <div className="space-y-6">
           {/* Header info */}
-          <section className="rounded-xl border border-white/10 bg-onyx-light/30 p-4 flex flex-wrap gap-4">
+          <section className="rounded-xl border border-p-border bg-p-surface-alt p-4 flex flex-wrap gap-4">
             <Stat label="Statut" value={spec.status} accent={spec.status === 'approved' ? 'emerald' : 'amber'} />
             <Stat label="Approuvée CEO" value={spec.approved_by_ceo ? 'Oui' : 'Non'} accent={spec.approved_by_ceo ? 'emerald' : undefined} />
             {spec.approved_at && <Stat label="Approuvée" value={timeAgoFr(spec.approved_at)} />}
@@ -91,7 +91,7 @@ export default function AsvcSpecDetailPage() {
           {/* Vision */}
           {spec.vision && (
             <Section title="Vision" Icon={FileText}>
-              <p className="text-neutral-300 text-[13px] leading-relaxed">{spec.vision}</p>
+              <p className="text-p-text-2 text-[13px] leading-relaxed">{spec.vision}</p>
             </Section>
           )}
 
@@ -101,7 +101,7 @@ export default function AsvcSpecDetailPage() {
               <div className="space-y-2">
                 {spec.user_stories.map((s, i) => (
                   <div key={i} className="border-l-2 border-admin-accent/30 pl-3 py-1">
-                    <div className="text-neutral-300 text-[12.5px]">
+                    <div className="text-p-text-2 text-[12.5px]">
                       <strong className="text-admin-accent">As a {s.role}</strong>,{' '}
                       I want {s.goal}, so that {s.benefit}.
                     </div>
@@ -121,11 +121,11 @@ export default function AsvcSpecDetailPage() {
             <Section title="Acceptance criteria" Icon={CheckCircle2}>
               <div className="space-y-2">
                 {spec.acceptance_criteria.map((ac, i) => (
-                  <div key={i} className="rounded border border-white/5 bg-onyx-light/40 p-2.5 text-[12px]">
+                  <div key={i} className="rounded border border-p-border bg-p-surface-alt p-2.5 text-[12px]">
                     <div className="text-neutral-500 text-[10.5px] mb-1">
                       Story #{ac.story_idx ?? i + 1}
                     </div>
-                    <div className="text-neutral-300">
+                    <div className="text-p-text-2">
                       <strong className="text-blue-700">GIVEN</strong> {ac.given}<br />
                       <strong className="text-blue-700">WHEN</strong> {ac.when}<br />
                       <strong className="text-blue-700">THEN</strong> {ac.then}
@@ -139,7 +139,7 @@ export default function AsvcSpecDetailPage() {
           {/* Technical architecture */}
           {spec.technical_architecture && (
             <Section title="Architecture technique" Icon={FileText}>
-              <pre className="text-[11.5px] text-neutral-300 whitespace-pre-wrap font-mono bg-black/30 p-3 rounded max-h-96 overflow-auto">
+              <pre className="text-[11.5px] text-p-text-2 whitespace-pre-wrap font-mono bg-black/30 p-3 rounded max-h-96 overflow-auto">
                 {spec.technical_architecture}
               </pre>
             </Section>
@@ -148,7 +148,7 @@ export default function AsvcSpecDetailPage() {
           {/* Wireframes Mermaid */}
           {spec.wireframes_mermaid && (
             <Section title="Wireframes (Mermaid)" Icon={FileText}>
-              <pre className="text-[11px] text-neutral-300 whitespace-pre-wrap font-mono bg-black/30 p-3 rounded overflow-auto">
+              <pre className="text-[11px] text-p-text-2 whitespace-pre-wrap font-mono bg-black/30 p-3 rounded overflow-auto">
                 {spec.wireframes_mermaid}
               </pre>
               <p className="text-neutral-600 text-[10.5px] mt-2 italic">
@@ -160,7 +160,7 @@ export default function AsvcSpecDetailPage() {
           {/* API endpoints */}
           {spec.api_endpoints && spec.api_endpoints.length > 0 && (
             <Section title={`API endpoints (${spec.api_endpoints.length})`} Icon={FileText}>
-              <pre className="text-[11px] text-neutral-300 font-mono bg-black/30 p-3 rounded overflow-auto max-h-72">
+              <pre className="text-[11px] text-p-text-2 font-mono bg-black/30 p-3 rounded overflow-auto max-h-72">
                 {JSON.stringify(spec.api_endpoints, null, 2)}
               </pre>
             </Section>
@@ -169,7 +169,7 @@ export default function AsvcSpecDetailPage() {
           {/* Database schema */}
           {spec.database_schema && (
             <Section title="Database schema (DDL)" Icon={FileText}>
-              <pre className="text-[11px] text-neutral-300 font-mono bg-black/30 p-3 rounded overflow-auto max-h-96">
+              <pre className="text-[11px] text-p-text-2 font-mono bg-black/30 p-3 rounded overflow-auto max-h-96">
                 {spec.database_schema}
               </pre>
             </Section>
@@ -177,7 +177,7 @@ export default function AsvcSpecDetailPage() {
 
           {/* Markdown complet */}
           <Section title="Spec Markdown complet" Icon={FileText} collapsed>
-            <pre className="text-[11.5px] text-neutral-300 whitespace-pre-wrap font-mono bg-black/30 p-3 rounded max-h-[600px] overflow-auto">
+            <pre className="text-[11.5px] text-p-text-2 whitespace-pre-wrap font-mono bg-black/30 p-3 rounded max-h-[600px] overflow-auto">
               {spec.markdown_content}
             </pre>
           </Section>
@@ -197,7 +197,7 @@ function Section({
 }) {
   const [open, setOpen] = useState(!collapsed);
   return (
-    <section className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+    <section className="rounded-xl border border-p-border bg-p-surface-alt p-4">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -219,7 +219,7 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
       ? 'text-admin-accent'
       : accent === 'red'
         ? 'text-red-700'
-        : 'text-neutral-300';
+        : 'text-p-text-2';
   return (
     <div className="text-[11.5px]">
       <div className="text-neutral-500 text-[10.5px]">{label}</div>

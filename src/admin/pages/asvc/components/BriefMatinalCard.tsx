@@ -116,7 +116,7 @@ export function BriefMatinalCard({ brief, generating, error, onGenerate }: Props
   const sections = buildSections((brief?.kpis as Record<string, unknown> | null) ?? null);
 
   return (
-    <section className="mb-8 rounded-2xl border border-white/10 bg-gradient-to-br from-onyx-light/50 to-onyx-light/20 p-6">
+    <section className="mb-8 rounded-2xl border border-p-border bg-gradient-to-br from-onyx-light/50 to-onyx-light/20 p-6">
       <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
         <div className="flex items-center gap-2 min-w-0">
           <Sunrise size={16} className="text-admin-accent" />
@@ -131,7 +131,7 @@ export function BriefMatinalCard({ brief, generating, error, onGenerate }: Props
           type="button"
           onClick={onGenerate}
           disabled={generating}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 border border-white/10 hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed text-neutral-300 text-[11px] rounded-md transition"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 border border-p-border hover:bg-p-surface-alt disabled:opacity-50 disabled:cursor-not-allowed text-p-text-2 text-[11px] rounded-md transition"
         >
           {generating ? <Loader2 size={11} className="animate-spin" /> : <RefreshCw size={11} />}
           {generating ? 'Génération...' : 'Générer maintenant'}
@@ -147,13 +147,13 @@ export function BriefMatinalCard({ brief, generating, error, onGenerate }: Props
       {brief ? (
         <>
           {/* Summary texte généré par Claude */}
-          <p className="text-neutral-300 text-[13.5px] leading-relaxed whitespace-pre-line mb-4">
+          <p className="text-p-text-2 text-[13.5px] leading-relaxed whitespace-pre-line mb-4">
             {brief.summary}
           </p>
 
           {/* Sections KPIs structurées sous le summary */}
           {sections.length > 0 && (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2.5 pt-3 border-t border-white/5">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2.5 pt-3 border-t border-p-border">
               {sections.map((s) => (
                 <KpiSection key={s.label} section={s} />
               ))}
@@ -172,7 +172,7 @@ export function BriefMatinalCard({ brief, generating, error, onGenerate }: Props
 
 function KpiSection({ section }: { section: SectionKpi }) {
   return (
-    <div className="rounded-lg border border-white/5 bg-onyx-light/30 p-2.5">
+    <div className="rounded-lg border border-p-border bg-p-surface-alt p-2.5">
       <div className="flex items-center gap-1.5 mb-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-neutral-500">
         <span>{section.emoji}</span>
         {section.label}
@@ -189,7 +189,7 @@ function KpiSection({ section }: { section: SectionKpi }) {
                     ? 'text-emerald-300'
                     : r.accent === 'amber'
                       ? 'text-admin-accent'
-                      : 'text-neutral-300'
+                      : 'text-p-text-2'
               }`}
             >
               {r.value}

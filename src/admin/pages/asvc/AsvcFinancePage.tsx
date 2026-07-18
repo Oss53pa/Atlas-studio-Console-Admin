@@ -33,7 +33,7 @@ export default function AsvcFinancePage() {
         subtitle="Facturation · Compta SYSCOHADA · Trésorerie — par les 3 agents Finance"
       />
 
-      <div className="flex gap-1 border-b border-white/10 mb-5">
+      <div className="flex gap-1 border-b border-p-border mb-5">
         {TABS.map((t) => {
           const active = tab === t.id;
           return (
@@ -44,7 +44,7 @@ export default function AsvcFinancePage() {
               className={`inline-flex items-center gap-1.5 px-4 py-2 text-[12.5px] border-b-2 -mb-px transition ${
                 active
                   ? 'border-admin-accent text-admin-accent font-semibold'
-                  : 'border-transparent text-neutral-400 hover:text-neutral-200'
+                  : 'border-transparent text-p-muted hover:text-p-text'
               }`}
             >
               <t.Icon size={13} />
@@ -69,9 +69,9 @@ function BillingTab() {
 
   if (rows.length === 0) {
     return (
-      <div className="rounded-xl border border-white/5 bg-onyx-light/20 py-12 px-6 text-center">
+      <div className="rounded-xl border border-p-border bg-p-surface-alt/50 py-12 px-6 text-center">
         <Receipt size={20} className="text-neutral-600 mx-auto mb-2" />
-        <p className="text-neutral-400 text-sm">Aucune facture à relancer 🎉</p>
+        <p className="text-p-muted text-sm">Aucune facture à relancer 🎉</p>
         <p className="text-neutral-600 text-[11px] mt-1">
           Le Facturation Agent surveille les échéances. Une carte apparaîtra ici dès qu'une relance est suggérée.
         </p>
@@ -112,7 +112,7 @@ function InvoiceCard({
   onDraft: (level: ReminderLevel) => void;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+    <div className="rounded-xl border border-p-border bg-p-surface-alt p-4">
       <div className="flex flex-wrap items-start gap-3 mb-2">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap mb-0.5">
@@ -122,7 +122,7 @@ function InvoiceCard({
               {REMINDER_LEVEL_LABELS[inv.suggested_level]}
             </span>
           </div>
-          <div className="text-neutral-400 text-[12px] font-mono mt-1">
+          <div className="text-p-muted text-[12px] font-mono mt-1">
             {fcfaFmt(inv.amount_ttc_fcfa)}
           </div>
           <div className="text-neutral-600 text-[10.5px] mt-1 flex flex-wrap gap-x-3">
@@ -159,7 +159,7 @@ function AccountingTab() {
 
   return (
     <>
-      <div className="mb-4 rounded-lg border border-white/5 bg-onyx-light/20 p-3 text-[12px] text-neutral-400">
+      <div className="mb-4 rounded-lg border border-p-border bg-p-surface-alt/50 p-3 text-[12px] text-p-muted">
         <BookOpenCheck size={13} className="inline mr-1.5" />
         Le Compta Agent propose des écritures SYSCOHADA équilibrées (déb=créd). Tu valides avant
         import dans Atlas Finance. Aucune écriture n'est passée automatiquement.
@@ -178,7 +178,7 @@ function AccountingTab() {
 
       <div className="space-y-2">
         {rows.map((inv) => (
-          <div key={inv.invoice_id} className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+          <div key={inv.invoice_id} className="rounded-xl border border-p-border bg-p-surface-alt p-4">
             <div className="flex flex-wrap items-start gap-3">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -186,7 +186,7 @@ function AccountingTab() {
                   <span className="text-neutral-light text-[13px] font-medium truncate">{inv.client_name}</span>
                   <span className="text-neutral-500 text-[11px]">· {inv.status}</span>
                 </div>
-                <div className="text-neutral-400 text-[12px] font-mono">{fcfaFmt(inv.amount_ttc_fcfa)}</div>
+                <div className="text-p-muted text-[12px] font-mono">{fcfaFmt(inv.amount_ttc_fcfa)}</div>
               </div>
 
               <div className="flex gap-1 flex-wrap">
@@ -196,7 +196,7 @@ function AccountingTab() {
                     type="button"
                     onClick={() => suggestJournal(inv.invoice_id, kind)}
                     disabled={pendingId === inv.invoice_id}
-                    className="inline-flex items-center gap-1 px-2 py-1.5 border border-white/10 text-neutral-300 hover:bg-white/5 disabled:opacity-50 text-[11px] rounded-md transition"
+                    className="inline-flex items-center gap-1 px-2 py-1.5 border border-p-border text-p-text-2 hover:bg-p-surface-alt disabled:opacity-50 text-[11px] rounded-md transition"
                     title={kind === 'invoice_issued' ? 'Écriture émission (411/706/4431)' : 'Écriture encaissement (521/411)'}
                   >
                     {pendingId === inv.invoice_id ? <Loader2 size={10} className="animate-spin" /> : <Calculator size={11} />}
@@ -234,7 +234,7 @@ function TreasuryTab() {
           type="button"
           onClick={triggerBrief}
           disabled={generating}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 border border-white/10 hover:bg-white/5 disabled:opacity-50 text-neutral-300 text-[11px] rounded-md transition"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 border border-p-border hover:bg-p-surface-alt disabled:opacity-50 text-p-text-2 text-[11px] rounded-md transition"
         >
           {generating ? <Loader2 size={11} className="animate-spin" /> : <RefreshCw size={11} />}
           {generating ? 'Trésorerie Agent en cours...' : 'Demander un brief Trésorerie'}
@@ -290,9 +290,9 @@ function TreasuryTab() {
           <h3 className="text-neutral-light text-[12px] font-semibold mb-2">
             Top retards
           </h3>
-          <div className="rounded-xl border border-white/10 overflow-hidden">
+          <div className="rounded-xl border border-p-border overflow-hidden">
             <table className="w-full text-[12px]">
-              <thead className="bg-onyx-light/40">
+              <thead className="bg-p-surface-alt">
                 <tr className="text-neutral-500 text-[10.5px] uppercase tracking-wider">
                   <th className="text-left px-3 py-2 font-semibold">Facture</th>
                   <th className="text-left px-3 py-2 font-semibold">Client</th>
@@ -302,10 +302,10 @@ function TreasuryTab() {
               </thead>
               <tbody>
                 {dashboard.recent_overdue.map((o) => (
-                  <tr key={o.invoice_number} className="border-t border-white/5">
+                  <tr key={o.invoice_number} className="border-t border-p-border">
                     <td className="px-3 py-2 text-neutral-500 font-mono text-[11px]">{o.invoice_number}</td>
-                    <td className="px-3 py-2 text-neutral-300">{o.client_name}</td>
-                    <td className="px-3 py-2 text-right font-mono text-neutral-300">{fcfaFmt(o.amount_ttc_fcfa)}</td>
+                    <td className="px-3 py-2 text-p-text-2">{o.client_name}</td>
+                    <td className="px-3 py-2 text-right font-mono text-p-text-2">{fcfaFmt(o.amount_ttc_fcfa)}</td>
                     <td className="px-3 py-2 text-right text-red-700/80">{o.days_overdue}j</td>
                   </tr>
                 ))}
@@ -335,7 +335,7 @@ function KpiCard({
     ? 'border-red-500/30 bg-red-500/5'
     : accent
       ? 'border-amber-500/30 bg-amber-500/5'
-      : 'border-white/10 bg-onyx-light/30';
+      : 'border-p-border bg-p-surface-alt';
   return (
     <div className={`rounded-xl border p-4 ${borderClass}`}>
       <div className="text-neutral-500 text-[10.5px] uppercase tracking-wider mb-1">{label}</div>

@@ -6,7 +6,7 @@ export function CardListSkeleton({ rows = 5, height = 'h-[72px]' }: { rows?: num
       {Array.from({ length: rows }).map((_, i) => (
         <div
           key={i}
-          className={`rounded-xl border border-white/10 bg-onyx-light/30 ${height} animate-pulse`}
+          className={`rounded-xl border border-p-border bg-p-surface-alt ${height} animate-pulse`}
         />
       ))}
     </div>

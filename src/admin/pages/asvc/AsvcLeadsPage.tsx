@@ -68,7 +68,7 @@ export default function AsvcLeadsPage() {
       />
 
       <div className="flex flex-wrap gap-3 mb-5 text-[11.5px]">
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-white/10 bg-white/5 text-neutral-300">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-p-border bg-p-surface-alt text-p-text-2">
           <span className="font-semibold">{stats.total}</span>
           <span className="opacity-80">leads total</span>
         </span>
@@ -100,7 +100,7 @@ export default function AsvcLeadsPage() {
               className={`px-3 py-1.5 rounded-lg text-[12px] border transition ${
                 active
                   ? 'bg-admin-accent/15 text-admin-accent border-admin-accent/30'
-                  : 'border-white/10 text-neutral-400 hover:bg-white/5'
+                  : 'border-p-border text-p-muted hover:bg-p-surface-alt'
               }`}
             >
               {f.label}
@@ -120,9 +120,9 @@ export default function AsvcLeadsPage() {
       {loading && <CardListSkeleton />}
 
       {!loading && filtered.length === 0 && (
-        <div className="rounded-xl border border-white/5 bg-onyx-light/20 py-12 px-6 text-center">
+        <div className="rounded-xl border border-p-border bg-p-surface-alt/50 py-12 px-6 text-center">
           <Target size={20} className="text-neutral-600 mx-auto mb-2" />
-          <p className="text-neutral-400 text-sm">Aucun lead pour ce filtre.</p>
+          <p className="text-p-muted text-sm">Aucun lead pour ce filtre.</p>
           <p className="text-neutral-600 text-[11px] mt-1">
             Les leads peuvent être créés à la main dans AtlasTrade, ou enrichis par l'agent Prospection.
           </p>
@@ -155,7 +155,7 @@ function LeadRow({
   onAction: (kind: SalesAgentKind, payload?: { channel?: SdrChannel; step?: string }) => void;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+    <div className="rounded-xl border border-p-border bg-p-surface-alt p-4">
       <div className="flex flex-wrap items-start gap-3 mb-2">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap mb-0.5">
@@ -185,7 +185,7 @@ function LeadRow({
             )}
             {lead.last_touch_at && <span>touche {timeAgoFr(lead.last_touch_at)}</span>}
             {lead.last_interaction_outcome && (
-              <span className="text-neutral-400">→ {lead.last_interaction_outcome}</span>
+              <span className="text-p-muted">→ {lead.last_interaction_outcome}</span>
             )}
           </div>
         </div>
@@ -298,7 +298,7 @@ function SdrButton({
       onClick={onClick}
       disabled={pending}
       title={`SDR Agent — drafter sur ${label}`}
-      className="inline-flex items-center gap-1 px-2 py-1.5 border border-white/10 text-neutral-300 hover:bg-white/5 disabled:opacity-50 text-[11px] rounded-md transition"
+      className="inline-flex items-center gap-1 px-2 py-1.5 border border-p-border text-p-text-2 hover:bg-p-surface-alt disabled:opacity-50 text-[11px] rounded-md transition"
     >
       {pending ? <Loader2 size={10} className="animate-spin" /> : <Icon size={11} />}
       {label}

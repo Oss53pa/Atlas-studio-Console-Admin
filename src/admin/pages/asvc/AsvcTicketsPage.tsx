@@ -141,20 +141,20 @@ function TicketDetail({ ticketId, onBack }: { ticketId: string; onBack: () => vo
       <button
         type="button"
         onClick={onBack}
-        className="inline-flex items-center gap-1.5 text-neutral-500 hover:text-neutral-300 text-[12px] mb-4 transition"
+        className="inline-flex items-center gap-1.5 text-neutral-500 hover:text-p-text-2 text-[12px] mb-4 transition"
       >
         <ArrowLeft size={13} />
         Retour à la liste
       </button>
 
-      <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-5 mb-5">
+      <div className="rounded-xl border border-p-border bg-p-surface-alt p-5 mb-5">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="min-w-0">
             <div className="text-neutral-500 text-[11px] font-mono">{ticket.ticket_number}</div>
             <h2 className="text-neutral-light text-base font-semibold mt-0.5">
               {ticket.subject ?? <span className="italic text-neutral-500">(sans objet)</span>}
             </h2>
-            <div className="text-neutral-400 text-[12px] mt-1">
+            <div className="text-p-muted text-[12px] mt-1">
               {ticket.client_name ?? ticket.client_email ?? 'anonyme'}
               {ticket.app_concerned && <> · {ticket.app_concerned}</>}
               <> · via {ticket.source}</>
@@ -212,8 +212,8 @@ function TicketDetail({ ticketId, onBack }: { ticketId: string; onBack: () => vo
             disabled={drafting}
             className={`inline-flex items-center gap-1.5 border text-[12px] px-3 py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${
               isBug
-                ? 'bg-white/5 border-white/15 text-neutral-200 hover:bg-white/10'
-                : 'border-white/10 text-neutral-400 hover:bg-white/5'
+                ? 'bg-p-surface-alt border-p-border text-p-text hover:bg-p-surface-alt'
+                : 'border-p-border text-p-muted hover:bg-p-surface-alt'
             }`}
             title={isBug ? 'Catégorie = bug : triage recommandé' : 'Forcer le triage bug même si la catégorie n\'est pas \"bug\"'}
           >
@@ -246,10 +246,10 @@ function Bubble({
       <div
         className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-[12.5px] leading-relaxed ${
           isClient
-            ? 'bg-white/5 border border-white/10 text-neutral-200'
+            ? 'bg-p-surface-alt border border-p-border text-p-text'
             : sender === 'ceo'
-              ? 'bg-admin-accent/20 border border-admin-accent/30 text-neutral-100'
-              : 'bg-white/8 border border-white/10 text-neutral-100'
+              ? 'bg-admin-accent/20 border border-admin-accent/30 text-p-text'
+              : 'bg-p-surface-alt border border-p-border text-p-text'
         }`}
       >
         <div className="flex items-center gap-2 mb-1 text-[10px] text-neutral-500">

@@ -156,26 +156,26 @@ export default {
         pill: '9999px',
       },
       boxShadow: {
-        'gold-sm': '0 2px 8px rgba(152, 104, 20, 0.22), 0 0 0 1px rgba(152, 104, 20, 0.12)',
-        'gold': '0 6px 24px rgba(152, 104, 20, 0.28), 0 0 0 1px rgba(152, 104, 20, 0.20)',
-        'gold-lg': '0 12px 48px rgba(152, 104, 20, 0.34), 0 0 0 1px rgba(152, 104, 20, 0.24)',
-        'gold-glow': '0 0 32px rgba(152, 104, 20, 0.26), 0 0 64px rgba(152, 104, 20, 0.15)',
-        // Elevation scale (design-system token) — soft, diffuse, neumorphic on charcoal.
-        // Light comes from the top: faint top inner highlight + soft, layered drop shadow.
-        'elev-1': 'inset 0 1px 0 0 rgba(255,255,255,0.045), 0 1px 2px rgba(0,0,0,0.4)',
-        'elev-2': 'inset 0 1px 0 0 rgba(255,255,255,0.05), 0 4px 14px -2px rgba(0,0,0,0.5), 0 2px 6px -2px rgba(0,0,0,0.4)',
-        'elev-3': 'inset 0 1px 0 0 rgba(255,255,255,0.06), 0 16px 36px -10px rgba(0,0,0,0.62), 0 6px 14px -6px rgba(0,0,0,0.45)',
-        'elev-4': 'inset 0 1px 0 0 rgba(255,255,255,0.06), 0 28px 60px -14px rgba(0,0,0,0.74), 0 10px 24px -10px rgba(0,0,0,0.5)',
-        'elev-5': 'inset 0 1px 0 0 rgba(255,255,255,0.07), 0 40px 88px -18px rgba(0,0,0,0.85), 0 14px 30px -12px rgba(0,0,0,0.55)',
-        // Aliases kept for existing usages — now resolve to the soft elevation scale.
-        'premium': 'inset 0 1px 0 0 rgba(255,255,255,0.05), 0 4px 14px -2px rgba(0,0,0,0.5), 0 2px 6px -2px rgba(0,0,0,0.4)',
-        'premium-lg': 'inset 0 1px 0 0 rgba(255,255,255,0.06), 0 28px 60px -14px rgba(0,0,0,0.74), 0 10px 24px -10px rgba(0,0,0,0.5)',
-        'inset-highlight': 'inset 0 1px 0 0 rgba(255,255,255,0.06)',
-        // Soft neumorphic dual shadow (raised) + inset (pressed)
-        'neu': '7px 7px 18px rgba(0,0,0,0.5), -7px -7px 18px rgba(255,255,255,0.022)',
-        'neu-sm': '4px 4px 10px rgba(0,0,0,0.42), -4px -4px 10px rgba(255,255,255,0.02)',
-        'neu-inset': 'inset 4px 4px 10px rgba(0,0,0,0.5), inset -3px -3px 8px rgba(255,255,255,0.025)',
-        'focus-ring': '0 0 0 3px rgba(169,181,126,0.32), 0 0 0 1px rgba(169,181,126,0.55)',
+        // Accent glow shadows — soft olive/volt, tuned for a light surface.
+        'gold-sm': '0 2px 8px rgba(76, 92, 21, 0.14), 0 0 0 1px rgba(76, 92, 21, 0.10)',
+        'gold': '0 6px 20px -6px rgba(76, 92, 21, 0.20), 0 0 0 1px rgba(76, 92, 21, 0.14)',
+        'gold-lg': '0 12px 32px -8px rgba(76, 92, 21, 0.24), 0 0 0 1px rgba(76, 92, 21, 0.16)',
+        'gold-glow': '0 4px 20px -4px rgba(196, 236, 0, 0.35)',
+        // Elevation scale (design-system token) — soft, diffuse neutral drop shadows for a light UI.
+        'elev-1': '0 1px 2px rgba(23, 25, 18, 0.05)',
+        'elev-2': '0 1px 2px rgba(23, 25, 18, 0.04), 0 6px 16px -8px rgba(23, 25, 18, 0.10)',
+        'elev-3': '0 2px 4px rgba(23, 25, 18, 0.05), 0 16px 32px -12px rgba(23, 25, 18, 0.14)',
+        'elev-4': '0 4px 8px rgba(23, 25, 18, 0.06), 0 28px 52px -16px rgba(23, 25, 18, 0.18)',
+        'elev-5': '0 8px 16px rgba(23, 25, 18, 0.07), 0 40px 72px -20px rgba(23, 25, 18, 0.22)',
+        // Aliases kept for existing usages — now resolve to the soft light elevation scale.
+        'premium': '0 1px 2px rgba(23, 25, 18, 0.04), 0 6px 16px -8px rgba(23, 25, 18, 0.10)',
+        'premium-lg': '0 4px 8px rgba(23, 25, 18, 0.06), 0 28px 52px -16px rgba(23, 25, 18, 0.18)',
+        'inset-highlight': 'inset 0 1px 0 0 rgba(255,255,255,0.6)',
+        // Soft dual shadow (raised) + inset (pressed) — light neutral.
+        'neu': '0 2px 4px rgba(23, 25, 18, 0.04), 0 10px 24px -12px rgba(23, 25, 18, 0.12)',
+        'neu-sm': '0 1px 2px rgba(23, 25, 18, 0.04), 0 4px 10px -6px rgba(23, 25, 18, 0.10)',
+        'neu-inset': 'inset 0 1px 3px rgba(23, 25, 18, 0.06)',
+        'focus-ring': '0 0 0 3px rgba(76, 92, 21, 0.20), 0 0 0 1px rgba(76, 92, 21, 0.45)',
       },
       backgroundImage: {
         // Olive 5-stop gradient — premium feutré shimmer

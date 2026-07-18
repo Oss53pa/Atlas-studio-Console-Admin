@@ -182,7 +182,7 @@ function AgentReadinessCard({
     <button
       type="button"
       onClick={onClick}
-      className="text-left rounded-xl border border-white/10 bg-onyx-light/30 hover:bg-onyx-light/50 hover:border-admin-accent/30 p-4 transition group"
+      className="text-left rounded-xl border border-p-border bg-p-surface-alt hover:bg-p-surface-alt hover:border-admin-accent/30 p-4 transition group"
     >
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="min-w-0 flex-1">
@@ -211,11 +211,11 @@ function AgentReadinessCard({
           >
             {READINESS_STAGE_LABELS[agent.stage_recommended]}
           </span>
-          <span className="text-neutral-400 font-mono">
+          <span className="text-p-muted font-mono">
             {agent.passed}/{agent.total_tests}
           </span>
         </div>
-        <div className="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
+        <div className="w-full h-1.5 rounded-full bg-p-surface-alt overflow-hidden">
           <div
             className={`h-full ${barColor} transition-all`}
             style={{ width: `${pct}%` }}
@@ -339,7 +339,7 @@ function TestCaseRow({
       className={`rounded-lg border px-3 py-2.5 ${
         testCase.is_critical
           ? 'border-admin-accent/30 bg-admin-accent/5'
-          : 'border-white/10 bg-onyx-light/30'
+          : 'border-p-border bg-p-surface-alt'
       }`}
     >
       <div className="flex items-start justify-between gap-3 mb-1.5">
@@ -360,13 +360,13 @@ function TestCaseRow({
               </span>
             )}
           </div>
-          <p className="text-neutral-300 text-[12px] leading-snug">
-            <span className="text-neutral-200 font-medium">{testCase.scenario}</span>
+          <p className="text-p-text-2 text-[12px] leading-snug">
+            <span className="text-p-text font-medium">{testCase.scenario}</span>
             <span className="text-neutral-500"> → </span>
-            <span className="text-neutral-400">{testCase.expected_outcome}</span>
+            <span className="text-p-muted">{testCase.expected_outcome}</span>
           </p>
           {testCase.last_run_notes && (
-            <p className="mt-1 text-neutral-500 text-[11px] italic border-l-2 border-white/10 pl-2">
+            <p className="mt-1 text-neutral-500 text-[11px] italic border-l-2 border-p-border pl-2">
               {testCase.last_run_notes}
             </p>
           )}
@@ -431,7 +431,7 @@ function ActionButton({
   const colorClasses: Record<typeof color, string> = {
     emerald: 'border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10',
     red: 'border-red-500/30 text-red-700 hover:bg-red-500/10',
-    neutral: 'border-white/10 text-neutral-400 hover:bg-white/5',
+    neutral: 'border-p-border text-p-muted hover:bg-p-surface-alt',
     amber: 'border-amber-500/30 text-amber-700 hover:bg-amber-500/10',
   };
   return (
@@ -462,13 +462,13 @@ function StatCard({
   icon: typeof Shield;
 }) {
   const colorClasses: Record<typeof accent, string> = {
-    neutral: 'text-neutral-300',
+    neutral: 'text-p-text-2',
     emerald: 'text-emerald-300',
     red: 'text-red-700',
     amber: 'text-amber-700',
   };
   return (
-    <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-3">
+    <div className="rounded-xl border border-p-border bg-p-surface-alt p-3">
       <div className="flex items-center gap-1.5 mb-1 text-[10px] text-neutral-500 uppercase tracking-wider">
         <Icon size={10} />
         {label}

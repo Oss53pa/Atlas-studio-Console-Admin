@@ -76,45 +76,46 @@ export function LockScreen({ onUnlock, onSignOut }: LockScreenProps) {
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center"
       style={{
-        background: "rgba(10,10,10,0.96)",
-        backdropFilter: "blur(8px)",
+        background: "rgba(23,25,18,0.55)",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
       }}
     >
       <div className="w-full max-w-md mx-auto px-6">
-        {/* Logo */}
+        {/* Logo (sur le voile sombre) */}
         <div className="text-center mb-8">
           <Logo size={32} color="text-white" />
-          <div className="text-p-accent text-[10px] font-bold uppercase tracking-widest mt-1">
+          <div className="text-white/70 text-[10px] font-bold uppercase tracking-widest mt-1">
             Console Administration
           </div>
         </div>
 
-        {/* Lock card */}
-        <div className="bg-p-surface border border-white/10 rounded-2xl p-8 shadow-2xl">
+        {/* Lock card — carte claire */}
+        <div className="bg-p-surface border border-p-border rounded-2xl p-8 shadow-elev-5">
           <div className="flex justify-center mb-5">
-            <div className="w-14 h-14 rounded-full bg-p-accent/15 border border-p-accent/30 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-full bg-p-accent/12 border border-p-accent/25 flex items-center justify-center">
               <Lock size={22} className="text-p-accent" />
             </div>
           </div>
 
-          <h2 className="text-white text-lg font-semibold text-center mb-2">
+          <h2 className="text-p-text text-lg font-semibold text-center mb-2">
             Session verrouillée
           </h2>
-          <p className="text-white/50 text-[12px] text-center mb-6 leading-relaxed">
+          <p className="text-p-muted text-[12px] text-center mb-6 leading-relaxed">
             Inactivité détectée — entrez votre mot de passe<br />
             pour reprendre votre session.
           </p>
 
           {/* User pill */}
-          <div className="flex items-center gap-3 px-3 py-2 bg-white/5 border border-white/10 rounded-lg mb-4">
-            <div className="w-8 h-8 rounded-full bg-p-accent flex items-center justify-center text-p-surface text-[11px] font-bold flex-shrink-0">
+          <div className="flex items-center gap-3 px-3 py-2 bg-p-surface-alt border border-p-border rounded-lg mb-4">
+            <div className="w-8 h-8 rounded-full bg-p-accent flex items-center justify-center text-p-on-accent text-[11px] font-bold flex-shrink-0">
               {initials}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-white text-[12px] font-medium truncate">
+              <div className="text-p-text text-[12px] font-medium truncate">
                 {profile?.full_name || "Admin"}
               </div>
-              <div className="text-white/40 text-[10px] truncate">{user?.email}</div>
+              <div className="text-p-muted text-[10px] truncate">{user?.email}</div>
             </div>
           </div>
 
@@ -128,13 +129,13 @@ export function LockScreen({ onUnlock, onSignOut }: LockScreenProps) {
               onKeyDown={handleKeyDown}
               placeholder="Mot de passe"
               disabled={loading}
-              className="w-full px-3 py-2.5 pr-10 bg-p-surface border border-white/10 rounded-lg text-white text-[13px] placeholder-white/30 focus:border-p-accent/50 outline-none transition-colors"
+              className="w-full px-3 py-2.5 pr-10 bg-p-surface-alt border border-p-border rounded-lg text-p-text text-[13px] placeholder-p-muted focus:border-p-accent outline-none transition-colors"
               autoComplete="current-password"
             />
             <button
               type="button"
               onClick={() => setShowPassword(s => !s)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-p-muted hover:text-p-text transition-colors"
               tabIndex={-1}
             >
               {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -142,13 +143,13 @@ export function LockScreen({ onUnlock, onSignOut }: LockScreenProps) {
           </div>
 
           {error && (
-            <div className="mt-2 text-red-700 text-[11px] font-medium">{error}</div>
+            <div className="mt-2 text-p-err text-[11px] font-medium">{error}</div>
           )}
 
           <button
             onClick={handleUnlock}
             disabled={loading || !password}
-            className="w-full mt-4 py-2.5 bg-p-accent text-p-surface rounded-lg font-semibold text-[13px] hover:bg-p-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full mt-4 py-2.5 bg-p-accent text-p-on-accent rounded-lg font-semibold text-[13px] hover:bg-p-accent-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
@@ -159,10 +160,10 @@ export function LockScreen({ onUnlock, onSignOut }: LockScreenProps) {
             )}
           </button>
 
-          <div className="mt-4 pt-4 border-t border-white/5 text-center">
+          <div className="mt-4 pt-4 border-t border-p-border text-center">
             <button
               onClick={onSignOut}
-              className="text-white/40 hover:text-white/70 text-[11px] transition-colors"
+              className="text-p-muted hover:text-p-text text-[11px] transition-colors"
             >
               Se déconnecter complètement
             </button>
@@ -170,7 +171,7 @@ export function LockScreen({ onUnlock, onSignOut }: LockScreenProps) {
         </div>
 
         <div className="text-center mt-6">
-          <div className="text-white/30 text-[10px]">
+          <div className="text-white/50 text-[10px]">
             Atlas Studio · Sécurité console
           </div>
         </div>

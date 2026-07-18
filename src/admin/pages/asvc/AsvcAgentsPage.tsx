@@ -58,7 +58,7 @@ export default function AsvcAgentsPage() {
 
       {/* Onglets par département */}
       {grouped.length > 0 && (
-        <div className="flex gap-1 border-b border-white/10 mb-5 overflow-x-auto">
+        <div className="flex gap-1 border-b border-p-border mb-5 overflow-x-auto">
           {grouped.map(({ dept, items }) => {
             const active = dept === currentDept;
             return (
@@ -69,11 +69,11 @@ export default function AsvcAgentsPage() {
                 className={`flex items-center gap-2 px-4 py-2.5 text-[13px] font-semibold border-b-2 -mb-px whitespace-nowrap transition-colors ${
                   active
                     ? 'border-admin-accent text-admin-accent'
-                    : 'border-transparent text-neutral-500 hover:text-neutral-300'
+                    : 'border-transparent text-neutral-500 hover:text-p-text-2'
                 }`}
               >
                 {DEPARTMENT_LABELS[dept]}
-                <span className={`text-[11px] px-1.5 py-0.5 rounded-full ${active ? 'bg-admin-accent/15 text-admin-accent' : 'bg-white/5 text-neutral-500'}`}>
+                <span className={`text-[11px] px-1.5 py-0.5 rounded-full ${active ? 'bg-admin-accent/15 text-admin-accent' : 'bg-p-surface-alt text-neutral-500'}`}>
                   {items.length}
                 </span>
               </button>
@@ -102,7 +102,7 @@ function AgentMonitorCard({ agent, stats }: { agent: Agent; stats: AgentActionSt
 
   const healthColor =
     healthScore === null
-      ? 'bg-white/5 text-neutral-500'
+      ? 'bg-p-surface-alt text-neutral-500'
       : healthScore >= 80
         ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
         : healthScore >= 50
@@ -110,7 +110,7 @@ function AgentMonitorCard({ agent, stats }: { agent: Agent; stats: AgentActionSt
           : 'bg-red-500/15 text-red-700 border-red-500/30';
 
   return (
-    <div className="rounded-xl border border-white/10 bg-onyx-light/30 p-4">
+    <div className="rounded-xl border border-p-border bg-p-surface-alt p-4">
       <div className="flex items-start gap-3 mb-3">
         <div className="w-9 h-9 rounded-lg bg-admin-accent/15 text-admin-accent flex items-center justify-center flex-shrink-0">
           <Bot size={16} />
@@ -135,7 +135,7 @@ function AgentMonitorCard({ agent, stats }: { agent: Agent; stats: AgentActionSt
               </span>
             )}
           </div>
-          <p className="text-neutral-400 text-[11.5px] leading-snug">{agent.role_description}</p>
+          <p className="text-p-muted text-[11.5px] leading-snug">{agent.role_description}</p>
           <div className="flex items-center gap-2 text-[10px] text-neutral-600 font-mono mt-1">
             <span>{agent.code}</span>
             <span>·</span>
@@ -154,14 +154,14 @@ function AgentMonitorCard({ agent, stats }: { agent: Agent; stats: AgentActionSt
 
       {/* Stats 7j */}
       {stats && total > 0 ? (
-        <div className="grid grid-cols-4 gap-1.5 pt-2 border-t border-white/5">
+        <div className="grid grid-cols-4 gap-1.5 pt-2 border-t border-p-border">
           <MiniStat icon={<Activity size={10} />} label="Actions" value={String(total)} />
           <MiniStat icon={<TrendingUp size={10} />} label="Approval" value={`${Math.round(approvalRate ?? 0)}%`} />
           <MiniStat label="Exécutées" value={String(stats.executed)} />
           <MiniStat icon={<Clock size={10} />} label="Délai val." value={`${Math.round(Number(stats.avg_validation_minutes))}m`} />
         </div>
       ) : (
-        <p className="text-neutral-600 text-[10.5px] italic pt-2 border-t border-white/5">
+        <p className="text-neutral-600 text-[10.5px] italic pt-2 border-t border-p-border">
           Aucune action sur 7 jours
         </p>
       )}
@@ -171,7 +171,7 @@ function AgentMonitorCard({ agent, stats }: { agent: Agent; stats: AgentActionSt
 
 function MiniStat({ icon, label, value }: { icon?: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="bg-onyx-light/40 rounded px-2 py-1.5">
+    <div className="bg-p-surface-alt rounded px-2 py-1.5">
       <div className="text-neutral-light text-[12px] font-semibold font-mono leading-none">{value}</div>
       <div className="text-neutral-600 text-[9.5px] mt-0.5 flex items-center gap-0.5">
         {icon}
@@ -196,7 +196,7 @@ function Stat({
       ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
       : accent === 'amber'
         ? 'border-admin-accent/30 bg-admin-accent/10 text-admin-accent'
-        : 'border-white/10 bg-white/5 text-neutral-300';
+        : 'border-p-border bg-p-surface-alt text-p-text-2';
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border ${cls}`}>
       <span className="font-semibold">{value}</span>

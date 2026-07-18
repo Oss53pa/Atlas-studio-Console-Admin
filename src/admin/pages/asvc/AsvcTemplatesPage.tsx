@@ -149,7 +149,7 @@ function TemplateCard({
     <button
       type="button"
       onClick={onEdit}
-      className="text-left rounded-xl border border-white/10 bg-onyx-light/30 hover:bg-onyx-light/50 hover:border-admin-accent/30 p-4 transition group"
+      className="text-left rounded-xl border border-p-border bg-p-surface-alt hover:bg-p-surface-alt hover:border-admin-accent/30 p-4 transition group"
     >
       <div className="flex items-start gap-2 mb-2">
         <div className="w-7 h-7 rounded-md bg-admin-accent/15 text-admin-accent flex items-center justify-center flex-shrink-0">
@@ -165,7 +165,7 @@ function TemplateCard({
       </div>
 
       {template.value.subject && (
-        <p className="text-neutral-400 text-[11px] mb-1.5 truncate">
+        <p className="text-p-muted text-[11px] mb-1.5 truncate">
           <span className="text-neutral-500">Objet :</span> {template.value.subject}
         </p>
       )}
@@ -228,7 +228,7 @@ function TemplateEditorModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-3 py-1.5 rounded-lg border border-white/10 text-neutral-300 hover:bg-white/5 text-[12px]"
+            className="px-3 py-1.5 rounded-lg border border-p-border text-p-text-2 hover:bg-p-surface-alt text-[12px]"
           >
             Annuler
           </button>
@@ -254,7 +254,7 @@ function TemplateEditorModal({
               {variables.map((v) => (
                 <span
                   key={v}
-                  className="px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-[10.5px] font-mono text-neutral-300"
+                  className="px-1.5 py-0.5 rounded border border-p-border bg-p-surface-alt text-[10.5px] font-mono text-p-text-2"
                 >
                   [{v}]
                 </span>
@@ -272,7 +272,7 @@ function TemplateEditorModal({
               type="text"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-white/10 bg-onyx-light/30 text-neutral-200 text-[13px] focus:border-admin-accent focus:outline-none"
+              className="w-full px-3 py-2 rounded-lg border border-p-border bg-p-surface-alt text-p-text text-[13px] focus:border-admin-accent focus:outline-none"
             />
           </div>
         )}
@@ -285,7 +285,7 @@ function TemplateEditorModal({
             <button
               type="button"
               onClick={copy}
-              className="inline-flex items-center gap-1 text-[10px] text-neutral-500 hover:text-neutral-300"
+              className="inline-flex items-center gap-1 text-[10px] text-neutral-500 hover:text-p-text-2"
             >
               {copied ? <Check size={10} /> : <Copy size={10} />}
               {copied ? 'Copié' : 'Copier'}
@@ -295,7 +295,7 @@ function TemplateEditorModal({
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={20}
-            className="w-full px-3 py-2 rounded-lg border border-white/10 bg-onyx-light/30 text-neutral-200 text-[12.5px] font-mono leading-relaxed focus:border-admin-accent focus:outline-none resize-y"
+            className="w-full px-3 py-2 rounded-lg border border-p-border bg-p-surface-alt text-p-text text-[12.5px] font-mono leading-relaxed focus:border-admin-accent focus:outline-none resize-y"
           />
           <p className="mt-1 text-[10px] text-neutral-600">{body.length} caractères</p>
         </div>
@@ -325,7 +325,7 @@ function TemplateEditorModal({
           </div>
         )}
 
-        <div className="text-[10px] text-neutral-600 pt-2 border-t border-white/5 flex items-center justify-between">
+        <div className="text-[10px] text-neutral-600 pt-2 border-t border-p-border flex items-center justify-between">
           <span>Source : Annexe {template.value.source_annexe ?? '?'}</span>
           <span>Dernière maj : {timeAgoFr(template.updated_at)}</span>
         </div>
@@ -338,7 +338,7 @@ function Meta({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <p className="text-[9.5px] uppercase tracking-widest text-neutral-500 mb-0.5">{label}</p>
-      <p className="text-neutral-300 text-[12px]">{value}</p>
+      <p className="text-p-text-2 text-[12px]">{value}</p>
     </div>
   );
 }
