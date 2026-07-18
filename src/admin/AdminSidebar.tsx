@@ -17,7 +17,12 @@ import { NotificationCenter } from "./components/NotificationCenter";
 import { SITE_URL } from "../config/site";
 
 interface NavItem { to: string; icon: LucideIcon; label: string; }
-interface NavGroup { id: string; label: string; icon: LucideIcon; items: NavItem[]; }
+interface NavSubgroup { label: string; items: NavItem[]; }
+interface NavGroup { id: string; label: string; icon: LucideIcon; items?: NavItem[]; subgroups?: NavSubgroup[]; }
+
+// Liste plate des items d'un groupe (qu'il soit à plat ou en sous-rubriques),
+// utilisée pour la détection de section active et de page active.
+const flatItems = (g: NavGroup): NavItem[] => g.subgroups ? g.subgroups.flatMap(s => s.items) : (g.items ?? []);
 
 const NAV_GROUPS: NavGroup[] = [
   {
@@ -90,28 +95,58 @@ const NAV_GROUPS: NavGroup[] = [
     id: "asvc",
     label: "ASVC — Virtual Company",
     icon: Bot,
-    items: [
-      { to: "/admin/asvc/setup-guide", icon: BookOpen, label: "Guide de démarrage" },
-      { to: "/admin/asvc", icon: Inbox, label: "Brief & Inbox" },
-      { to: "/admin/asvc/arbitrations", icon: ListChecks, label: "Arbitrages" },
-      { to: "/admin/asvc/pipeline", icon: Workflow, label: "Pipeline Produit" },
-      { to: "/admin/asvc/agents", icon: Bot, label: "Agents" },
-      { to: "/admin/asvc/tickets", icon: LifeBuoy, label: "Tickets SAV" },
-      { to: "/admin/asvc/customers", icon: UserCheck, label: "Customer Lifecycle" },
-      { to: "/admin/asvc/content", icon: Calendar, label: "Content Calendar" },
-      { to: "/admin/asvc/leads", icon: Target, label: "Pipeline Ventes" },
-      { to: "/admin/asvc/finance", icon: Wallet, label: "Finance" },
-      { to: "/admin/asvc/health", icon: Shield, label: "Health & Audit" },
-      { to: "/admin/asvc/tests", icon: CheckSquare, label: "Tests Readiness" },
-      { to: "/admin/asvc/tech-debt", icon: Wrench, label: "Tech Debt" },
-      { to: "/admin/asvc/briefs", icon: History, label: "Historique briefs" },
-      { to: "/admin/asvc/connectors", icon: Plug, label: "Connecteurs" },
-      { to: "/admin/asvc/templates", icon: Files, label: "Templates" },
-      { to: "/admin/asvc/settings", icon: Settings, label: "Préférences CEO" },
-      { to: "/admin/asvc/agent-prompts", icon: BookOpen, label: "System prompts" },
-      { to: "/admin/asvc/actions", icon: ScrollText, label: "Journal actions" },
-      { to: "/admin/asvc/kill-switch", icon: Power, label: "Kill Switch" },
-      { to: "/admin/asvc/config", icon: SlidersHorizontal, label: "Configuration" },
+    subgroups: [
+      {
+        label: "Pilotage",
+        items: [
+          { to: "/admin/asvc/setup-guide", icon: BookOpen, label: "Guide de démarrage" },
+          { to: "/admin/asvc", icon: Inbox, label: "Brief & Inbox" },
+          { to: "/admin/asvc/arbitrations", icon: ListChecks, label: "Arbitrages" },
+        ],
+      },
+      {
+        label: "Opérations",
+        items: [
+          { to: "/admin/asvc/pipeline", icon: Workflow, label: "Pipeline Produit" },
+          { to: "/admin/asvc/leads", icon: Target, label: "Pipeline Ventes" },
+          { to: "/admin/asvc/customers", icon: UserCheck, label: "Customer Lifecycle" },
+          { to: "/admin/asvc/tickets", icon: LifeBuoy, label: "Tickets SAV" },
+          { to: "/admin/asvc/content", icon: Calendar, label: "Content Calendar" },
+          { to: "/admin/asvc/finance", icon: Wallet, label: "Finance" },
+        ],
+      },
+      {
+        label: "Agents & IA",
+        items: [
+          { to: "/admin/asvc/agents", icon: Bot, label: "Agents" },
+          { to: "/admin/asvc/agent-prompts", icon: BookOpen, label: "System prompts" },
+        ],
+      },
+      {
+        label: "Qualité & Tech",
+        items: [
+          { to: "/admin/asvc/health", icon: Shield, label: "Health & Audit" },
+          { to: "/admin/asvc/tests", icon: CheckSquare, label: "Tests Readiness" },
+          { to: "/admin/asvc/tech-debt", icon: Wrench, label: "Tech Debt" },
+        ],
+      },
+      {
+        label: "Journaux",
+        items: [
+          { to: "/admin/asvc/briefs", icon: History, label: "Historique briefs" },
+          { to: "/admin/asvc/actions", icon: ScrollText, label: "Journal actions" },
+        ],
+      },
+      {
+        label: "Configuration",
+        items: [
+          { to: "/admin/asvc/connectors", icon: Plug, label: "Connecteurs" },
+          { to: "/admin/asvc/templates", icon: Files, label: "Templates" },
+          { to: "/admin/asvc/settings", icon: Settings, label: "Préférences CEO" },
+          { to: "/admin/asvc/config", icon: SlidersHorizontal, label: "Configuration" },
+          { to: "/admin/asvc/kill-switch", icon: Power, label: "Kill Switch" },
+        ],
+      },
     ],
   },
   {
@@ -155,7 +190,7 @@ export function AdminSidebar() {
   // ─── Active section: derived from URL, can be overriden by user click
   const sectionFromUrl = useMemo(() => {
     for (const g of NAV_GROUPS) {
-      if (g.items.some(it => location.pathname === it.to || (it.to !== "/admin" && location.pathname.startsWith(it.to + "/")))) {
+      if (flatItems(g).some(it => location.pathname === it.to || (it.to !== "/admin" && location.pathname.startsWith(it.to + "/")))) {
         return g.id;
       }
     }
@@ -199,7 +234,7 @@ export function AdminSidebar() {
         <div className="space-y-0.5">
           {NAV_GROUPS.map((group) => {
             const isActiveSection = activeSection === group.id;
-            const hasActivePage = group.items.some(it => isActive(it.to));
+            const hasActivePage = flatItems(group).some(it => isActive(it.to));
             return (
               <button
                 key={group.id}
@@ -241,6 +276,25 @@ export function AdminSidebar() {
     </div>
   );
 
+  // Rendu d'un item de navigation (partagé entre listes à plat et rubriques)
+  const renderItem = (item: NavItem) => {
+    const active = isActive(item.to);
+    return (
+      <Link
+        key={item.to}
+        to={item.to}
+        className={`relative flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[12px] transition-all duration-200 ${
+          active
+            ? "bg-admin-accent/15 text-admin-accent font-medium"
+            : "text-white/70 hover:bg-white/5 hover:text-white hover:translate-x-0.5"
+        }`}
+      >
+        <item.icon size={14} strokeWidth={1.5} className="flex-shrink-0" />
+        <span className="truncate">{item.label}</span>
+      </Link>
+    );
+  };
+
   // ─── SECONDARY SIDEBAR — items of active section, w-56 ──────────────
   const secondarySidebar = (
     <div className="w-56 h-screen bg-onyx/95 border-r border-white/10 flex flex-col flex-shrink-0">
@@ -272,27 +326,24 @@ export function AdminSidebar() {
         </select>
       </div>
 
-      {/* Items list — révélation fluide au changement de section */}
+      {/* Items list — rubriques si définies, sinon liste à plat. Révélation fluide. */}
       <nav className="flex-1 overflow-y-auto py-3 px-3 scrollbar-thin">
-        <div key={activeGroup.id} className="ml-2 pl-3 border-l border-white/10 space-y-0.5 animate-fade-in-up">
-          {activeGroup.items.map(item => {
-            const active = isActive(item.to);
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`relative flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[12px] transition-all duration-200 ${
-                  active
-                    ? "bg-admin-accent/15 text-admin-accent font-medium"
-                    : "text-white/70 hover:bg-white/5 hover:text-white hover:translate-x-0.5"
-                }`}
-              >
-                <item.icon size={14} strokeWidth={1.5} className="flex-shrink-0" />
-                <span className="truncate">{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
+        {activeGroup.subgroups ? (
+          <div key={activeGroup.id} className="space-y-3.5 animate-fade-in-up">
+            {activeGroup.subgroups.map(sg => (
+              <div key={sg.label}>
+                <div className="px-2 mb-1 text-[9px] font-bold uppercase tracking-widest text-white/35">{sg.label}</div>
+                <div className="ml-2 pl-3 border-l border-white/10 space-y-0.5">
+                  {sg.items.map(renderItem)}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div key={activeGroup.id} className="ml-2 pl-3 border-l border-white/10 space-y-0.5 animate-fade-in-up">
+            {(activeGroup.items ?? []).map(renderItem)}
+          </div>
+        )}
       </nav>
 
       {/* Footer */}
