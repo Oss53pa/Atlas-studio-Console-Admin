@@ -7,6 +7,7 @@ import {
 import { supabase } from "../../lib/supabase";
 import { AdminCard } from "../components/AdminCard";
 import { AdminBadge } from "../components/AdminBadge";
+import { PremiumAreaChart } from "../../components/ui/charts/PremiumCharts";
 import { useAppFilter } from "../contexts/AppFilterContext";
 import { useToast } from "../contexts/ToastContext";
 import type { AppRow, Subscription, Invoice, ErrorLogRow } from "../../lib/database.types";
@@ -36,6 +37,7 @@ export default function AppCockpitPage() {
   const [profiles, setProfiles] = useState<Record<string, ProfileLite>>({});
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [metric, setMetric] = useState<"cumul" | "new" | "revenue">("cumul");
 
   // Entrer dans le cockpit d'une app scope toute la console sur cette app.
   useEffect(() => { if (appId) setSelectedApp(appId); }, [appId, setSelectedApp]);
@@ -93,6 +95,32 @@ export default function AppCockpitPage() {
     () => [...subs].sort((a, b) => (b.created_at || "").localeCompare(a.created_at || "")).slice(0, 6),
     [subs],
   );
+
+  // Séries mensuelles sur 12 mois (calculées depuis les données déjà chargées).
+  const series = useMemo(() => {
+    const now = new Date();
+    const out: { label: string; newCount: number; cumul: number; revenue: number }[] = [];
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      const endIso = new Date(d.getFullYear(), d.getMonth() + 1, 1).toISOString();
+      const newCount = subs.filter(s => (s.created_at || "").slice(0, 7) === key).length;
+      const cumul = subs.filter(s => (s.created_at || "") < endIso).length;
+      const revenue = invoices
+        .filter(inv => inv.status === "paid" && (inv.paid_at || inv.created_at || "").slice(0, 7) === key)
+        .reduce((sum, inv) => sum + (Number(inv.amount) || 0), 0);
+      out.push({ label: d.toLocaleDateString("fr-FR", { month: "short" }), newCount, cumul, revenue });
+    }
+    return out;
+  }, [subs, invoices]);
+
+  const chartData = series.map(b => ({ label: b.label, value: metric === "cumul" ? b.cumul : metric === "new" ? b.newCount : b.revenue }));
+  const hasSeries = chartData.some(d => d.value > 0);
+  const METRICS: { id: typeof metric; label: string }[] = [
+    { id: "cumul", label: "Abonnements cumulés" },
+    { id: "new", label: "Nouveaux / mois" },
+    { id: "revenue", label: "Revenu encaissé" },
+  ];
 
   const clientName = (uid: string) => profiles[uid]?.full_name || profiles[uid]?.email || uid.slice(0, 8);
   const dateFr = (d: string | null) => d ? new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "—";
@@ -164,6 +192,33 @@ export default function AppCockpitPage() {
         <AdminCard label="Factures en attente" value={loading ? "…" : kpi.pendingInv} icon={Receipt} sub="paiements à relancer" onClick={() => navigate("/admin/invoices")} />
         <AdminCard label="Erreurs ouvertes" value={loading ? "…" : kpi.openErrors} icon={AlertTriangle} sub={kpi.critical > 0 ? `${kpi.critical} critique(s)` : "aucune critique"} onClick={() => navigate(`/admin/error-monitor/${appId}`)} />
       </div>
+
+      {/* Évolution 12 mois */}
+      <section className="bg-admin-surface border border-admin-surface-alt rounded-2xl p-5 shadow-premium mb-6">
+        <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
+          <h2 className="text-admin-text font-semibold text-sm flex items-center gap-2"><TrendingUp size={15} className="text-admin-accent" /> Évolution — 12 mois</h2>
+          <div className="inline-flex items-center gap-1 p-0.5 rounded-lg bg-admin-surface-alt/60 border border-admin-surface-alt">
+            {METRICS.map(m => (
+              <button key={m.id} onClick={() => setMetric(m.id)}
+                className={`px-3 py-1.5 rounded-md text-[12px] font-medium transition-colors ${metric === m.id ? "bg-admin-accent text-admin-bg" : "text-admin-muted hover:text-admin-text"}`}>
+                {m.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        {loading ? (
+          <div className="h-[190px] flex items-center justify-center text-admin-muted text-sm">Chargement…</div>
+        ) : !hasSeries ? (
+          <div className="h-[190px] flex items-center justify-center text-admin-muted text-sm">Pas encore de données sur cette période.</div>
+        ) : (
+          <PremiumAreaChart
+            data={chartData}
+            height={200}
+            valueFormatter={metric === "revenue" ? (n) => fcfa(n) : (n) => fmt(n)}
+            unit={metric === "revenue" ? undefined : "abonnés"}
+          />
+        )}
+      </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Colonne principale */}
@@ -237,6 +292,10 @@ export default function AppCockpitPage() {
                 <button onClick={toggleVisibility} className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-colors ${app?.visible ? "bg-admin-success/15 text-green-700 border-admin-success/30 hover:bg-admin-success/25" : "bg-admin-surface-alt text-admin-muted border-admin-surface-alt hover:bg-admin-surface-alt/80"}`}>
                   {app?.visible ? <Eye size={12} /> : <EyeOff size={12} />}{app?.visible ? "Visible" : "Masquée"}
                 </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-admin-muted text-[12.5px]">SEO &amp; métadonnées</span>
+                <Link to={`/admin/seo?app=${appId}`} className="text-admin-accent text-[12.5px] font-medium hover:underline inline-flex items-center gap-1">Éditer <ChevronRight size={13} /></Link>
               </div>
               <Link to="/admin/landing-pages" className="block text-center mt-1 px-3 py-2 rounded-lg border border-admin-surface-alt text-admin-text text-[12.5px] font-medium hover:border-admin-accent/45 hover:bg-admin-surface-alt/60 transition-all">Gérer les landing pages</Link>
             </div>

@@ -45,6 +45,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: "/admin/plans", icon: Layers, label: "Plans & Tarifs" },
       { to: "/admin/promo-codes", icon: Tag, label: "Codes Promo" },
       { to: "/admin/landing-pages", icon: FileText, label: "Landing Pages" },
+      { to: "/admin/seo", icon: Search, label: "SEO & Méta" },
       { to: "/admin/ohada", icon: Globe2, label: "Référentiel OHADA" },
     ],
   },

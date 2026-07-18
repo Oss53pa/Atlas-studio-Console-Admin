@@ -36,6 +36,7 @@ const DashboardPage = lazyRetry(() => import('./admin/pages/DashboardPage'));
 const ContentManagementPage = lazyRetry(() => import('./admin/pages/ContentManagementPage'));
 const AdminAppsTable = lazyRetry(() => import('./admin/pages/AdminAppsTable'));
 const AppCockpitPage = lazyRetry(() => import('./admin/pages/AppCockpitPage'));
+const SeoPage = lazyRetry(() => import('./admin/pages/SeoPage'));
 const ClientsPage = lazyRetry(() => import('./admin/pages/ClientsPage'));
 const SubscriptionsPage = lazyRetry(() => import('./admin/pages/SubscriptionsPage'));
 const InvoicesPage = lazyRetry(() => import('./admin/pages/InvoicesPage'));
@@ -184,6 +185,7 @@ root.render(
                 <Route path="ohada" element={S(<OhadaReferentielPage />)} />
                 <Route path="admins" element={<RequireSuperAdmin>{S(<AdminsPage />)}</RequireSuperAdmin>} />
                 <Route path="landing-pages" element={S(<LandingPagesPage />)} />
+                <Route path="seo" element={S(<SeoPage />)} />
                 <Route path="error-monitor" element={S(<ErrorMonitorIndexPage />)} />
                 <Route path="error-monitor/:appSlug" element={S(<ErrorMonitorAppPage />)} />
                 <Route path="error-monitor/:appSlug/:errorId" element={S(<ErrorMonitorDetailPage />)} />
