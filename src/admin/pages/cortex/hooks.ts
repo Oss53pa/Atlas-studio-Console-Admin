@@ -3,6 +3,7 @@ import { supabase } from "../../../lib/supabase";
 import type {
   CpsApp, CpsArbitrationRow, CpsDashboard,
   CpsDeal, CpsMilestone, CpsAssumption, CpsCost,
+  CpsPricingPlan, CpsScenario, CpsProjection, CpsChannel,
 } from "./types";
 
 /* ── Dashboard exécutif (agrégats serveur, RG-07) ───────────────────────── */
@@ -122,6 +123,37 @@ export const useCortexAssumptions = (appId?: string) =>
   useCpsTable<CpsAssumption>("cps_assumptions", "created_at", false, appId);
 export const useCortexCosts = (appId?: string) =>
   useCpsTable<CpsCost>("cps_costs", "period_month", false, appId);
+
+/* ── Vague 2 : Finance & scénarios ──────────────────────────────────────── */
+export const useCortexPricing = (appId?: string) =>
+  useCpsTable<CpsPricingPlan>("cps_pricing_plans", "created_at", false, appId);
+export const useCortexChannels = (appId?: string) =>
+  useCpsTable<CpsChannel>("cps_channels", "created_at", false, appId);
+
+export function useCortexScenarios(appId?: string) {
+  const base = useCpsTable<CpsScenario>("cps_scenarios", "created_at", false, appId);
+  const generate = useCallback(async (scenarioId: string) => {
+    const { data, error } = await supabase.rpc("cps_generate_projections", { p_scenario: scenarioId });
+    if (error) throw error;
+    await base.refresh();
+    return data as number;
+  }, [base]);
+  return { ...base, generate };
+}
+
+export function useCortexProjections(scenarioId?: string) {
+  const [rows, setRows] = useState<CpsProjection[]>([]);
+  const [loading, setLoading] = useState(false);
+  const refresh = useCallback(async () => {
+    if (!scenarioId) { setRows([]); return; }
+    setLoading(true);
+    const { data } = await supabase.from("cps_projections").select("*").eq("scenario_id", scenarioId).order("month_index");
+    setRows((data ?? []) as CpsProjection[]);
+    setLoading(false);
+  }, [scenarioId]);
+  useEffect(() => { refresh(); }, [refresh]);
+  return { rows, loading, refresh };
+}
 
 /** Une seule app (fiche) via la table d'arbitrage. */
 export function useCortexApp(appId: string) {

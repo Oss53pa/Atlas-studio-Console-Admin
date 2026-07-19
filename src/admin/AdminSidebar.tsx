@@ -170,6 +170,13 @@ const NAV_GROUPS: NavGroup[] = [
           { to: "/admin/cortex/costs", icon: Wallet, label: "Coûts" },
         ],
       },
+      {
+        label: "Finance",
+        items: [
+          { to: "/admin/cortex/finance", icon: CreditCard, label: "Pricing" },
+          { to: "/admin/cortex/scenarios", icon: BarChart3, label: "Scénarios & Projections" },
+        ],
+      },
     ],
   },
   {

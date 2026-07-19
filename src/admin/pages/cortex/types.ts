@@ -84,6 +84,39 @@ export interface CpsAssumption {
   updated_at: string;
 }
 
+/* ── Vague 2 : Finance & scénarios ──────────────────────────────────────── */
+export type PricingModel = "subscription" | "freemium" | "setup_fee" | "usage" | "license" | "service";
+export type PricingPeriod = "monthly" | "quarterly" | "yearly" | "one_off";
+export type PricingStatus = "draft" | "active" | "retired";
+export type ScenarioKind = "pessimiste" | "realiste" | "optimiste" | "custom";
+export type ChannelStatus = "a_tester" | "actif" | "abandonne";
+
+export interface CpsPricingPlan {
+  id: string; app_id: string; plan_code: string; model: PricingModel;
+  amount_fcfa: number; period: PricingPeriod; status: PricingStatus;
+  created_at: string; updated_at: string;
+}
+
+export interface CpsScenario {
+  id: string; name: string; kind: ScenarioKind; app_id: string | null;
+  horizon_months: number;
+  start_customers: number; new_per_month: number; growth_bp: number;
+  churn_monthly_bp: number; avg_mrr_fcfa: number; monthly_fixed_cost_fcfa: number;
+  linked_assumption_ids: string[]; inputs_hash: string | null; is_stale: boolean;
+  created_at: string; updated_at: string;
+}
+
+export interface CpsProjection {
+  id: string; scenario_id: string; app_id: string | null; month_index: number;
+  mrr_fcfa: number; new_customers: number; active_customers: number;
+  churn_rate_bp: number; costs_fcfa: number; computed_at: string; inputs_hash: string;
+}
+
+export interface CpsChannel {
+  id: string; app_id: string; name: string; status: ChannelStatus;
+  cost_fcfa: number; results: string | null; created_at: string; updated_at: string;
+}
+
 /** Snapshot KPI du dashboard (calculé côté Postgres — RG-07). */
 export interface CpsDashboard {
   apps_total: number;

@@ -100,6 +100,8 @@ const CortexPipelinePage = lazyRetry(() => import('./admin/pages/cortex/CortexPi
 const CortexPlanningPage = lazyRetry(() => import('./admin/pages/cortex/CortexPlanningPage'));
 const CortexCostsPage = lazyRetry(() => import('./admin/pages/cortex/CortexCostsPage'));
 const CortexAppPage = lazyRetry(() => import('./admin/pages/cortex/CortexAppPage'));
+const CortexFinancePage = lazyRetry(() => import('./admin/pages/cortex/CortexFinancePage'));
+const CortexScenariosPage = lazyRetry(() => import('./admin/pages/cortex/CortexScenariosPage'));
 
 const CONSOLE_APP_ID = 'atlas-studio-console';
 
@@ -228,6 +230,8 @@ root.render(
                 <Route path="cortex/pipeline" element={S(<CortexPipelinePage />)} />
                 <Route path="cortex/planning" element={S(<CortexPlanningPage />)} />
                 <Route path="cortex/costs" element={S(<CortexCostsPage />)} />
+                <Route path="cortex/finance" element={S(<CortexFinancePage />)} />
+                <Route path="cortex/scenarios" element={S(<CortexScenariosPage />)} />
                 <Route path="cortex/app/:id" element={S(<CortexAppPage />)} />
               </Route>
             </Route>
