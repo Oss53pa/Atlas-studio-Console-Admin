@@ -138,6 +138,19 @@ export interface CpsMetricsSnapshot {
   mrr_fcfa: number; active_clients: number; trials: number; signups: number; updated_at: string;
 }
 
+/* ── Vague 4 : PROPH3T Cortex Advisor ───────────────────────────────────── */
+export type InsightType = "alerte_derive" | "opportunite" | "arbitrage_portefeuille" | "hypothese_suggeree" | "risque" | "synthese_periodique";
+export type InsightSeverity = "info" | "attention" | "critique";
+export type InsightStatus = "nouveau" | "lu" | "accepte" | "rejete" | "converti_en_action";
+
+export interface CpsInsight {
+  id: string; insight_type: InsightType; severity: InsightSeverity;
+  title: string; body: string; scope: Record<string, unknown>;
+  inputs_hash: string | null; model_used: string | null;
+  status: InsightStatus; human_note: string | null; cj_task_created: string | null;
+  created_at: string; updated_at: string;
+}
+
 /** Snapshot KPI du dashboard (calculé côté Postgres — RG-07). */
 export interface CpsDashboard {
   apps_total: number;

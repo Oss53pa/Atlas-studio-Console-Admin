@@ -178,6 +178,12 @@ const NAV_GROUPS: NavGroup[] = [
         ],
       },
       {
+        label: "Advisor",
+        items: [
+          { to: "/admin/cortex/advisor", icon: Brain, label: "PROPH3T Advisor" },
+        ],
+      },
+      {
         label: "Système",
         items: [
           { to: "/admin/cortex/data-fabric", icon: Database, label: "Data Fabric" },

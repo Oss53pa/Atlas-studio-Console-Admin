@@ -4,7 +4,7 @@ import type {
   CpsApp, CpsArbitrationRow, CpsDashboard,
   CpsDeal, CpsMilestone, CpsAssumption, CpsCost,
   CpsPricingPlan, CpsScenario, CpsProjection, CpsChannel,
-  CpsDataSource, CpsEventRaw,
+  CpsDataSource, CpsEventRaw, CpsInsight, InsightStatus,
 } from "./types";
 
 /* ── Dashboard exécutif (agrégats serveur, RG-07) ───────────────────────── */
@@ -197,6 +197,54 @@ export function useCortexEvents(limit = 40) {
   }, [limit]);
   useEffect(() => { refresh(); }, [refresh]);
   return { rows, loading, refresh };
+}
+
+/* ── Vague 4 : PROPH3T Cortex Advisor ───────────────────────────────────── */
+export function useCortexInsights() {
+  const [rows, setRows] = useState<CpsInsight[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase.from("cps_proph3t_insights")
+      .select("*").order("created_at", { ascending: false }).limit(100);
+    if (error) setError(error.message);
+    else { setRows((data ?? []) as CpsInsight[]); setError(null); }
+    setLoading(false);
+  }, []);
+  useEffect(() => { refresh(); }, [refresh]);
+
+  /** Triage humain (RG-08 : validation obligatoire). */
+  const triage = useCallback(async (id: string, status: InsightStatus, human_note?: string) => {
+    const patch: Record<string, unknown> = { status };
+    if (human_note !== undefined) patch.human_note = human_note;
+    const { error } = await supabase.from("cps_proph3t_insights").update(patch).eq("id", id);
+    if (error) throw error;
+    await refresh();
+  }, [refresh]);
+
+  /** Détection déterministe (sans IA) — RPC serveur. */
+  const detectSignals = useCallback(async () => {
+    const { data, error } = await supabase.rpc("cps_detect_signals");
+    if (error) throw error;
+    await refresh();
+    return data as number;
+  }, [refresh]);
+
+  /** Analyse IA (Edge Function cortex-advisor-feed — nécessite déploiement). */
+  const runAdvisor = useCallback(async () => {
+    const { data: s } = await supabase.auth.getSession();
+    const { data, error } = await supabase.functions.invoke("cortex-advisor-feed", {
+      body: {},
+      headers: s?.session ? { Authorization: `Bearer ${s.session.access_token}` } : undefined,
+    });
+    if (error) throw error;
+    await refresh();
+    return data as { inserted: number; rejected_count: number };
+  }, [refresh]);
+
+  return { rows, loading, error, refresh, triage, detectSignals, runAdvisor };
 }
 
 /** Une seule app (fiche) via la table d'arbitrage. */
