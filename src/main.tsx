@@ -93,6 +93,14 @@ const AsvcPrDetailPage = lazyRetry(() => import('./admin/pages/asvc/AsvcPrDetail
 const AsvcDeploymentDetailPage = lazyRetry(() => import('./admin/pages/asvc/AsvcDeploymentDetailPage'));
 const AsvcTechDebtPage = lazyRetry(() => import('./admin/pages/asvc/AsvcTechDebtPage'));
 
+// Atlas Compass (module business model / stratégie)
+const CompassDashboardPage = lazyRetry(() => import('./admin/pages/compass/CompassDashboardPage'));
+const CompassPortfolioPage = lazyRetry(() => import('./admin/pages/compass/CompassPortfolioPage'));
+const CompassPipelinePage = lazyRetry(() => import('./admin/pages/compass/CompassPipelinePage'));
+const CompassPlanningPage = lazyRetry(() => import('./admin/pages/compass/CompassPlanningPage'));
+const CompassCostsPage = lazyRetry(() => import('./admin/pages/compass/CompassCostsPage'));
+const CompassAppPage = lazyRetry(() => import('./admin/pages/compass/CompassAppPage'));
+
 const CONSOLE_APP_ID = 'atlas-studio-console';
 
 function AdminLoader() {
@@ -213,6 +221,14 @@ root.render(
                 <Route path="asvc/specs/:id" element={S(<AsvcSpecDetailPage />)} />
                 <Route path="asvc/prs/:id" element={S(<AsvcPrDetailPage />)} />
                 <Route path="asvc/deployments/:id" element={S(<AsvcDeploymentDetailPage />)} />
+
+                {/* Atlas Compass */}
+                <Route path="compass" element={S(<CompassDashboardPage />)} />
+                <Route path="compass/portfolio" element={S(<CompassPortfolioPage />)} />
+                <Route path="compass/pipeline" element={S(<CompassPipelinePage />)} />
+                <Route path="compass/planning" element={S(<CompassPlanningPage />)} />
+                <Route path="compass/costs" element={S(<CompassCostsPage />)} />
+                <Route path="compass/app/:id" element={S(<CompassAppPage />)} />
               </Route>
             </Route>
 

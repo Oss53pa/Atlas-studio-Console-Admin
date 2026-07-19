@@ -6,7 +6,7 @@ import {
   CreditCard, Megaphone, Layers, Search, Brain, Activity, Menu, Flag, Bell, Tag, Rocket, BookOpen, KeyRound, Settings, ShieldCheck, Send, ListChecks, Database, AlertTriangle,
   Crown, Home, Package, Wrench, PanelLeftClose, PanelLeftOpen,
   Bot, Inbox, ScrollText, Power, SlidersHorizontal, LifeBuoy, UserCheck, Calendar, Target, Wallet,
-  Workflow, Shield, Plug, History, CheckSquare, Files, Globe2,
+  Workflow, Shield, Plug, History, CheckSquare, Files, Globe2, Compass,
   type LucideIcon,
 } from "lucide-react";
 import { Logo } from "../components/ui/Logo";
@@ -146,6 +146,28 @@ const NAV_GROUPS: NavGroup[] = [
           { to: "/admin/asvc/settings", icon: Settings, label: "Préférences CEO" },
           { to: "/admin/asvc/config", icon: SlidersHorizontal, label: "Configuration" },
           { to: "/admin/asvc/kill-switch", icon: Power, label: "Kill Switch" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "compass",
+    label: "Atlas Compass",
+    icon: Compass,
+    subgroups: [
+      {
+        label: "Pilotage",
+        items: [
+          { to: "/admin/compass", icon: LayoutDashboard, label: "Dashboard exécutif" },
+          { to: "/admin/compass/portfolio", icon: Rocket, label: "Portefeuille" },
+        ],
+      },
+      {
+        label: "Exécution",
+        items: [
+          { to: "/admin/compass/pipeline", icon: Target, label: "Pipeline" },
+          { to: "/admin/compass/planning", icon: Flag, label: "Jalons & Hypothèses" },
+          { to: "/admin/compass/costs", icon: Wallet, label: "Coûts" },
         ],
       },
     ],
