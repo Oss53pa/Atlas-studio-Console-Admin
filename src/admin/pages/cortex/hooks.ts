@@ -4,6 +4,7 @@ import type {
   CpsApp, CpsArbitrationRow, CpsDashboard,
   CpsDeal, CpsMilestone, CpsAssumption, CpsCost,
   CpsPricingPlan, CpsScenario, CpsProjection, CpsChannel,
+  CpsDataSource, CpsEventRaw,
 } from "./types";
 
 /* ── Dashboard exécutif (agrégats serveur, RG-07) ───────────────────────── */
@@ -18,7 +19,14 @@ export function useCortexDashboard() {
     else { setData(data as CpsDashboard); setError(null); }
     setLoading(false);
   }, []);
-  useEffect(() => { refresh(); }, [refresh]);
+  useEffect(() => {
+    refresh();
+    // Temps réel (Vague 3) : le snapshot change → on rafraîchit les tuiles.
+    const ch = supabase.channel("cortex:dashboard")
+      .on("postgres_changes", { event: "*", schema: "public", table: "cps_metrics_snapshot" }, () => refresh())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [refresh]);
   return { data, loading, error, refresh };
 }
 
@@ -151,6 +159,42 @@ export function useCortexProjections(scenarioId?: string) {
     setRows((data ?? []) as CpsProjection[]);
     setLoading(false);
   }, [scenarioId]);
+  useEffect(() => { refresh(); }, [refresh]);
+  return { rows, loading, refresh };
+}
+
+/* ── Vague 3 : Data Fabric ──────────────────────────────────────────────── */
+function randomSecret(): string {
+  const a = new Uint8Array(24);
+  (globalThis.crypto || (window as any).crypto).getRandomValues(a);
+  return [...a].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+export function useCortexDataSources() {
+  const base = useCpsTable<CpsDataSource>("cps_data_sources", "created_at", false);
+  const createSource = useCallback(async (source_app: string, mode: string) => {
+    const { error } = await supabase.from("cps_data_sources")
+      .insert({ source_app, mode, hmac_secret: randomSecret(), status: "active" });
+    if (error) throw error;
+    await base.refresh();
+  }, [base]);
+  const rotateSecret = useCallback(async (id: string) => {
+    const { error } = await supabase.from("cps_data_sources").update({ hmac_secret: randomSecret() }).eq("id", id);
+    if (error) throw error;
+    await base.refresh();
+  }, [base]);
+  return { ...base, createSource, rotateSecret };
+}
+
+export function useCortexEvents(limit = 40) {
+  const [rows, setRows] = useState<CpsEventRaw[]>([]);
+  const [loading, setLoading] = useState(true);
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    const { data } = await supabase.from("cps_events_raw").select("*").order("received_at", { ascending: false }).limit(limit);
+    setRows((data ?? []) as CpsEventRaw[]);
+    setLoading(false);
+  }, [limit]);
   useEffect(() => { refresh(); }, [refresh]);
   return { rows, loading, refresh };
 }

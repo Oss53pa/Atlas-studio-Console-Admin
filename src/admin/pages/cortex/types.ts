@@ -117,12 +117,35 @@ export interface CpsChannel {
   cost_fcfa: number; results: string | null; created_at: string; updated_at: string;
 }
 
+/* ── Vague 3 : Data Fabric ──────────────────────────────────────────────── */
+export type SourceMode = "push" | "pull" | "manual";
+export type SourceStatus = "active" | "paused";
+
+export interface CpsDataSource {
+  id: string; source_app: string; mode: SourceMode; hmac_secret: string | null;
+  status: SourceStatus; last_seen_at: string | null;
+  event_count: number; reject_count: number; last_reject_reason: string | null;
+  created_at: string; updated_at: string;
+}
+
+export interface CpsEventRaw {
+  id: string; source_app: string; event_type: string; occurred_at: string;
+  payload: Record<string, unknown>; idempotency_key: string; received_at: string;
+}
+
+export interface CpsMetricsSnapshot {
+  id: string; app_code: string; app_id: string | null;
+  mrr_fcfa: number; active_clients: number; trials: number; signups: number; updated_at: string;
+}
+
 /** Snapshot KPI du dashboard (calculé côté Postgres — RG-07). */
 export interface CpsDashboard {
   apps_total: number;
   apps_live: number;
   apps_build: number;
   apps_locomotive: number;
+  mrr_real_fcfa: number;
+  active_clients: number;
   pipeline_weighted_fcfa: number;
   pipeline_open_deals: number;
   milestones_due_30d: number;

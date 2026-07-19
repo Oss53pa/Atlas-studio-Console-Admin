@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LayoutGrid, Target, Flag, AlertTriangle, Wallet, Rocket } from "lucide-react";
+import { LayoutGrid, Target, Flag, AlertTriangle, Wallet, Rocket, TrendingUp } from "lucide-react";
 import { AdminPageHeader } from "../../components/AdminPageHeader";
 import { AdminCard } from "../../components/AdminCard";
 import { formatFcfa } from "../../../lib/money";
@@ -16,6 +16,8 @@ export default function CortexDashboardPage() {
       <AdminPageHeader title="Cortex" subtitle="Dashboard exécutif — pilotage stratégique du portefeuille" />
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <AdminCard loading={loading} label="MRR réel (temps réel)" value={formatFcfa(d?.mrr_real_fcfa, { compact: true })} icon={TrendingUp}
+          sub={`${d?.active_clients ?? 0} clients actifs · Data Fabric`} />
         <AdminCard loading={loading} label="Applications" value={d?.apps_total ?? 0} icon={LayoutGrid}
           sub={`${d?.apps_live ?? 0} live · ${d?.apps_build ?? 0} en build`} />
         <AdminCard loading={loading} label="Pipeline pondéré" value={formatFcfa(d?.pipeline_weighted_fcfa, { compact: true })} icon={Target}

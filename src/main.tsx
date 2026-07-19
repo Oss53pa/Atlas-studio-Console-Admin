@@ -102,6 +102,7 @@ const CortexCostsPage = lazyRetry(() => import('./admin/pages/cortex/CortexCosts
 const CortexAppPage = lazyRetry(() => import('./admin/pages/cortex/CortexAppPage'));
 const CortexFinancePage = lazyRetry(() => import('./admin/pages/cortex/CortexFinancePage'));
 const CortexScenariosPage = lazyRetry(() => import('./admin/pages/cortex/CortexScenariosPage'));
+const CortexDataFabricPage = lazyRetry(() => import('./admin/pages/cortex/CortexDataFabricPage'));
 
 const CONSOLE_APP_ID = 'atlas-studio-console';
 
@@ -232,6 +233,7 @@ root.render(
                 <Route path="cortex/costs" element={S(<CortexCostsPage />)} />
                 <Route path="cortex/finance" element={S(<CortexFinancePage />)} />
                 <Route path="cortex/scenarios" element={S(<CortexScenariosPage />)} />
+                <Route path="cortex/data-fabric" element={S(<CortexDataFabricPage />)} />
                 <Route path="cortex/app/:id" element={S(<CortexAppPage />)} />
               </Route>
             </Route>

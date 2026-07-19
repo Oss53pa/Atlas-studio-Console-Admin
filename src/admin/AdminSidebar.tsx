@@ -177,6 +177,12 @@ const NAV_GROUPS: NavGroup[] = [
           { to: "/admin/cortex/scenarios", icon: BarChart3, label: "Scénarios & Projections" },
         ],
       },
+      {
+        label: "Système",
+        items: [
+          { to: "/admin/cortex/data-fabric", icon: Database, label: "Data Fabric" },
+        ],
+      },
     ],
   },
   {
