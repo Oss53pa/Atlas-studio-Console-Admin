@@ -3,31 +3,31 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { AdminPageHeader } from "../../components/AdminPageHeader";
 import { formatFcfa, bpToPct } from "../../../lib/money";
-import { useCompassApp, useCompassDeals, useCompassMilestones, useCompassAssumptions, useCompassCosts } from "./hooks";
+import { useCortexApp, useCortexDeals, useCortexMilestones, useCortexAssumptions, useCortexCosts } from "./hooks";
 import type { LifecycleStage, StrategicClass } from "./types";
 import {
   Badge, LIFECYCLE, CLASS_LABEL, DEAL_STAGE, MILESTONE_STATUS, ASSUMPTION_STATUS, CRITICALITY,
   stageTone, classTone, dealTone, assumptionTone,
 } from "./ui";
-import "./compass.css";
+import "./cortex.css";
 
 type Tab = "pipeline" | "jalons" | "hypotheses" | "couts";
 
-export default function CompassAppPage() {
+export default function CortexAppPage() {
   const { id = "" } = useParams();
-  const { app, loading } = useCompassApp(id);
-  const deals = useCompassDeals(id);
-  const miles = useCompassMilestones(id);
-  const assum = useCompassAssumptions(id);
-  const costs = useCompassCosts(id);
+  const { app, loading } = useCortexApp(id);
+  const deals = useCortexDeals(id);
+  const miles = useCortexMilestones(id);
+  const assum = useCortexAssumptions(id);
+  const costs = useCortexCosts(id);
   const [tab, setTab] = useState<Tab>("pipeline");
 
-  if (loading) return <div data-module="compass"><div className="p-10 text-center text-admin-muted">Chargement…</div></div>;
-  if (!app) return <div data-module="compass" className="p-10 text-center text-admin-muted">App introuvable. <Link to="/admin/compass/portfolio" className="cps-accent">Retour</Link></div>;
+  if (loading) return <div data-module="cortex"><div className="p-10 text-center text-admin-muted">Chargement…</div></div>;
+  if (!app) return <div data-module="cortex" className="p-10 text-center text-admin-muted">App introuvable. <Link to="/admin/cortex/portfolio" className="cps-accent">Retour</Link></div>;
 
   return (
-    <div data-module="compass">
-      <Link to="/admin/compass/portfolio" className="inline-flex items-center gap-1 text-[13px] text-admin-muted hover:cps-accent mb-2"><ArrowLeft size={14} /> Portefeuille</Link>
+    <div data-module="cortex">
+      <Link to="/admin/cortex/portfolio" className="inline-flex items-center gap-1 text-[13px] text-admin-muted hover:cps-accent mb-2"><ArrowLeft size={14} /> Portefeuille</Link>
       <AdminPageHeader title={app.name} subtitle={`${app.code} · Fiche business`}>
         <div className="flex items-center gap-2">
           <Badge tone={stageTone[app.lifecycle_stage as LifecycleStage]}>{LIFECYCLE[app.lifecycle_stage as LifecycleStage]}</Badge>

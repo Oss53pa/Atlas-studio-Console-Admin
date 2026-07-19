@@ -3,17 +3,17 @@ import { LayoutGrid, Target, Flag, AlertTriangle, Wallet, Rocket } from "lucide-
 import { AdminPageHeader } from "../../components/AdminPageHeader";
 import { AdminCard } from "../../components/AdminCard";
 import { formatFcfa } from "../../../lib/money";
-import { useCompassDashboard } from "./hooks";
+import { useCortexDashboard } from "./hooks";
 import { Provenance } from "./ui";
-import "./compass.css";
+import "./cortex.css";
 
-export default function CompassDashboardPage() {
-  const { data, loading } = useCompassDashboard();
+export default function CortexDashboardPage() {
+  const { data, loading } = useCortexDashboard();
   const d = data;
 
   return (
-    <div data-module="compass">
-      <AdminPageHeader title="Atlas Compass" subtitle="Dashboard exécutif — pilotage stratégique du portefeuille" />
+    <div data-module="cortex">
+      <AdminPageHeader title="Cortex" subtitle="Dashboard exécutif — pilotage stratégique du portefeuille" />
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <AdminCard loading={loading} label="Applications" value={d?.apps_total ?? 0} icon={LayoutGrid}
@@ -38,10 +38,10 @@ export default function CompassDashboardPage() {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { to: "/admin/compass/portfolio", label: "Portefeuille", desc: "Matrice & arbitrage" },
-          { to: "/admin/compass/pipeline", label: "Pipeline", desc: "Deals commerciaux" },
-          { to: "/admin/compass/planning", label: "Jalons & hypothèses", desc: "Mur de vérité" },
-          { to: "/admin/compass/costs", label: "Coûts", desc: "Dépenses réelles" },
+          { to: "/admin/cortex/portfolio", label: "Portefeuille", desc: "Matrice & arbitrage" },
+          { to: "/admin/cortex/pipeline", label: "Pipeline", desc: "Deals commerciaux" },
+          { to: "/admin/cortex/planning", label: "Jalons & hypothèses", desc: "Mur de vérité" },
+          { to: "/admin/cortex/costs", label: "Coûts", desc: "Dépenses réelles" },
         ].map((l) => (
           <Link key={l.to} to={l.to} className="block bg-white dark:bg-admin-surface border border-warm-border dark:border-white/5 rounded-xl p-4 hover:border-[var(--cps-accent)] transition-colors shadow-sm">
             <div className="font-semibold text-admin-text">{l.label}</div>

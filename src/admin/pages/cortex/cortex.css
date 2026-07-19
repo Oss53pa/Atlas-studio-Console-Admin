@@ -1,0 +1,37 @@
+/* Cortex — identité ambre SCOPÉE au module (data-module="cortex").
+   N'affecte pas la palette olive/volt du reste de la console. */
+[data-module="cortex"] {
+  --cps-accent: #EF9F27;
+  --cps-accent-2: #BA7517;
+  --cps-on-accent: #1A1204;
+}
+[data-module="cortex"] .cps-accent { color: var(--cps-accent); }
+[data-module="cortex"] .cps-accent-bg { background: var(--cps-accent); color: var(--cps-on-accent); }
+
+[data-module="cortex"] .cps-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--cps-accent); color: var(--cps-on-accent);
+  font-weight: 600; font-size: 13px; padding: 9px 16px; border-radius: 10px;
+  transition: filter .2s, transform .2s;
+}
+[data-module="cortex"] .cps-btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+[data-module="cortex"] .cps-btn-ghost {
+  background: transparent; color: var(--c-text);
+  border: 1px solid var(--c-border);
+}
+[data-module="cortex"] .cps-btn-ghost:hover { border-color: var(--cps-accent); filter: none; transform: none; }
+
+[data-module="cortex"] .cps-tab {
+  padding: 9px 2px; margin-right: 22px; border-bottom: 2px solid transparent;
+  color: var(--c-muted); font-weight: 600; font-size: 13.5px; cursor: pointer;
+}
+[data-module="cortex"] .cps-tab.on { color: var(--cps-accent); border-color: var(--cps-accent); }
+
+[data-module="cortex"] .money { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+[data-module="cortex"] .prov {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .06em;
+  padding: 1px 5px; border-radius: 4px; vertical-align: middle;
+}
+
+/* Cartes insight PROPH3T (liseré ambre) — préparé pour la Vague 4 */
+[data-module="cortex"] .cps-insight { border-left: 3px solid var(--cps-accent); }

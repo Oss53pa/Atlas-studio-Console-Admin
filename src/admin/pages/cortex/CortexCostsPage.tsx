@@ -3,10 +3,10 @@ import { Plus, Pencil } from "lucide-react";
 import { AdminPageHeader } from "../../components/AdminPageHeader";
 import { useToast } from "../../contexts/ToastContext";
 import { formatFcfa, parseFcfa } from "../../../lib/money";
-import { useCompassCosts, useCompassPortfolio } from "./hooks";
+import { useCortexCosts, useCortexPortfolio } from "./hooks";
 import type { CpsCost, CostCategory } from "./types";
 import { Badge, Provenance, CpsModal, Field, Input, Select } from "./ui";
-import "./compass.css";
+import "./cortex.css";
 
 const CATS: [CostCategory, string][] = [
   ["infra", "Infrastructure"], ["ai_tooling", "IA & outils"], ["marketing", "Marketing"],
@@ -17,9 +17,9 @@ const SOURCES: [string, string][] = [["manual", "Manuel"], ["import", "Import"],
 function thisMonth() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`; }
 const emptyCost: Partial<CpsCost> = { category: "infra", amount_fcfa: 0, period_month: thisMonth(), source: "manual", owner_only: false };
 
-export default function CompassCostsPage() {
-  const { rows, loading, error, create, update } = useCompassCosts();
-  const { rows: apps } = useCompassPortfolio();
+export default function CortexCostsPage() {
+  const { rows, loading, error, create, update } = useCortexCosts();
+  const { rows: apps } = useCortexPortfolio();
   const toast = useToast();
   const [edit, setEdit] = useState<Partial<CpsCost> | null>(null);
 
@@ -36,8 +36,8 @@ export default function CompassCostsPage() {
   const appName = (id: string | null) => id ? (apps.find((a) => a.id === id)?.name ?? "—") : "Transverse";
 
   return (
-    <div data-module="compass">
-      <AdminPageHeader title="Coûts réels" subtitle={`Atlas Compass — ${rows.length} lignes · total affiché ${formatFcfa(total, { compact: true })}`}>
+    <div data-module="cortex">
+      <AdminPageHeader title="Coûts réels" subtitle={`Cortex — ${rows.length} lignes · total affiché ${formatFcfa(total, { compact: true })}`}>
         <button className="cps-btn" onClick={() => setEdit({ ...emptyCost })}><Plus size={15} /> Ajouter un coût</button>
       </AdminPageHeader>
       {error && <div className="mb-4 text-sm text-red-600">{error}</div>}

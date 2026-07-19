@@ -1,4 +1,4 @@
-// Atlas Compass — types (miroir des tables cps_ de la Vague 1).
+// Cortex — types (miroir des tables cps_ de la Vague 1).
 
 export type LifecycleStage = "idea" | "cdc" | "build" | "beta" | "live" | "frozen" | "sunset";
 export type StrategicClass = "locomotive" | "pari" | "support" | "dormant";

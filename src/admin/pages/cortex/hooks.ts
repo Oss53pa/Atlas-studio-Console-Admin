@@ -6,7 +6,7 @@ import type {
 } from "./types";
 
 /* ── Dashboard exécutif (agrégats serveur, RG-07) ───────────────────────── */
-export function useCompassDashboard() {
+export function useCortexDashboard() {
   const [data, setData] = useState<CpsDashboard | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export function useCompassDashboard() {
 }
 
 /* ── Portefeuille : table d'arbitrage + CRUD apps ───────────────────────── */
-export function useCompassPortfolio() {
+export function useCortexPortfolio() {
   const [rows, setRows] = useState<CpsArbitrationRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -114,17 +114,17 @@ function useCpsTable<T extends { id: string }>(
   return { rows, loading, error, refresh, create, update, remove };
 }
 
-export const useCompassDeals = (appId?: string) =>
+export const useCortexDeals = (appId?: string) =>
   useCpsTable<CpsDeal>("cps_deals", "last_activity_at", false, appId);
-export const useCompassMilestones = (appId?: string) =>
+export const useCortexMilestones = (appId?: string) =>
   useCpsTable<CpsMilestone>("cps_milestones", "target_date", true, appId);
-export const useCompassAssumptions = (appId?: string) =>
+export const useCortexAssumptions = (appId?: string) =>
   useCpsTable<CpsAssumption>("cps_assumptions", "created_at", false, appId);
-export const useCompassCosts = (appId?: string) =>
+export const useCortexCosts = (appId?: string) =>
   useCpsTable<CpsCost>("cps_costs", "period_month", false, appId);
 
 /** Une seule app (fiche) via la table d'arbitrage. */
-export function useCompassApp(appId: string) {
+export function useCortexApp(appId: string) {
   const [app, setApp] = useState<CpsArbitrationRow | null>(null);
   const [loading, setLoading] = useState(true);
   const refresh = useCallback(async () => {

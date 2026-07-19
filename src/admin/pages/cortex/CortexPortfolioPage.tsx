@@ -4,21 +4,21 @@ import { Plus, Pencil, ArrowUpRight, AlertTriangle } from "lucide-react";
 import { AdminPageHeader } from "../../components/AdminPageHeader";
 import { useToast } from "../../contexts/ToastContext";
 import { formatFcfa } from "../../../lib/money";
-import { useCompassPortfolio } from "./hooks";
+import { useCortexPortfolio } from "./hooks";
 import type { CpsApp, CpsArbitrationRow, LifecycleStage, StrategicClass } from "./types";
 import {
   Badge, Provenance, CpsModal, Field, Input, Textarea, Select,
   LIFECYCLE, CLASS_LABEL, stageTone, classTone,
 } from "./ui";
-import "./compass.css";
+import "./cortex.css";
 
 const emptyApp: Partial<CpsApp> = {
   code: "", name: "", lifecycle_stage: "idea", strategic_class: "support",
   priority_rank: null, cosmos_leverage: false, target_market: [], notes: "",
 };
 
-export default function CompassPortfolioPage() {
-  const { rows, loading, error, createApp, updateApp } = useCompassPortfolio();
+export default function CortexPortfolioPage() {
+  const { rows, loading, error, createApp, updateApp } = useCortexPortfolio();
   const toast = useToast();
   const [edit, setEdit] = useState<Partial<CpsApp> | null>(null);
   const [saving, setSaving] = useState(false);
@@ -50,10 +50,10 @@ export default function CompassPortfolioPage() {
   };
 
   return (
-    <div data-module="compass">
+    <div data-module="cortex">
       <AdminPageHeader
         title="Portefeuille"
-        subtitle={`Atlas Compass — arbitrage stratégique · ${rows.length} apps · ${locomotives}/3 locomotives`}
+        subtitle={`Cortex — arbitrage stratégique · ${rows.length} apps · ${locomotives}/3 locomotives`}
       >
         <button className="cps-btn" onClick={() => setEdit({ ...emptyApp })}>
           <Plus size={15} /> Ajouter une app
@@ -88,7 +88,7 @@ export default function CompassPortfolioPage() {
                 <tr key={r.id} className="border-b border-warm-border/60 dark:border-white/5 hover:bg-warm-bg/40 dark:hover:bg-white/[0.02]">
                   <td className="px-4 py-3 money text-admin-muted">{r.priority_rank ?? "—"}</td>
                   <td className="px-4 py-3">
-                    <Link to={`/admin/compass/app/${r.id}`} className="font-semibold text-admin-text hover:cps-accent inline-flex items-center gap-1">
+                    <Link to={`/admin/cortex/app/${r.id}`} className="font-semibold text-admin-text hover:cps-accent inline-flex items-center gap-1">
                       {r.name} <ArrowUpRight size={13} className="text-admin-muted" />
                     </Link>
                     <div className="text-[11px] text-admin-muted font-mono">{r.code}{r.cosmos_leverage ? " · Cosmos" : ""}</div>

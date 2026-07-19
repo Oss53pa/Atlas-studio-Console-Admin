@@ -3,10 +3,10 @@ import { Plus, Pencil } from "lucide-react";
 import { AdminPageHeader } from "../../components/AdminPageHeader";
 import { useToast } from "../../contexts/ToastContext";
 import { formatFcfa, parseFcfa, bpToPct, pctToBp } from "../../../lib/money";
-import { useCompassDeals, useCompassPortfolio } from "./hooks";
+import { useCortexDeals, useCortexPortfolio } from "./hooks";
 import type { CpsDeal, DealStage, DealOrigin } from "./types";
 import { Badge, Provenance, CpsModal, Field, Input, Select, DEAL_STAGE, dealTone } from "./ui";
-import "./compass.css";
+import "./cortex.css";
 
 const ORIGINS: [DealOrigin, string][] = [
   ["reseau_perso", "Réseau perso"], ["cosmos_terrain", "Cosmos terrain"],
@@ -14,9 +14,9 @@ const ORIGINS: [DealOrigin, string][] = [
 ];
 const emptyDeal: Partial<CpsDeal> = { prospect_name: "", stage: "contact", origin: "reseau_perso", expected_mrr_fcfa: 0, probability_bp: 0 };
 
-export default function CompassPipelinePage() {
-  const { rows, loading, error, create, update } = useCompassDeals();
-  const { rows: apps } = useCompassPortfolio();
+export default function CortexPipelinePage() {
+  const { rows, loading, error, create, update } = useCortexDeals();
+  const { rows: apps } = useCortexPortfolio();
   const toast = useToast();
   const [edit, setEdit] = useState<Partial<CpsDeal> | null>(null);
   const [saving, setSaving] = useState(false);
@@ -36,8 +36,8 @@ export default function CompassPipelinePage() {
   const appName = (id: string | null) => apps.find((a) => a.id === id)?.name ?? "—";
 
   return (
-    <div data-module="compass">
-      <AdminPageHeader title="Pipeline commercial" subtitle={`Atlas Compass — ${rows.length} deals`}>
+    <div data-module="cortex">
+      <AdminPageHeader title="Pipeline commercial" subtitle={`Cortex — ${rows.length} deals`}>
         <button className="cps-btn" onClick={() => setEdit({ ...emptyDeal })}><Plus size={15} /> Nouveau deal</button>
       </AdminPageHeader>
 

@@ -93,13 +93,13 @@ const AsvcPrDetailPage = lazyRetry(() => import('./admin/pages/asvc/AsvcPrDetail
 const AsvcDeploymentDetailPage = lazyRetry(() => import('./admin/pages/asvc/AsvcDeploymentDetailPage'));
 const AsvcTechDebtPage = lazyRetry(() => import('./admin/pages/asvc/AsvcTechDebtPage'));
 
-// Atlas Compass (module business model / stratégie)
-const CompassDashboardPage = lazyRetry(() => import('./admin/pages/compass/CompassDashboardPage'));
-const CompassPortfolioPage = lazyRetry(() => import('./admin/pages/compass/CompassPortfolioPage'));
-const CompassPipelinePage = lazyRetry(() => import('./admin/pages/compass/CompassPipelinePage'));
-const CompassPlanningPage = lazyRetry(() => import('./admin/pages/compass/CompassPlanningPage'));
-const CompassCostsPage = lazyRetry(() => import('./admin/pages/compass/CompassCostsPage'));
-const CompassAppPage = lazyRetry(() => import('./admin/pages/compass/CompassAppPage'));
+// Atlas Cortex (module business model / stratégie)
+const CortexDashboardPage = lazyRetry(() => import('./admin/pages/cortex/CortexDashboardPage'));
+const CortexPortfolioPage = lazyRetry(() => import('./admin/pages/cortex/CortexPortfolioPage'));
+const CortexPipelinePage = lazyRetry(() => import('./admin/pages/cortex/CortexPipelinePage'));
+const CortexPlanningPage = lazyRetry(() => import('./admin/pages/cortex/CortexPlanningPage'));
+const CortexCostsPage = lazyRetry(() => import('./admin/pages/cortex/CortexCostsPage'));
+const CortexAppPage = lazyRetry(() => import('./admin/pages/cortex/CortexAppPage'));
 
 const CONSOLE_APP_ID = 'atlas-studio-console';
 
@@ -222,13 +222,13 @@ root.render(
                 <Route path="asvc/prs/:id" element={S(<AsvcPrDetailPage />)} />
                 <Route path="asvc/deployments/:id" element={S(<AsvcDeploymentDetailPage />)} />
 
-                {/* Atlas Compass */}
-                <Route path="compass" element={S(<CompassDashboardPage />)} />
-                <Route path="compass/portfolio" element={S(<CompassPortfolioPage />)} />
-                <Route path="compass/pipeline" element={S(<CompassPipelinePage />)} />
-                <Route path="compass/planning" element={S(<CompassPlanningPage />)} />
-                <Route path="compass/costs" element={S(<CompassCostsPage />)} />
-                <Route path="compass/app/:id" element={S(<CompassAppPage />)} />
+                {/* Atlas Cortex */}
+                <Route path="cortex" element={S(<CortexDashboardPage />)} />
+                <Route path="cortex/portfolio" element={S(<CortexPortfolioPage />)} />
+                <Route path="cortex/pipeline" element={S(<CortexPipelinePage />)} />
+                <Route path="cortex/planning" element={S(<CortexPlanningPage />)} />
+                <Route path="cortex/costs" element={S(<CortexCostsPage />)} />
+                <Route path="cortex/app/:id" element={S(<CortexAppPage />)} />
               </Route>
             </Route>
 

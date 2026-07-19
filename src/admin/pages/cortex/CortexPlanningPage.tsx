@@ -2,19 +2,19 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { AdminPageHeader } from "../../components/AdminPageHeader";
 import { useToast } from "../../contexts/ToastContext";
-import { useCompassMilestones, useCompassAssumptions } from "./hooks";
+import { useCortexMilestones, useCortexAssumptions } from "./hooks";
 import type { CpsMilestone, CpsAssumption, MilestoneStatus, MilestoneCategory, AssumptionStatus, AssumptionDomain, Criticality } from "./types";
 import { Badge, CpsModal, Field, Input, Textarea, Select, MILESTONE_STATUS, ASSUMPTION_STATUS, CRITICALITY, assumptionTone } from "./ui";
-import "./compass.css";
+import "./cortex.css";
 
 const M_CAT: [MilestoneCategory, string][] = [["juridique", "Juridique"], ["produit", "Produit"], ["commercial", "Commercial"], ["financier", "Financier"], ["equipe", "Équipe"]];
 const A_DOM: [AssumptionDomain, string][] = [["pricing", "Pricing"], ["demande", "Demande"], ["canal", "Canal"], ["cout", "Coût"], ["reglementaire", "Réglementaire"], ["tech", "Tech"]];
 const critTone: Record<Criticality, string> = { bloquante: "red", majeure: "amber", mineure: "gray" };
 const mStatusTone: Record<MilestoneStatus, string> = { a_venir: "gray", en_cours: "blue", atteint: "green", glisse: "amber", abandonne: "red" };
 
-export default function CompassPlanningPage() {
-  const ms = useCompassMilestones();
-  const as = useCompassAssumptions();
+export default function CortexPlanningPage() {
+  const ms = useCortexMilestones();
+  const as = useCortexAssumptions();
   const toast = useToast();
   const [mEdit, setMEdit] = useState<Partial<CpsMilestone> | null>(null);
   const [aEdit, setAEdit] = useState<Partial<CpsAssumption> | null>(null);
@@ -37,8 +37,8 @@ export default function CompassPlanningPage() {
   };
 
   return (
-    <div data-module="compass">
-      <AdminPageHeader title="Jalons & Hypothèses" subtitle="Atlas Compass — exécution & mur de vérité" />
+    <div data-module="cortex">
+      <AdminPageHeader title="Jalons & Hypothèses" subtitle="Cortex — exécution & mur de vérité" />
 
       <div className="grid lg:grid-cols-2 gap-5">
         {/* Jalons */}
