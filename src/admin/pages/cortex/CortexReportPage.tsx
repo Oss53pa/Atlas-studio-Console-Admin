@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Printer, ShieldCheck } from "lucide-react";
+import { Download, ShieldCheck } from "lucide-react";
 import { AdminPageHeader } from "../../components/AdminPageHeader";
 import { formatFcfa } from "../../../lib/money";
 import {
@@ -8,6 +8,7 @@ import {
 } from "./hooks";
 import type { BlockType, BpProfile, CanvasItem } from "./types";
 import { Select, CLASS_LABEL, LIFECYCLE, MILESTONE_STATUS } from "./ui";
+import { buildBusinessPlanPdf, bpFilename, type BpSection } from "./bpPdf";
 import "./cortex.css";
 
 /* RG-11 — chaque profil de destinataire n'ouvre que les sections autorisées.
@@ -65,6 +66,107 @@ export default function CortexReportPage() {
     [deals],
   );
 
+  /** Assemble le PDF à partir des mêmes données — et des mêmes filtres — que
+   *  l'aperçu à l'écran : une seule décision de confidentialité, deux rendus. */
+  const downloadPdf = () => {
+    const sections: BpSection[] = [];
+
+    if (allow("synthese") && kpi) {
+      const rows: string[][] = [
+        ["Applications au portefeuille", String(kpi.apps_total)],
+        ["Applications en production", String(kpi.apps_live)],
+        ["Revenu récurrent constaté", formatFcfa(kpi.mrr_real_fcfa)],
+        ["Clients actifs", String(kpi.active_clients)],
+        ["Pipeline pondéré", formatFcfa(kpi.pipeline_weighted_fcfa)],
+        ["Affaires ouvertes", String(kpi.pipeline_open_deals)],
+        ["Jalons à échéance sous 30 jours", String(kpi.milestones_due_30d)],
+      ];
+      if (allow("couts_synthese")) rows.push(["Coûts du mois en cours", formatFcfa(kpi.costs_month_fcfa)]);
+      sections.push({ heading: "1. Synthèse", head: ["Indicateur", "Valeur"], rows });
+    }
+
+    if (allow("portefeuille")) {
+      sections.push({
+        heading: "2. Portefeuille d'applications",
+        head: ["Application", "Stade", "Classe", "Marchés"],
+        rows: apps.map((a) => [
+          a.name, LIFECYCLE[a.lifecycle_stage], CLASS_LABEL[a.strategic_class],
+          (a.target_market ?? []).join(", ") || "-",
+        ]),
+      });
+    }
+
+    if (allow("canvas")) {
+      const filled = blocks.filter((b) => (b.items ?? []).length > 0);
+      if (filled.length > 0) {
+        sections.push({
+          heading: "3. Modèle économique",
+          bullets: filled.map((b) => ({
+            label: BLOCK_LABEL[b.block_type],
+            items: (b.items as CanvasItem[]).map((it) => it.label + (it.detail ? ` — ${it.detail}` : "")),
+          })),
+        });
+      }
+    }
+
+    if (allow("pipeline_nominatif")) {
+      sections.push({
+        heading: "4. Pipeline commercial",
+        head: ["Prospect", "Segment", "Étape", "MRR attendu", "Prob."],
+        rows: deals.map((d) => [
+          d.prospect_name, d.segment ?? "-", d.stage,
+          formatFcfa(d.expected_mrr_fcfa), `${(d.probability_bp / 100).toFixed(0)} %`,
+        ]),
+      });
+    } else if (allow("pipeline_agrege")) {
+      const open = deals.filter((d) => !["client", "perdu"].includes(d.stage)).length;
+      sections.push({
+        heading: "4. Pipeline commercial (agrégé)",
+        text: `${open} affaire(s) en cours, pour un MRR pondéré de ${formatFcfa(pipelineWeighted)}. `
+          + "L'identité des prospects n'est pas divulguée dans ce profil de document.",
+      });
+    }
+
+    if (allow("finance") && scenarioId && projections.length > 0) {
+      sections.push({
+        heading: "5. Projections financières",
+        breakBefore: true,
+        text: `Scénario « ${scenarios.find((s) => s.id === scenarioId)?.name} » — il s'agit d'une projection `
+          + "fondée sur des hypothèses de travail, et non d'un engagement.",
+        head: ["Mois", "Clients actifs", "MRR", "Coûts"],
+        rows: projections.map((p) => [
+          `M+${p.month_index}`, String(p.active_customers),
+          formatFcfa(p.mrr_fcfa), formatFcfa(p.costs_fcfa),
+        ]),
+      });
+    }
+
+    if (allow("couts_detail") && costByCategory.length > 0) {
+      sections.push({
+        heading: "6. Structure de coûts",
+        head: ["Catégorie", "Montant cumulé"],
+        rows: costByCategory.map(([cat, amt]) => [cat, formatFcfa(amt)]),
+        text: !allow("couts_prives") && costs.some((c) => c.owner_only)
+          ? "Certaines lignes à caractère personnel sont exclues de ce profil de document."
+          : undefined,
+      });
+    }
+
+    if (allow("jalons") && milestones.length > 0) {
+      sections.push({
+        heading: "7. Feuille de route",
+        head: ["Jalon", "Catégorie", "Échéance", "Statut"],
+        rows: milestones.map((m) => [
+          m.title, m.category,
+          m.target_date ? new Date(m.target_date).toLocaleDateString("fr-FR") : "-",
+          MILESTONE_STATUS[m.status],
+        ]),
+      });
+    }
+
+    buildBusinessPlanPdf({ profile, generatedOn: today, sections }).save(bpFilename(profile));
+  };
+
   return (
     <div data-module="cortex">
       <div className="cps-noprint">
@@ -74,7 +176,7 @@ export default function CortexReportPage() {
               options={[["complet", "Profil : complet (interne)"], ["banquier", "Profil : banquier"], ["partenaire", "Profil : partenaire"]]} />
             <Select value={scenarioId} onChange={(e) => setScenarioId(e.target.value)}
               options={[["", "Scénario : aucun"], ...scenarios.map((s) => [s.id, `Scénario : ${s.name}`] as [string, string])]} />
-            <button className="cps-btn" onClick={() => window.print()}><Printer size={15} /> Imprimer / PDF</button>
+            <button className="cps-btn" onClick={downloadPdf}><Download size={15} /> Télécharger le PDF</button>
           </div>
         </AdminPageHeader>
 
