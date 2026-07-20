@@ -5,6 +5,7 @@ import type {
   CpsDeal, CpsMilestone, CpsAssumption, CpsCost,
   CpsPricingPlan, CpsScenario, CpsProjection, CpsChannel,
   CpsDataSource, CpsEventRaw, CpsInsight, InsightStatus,
+  CpsCanvas, CpsCanvasBlock, CanvasItem,
 } from "./types";
 
 /* ── Dashboard exécutif (agrégats serveur, RG-07) ───────────────────────── */
@@ -259,4 +260,56 @@ export function useCortexApp(appId: string) {
   }, [appId]);
   useEffect(() => { refresh(); }, [refresh]);
   return { app, loading, refresh };
+}
+
+/* ── Vague 5 : Canvas (9 blocs) ─────────────────────────────────────────── */
+/** Charge (ou crée) le canvas d'une app — `appId` absent = canvas global. */
+export function useCortexCanvas(appId?: string) {
+  const [canvas, setCanvas] = useState<CpsCanvas | null>(null);
+  const [blocks, setBlocks] = useState<CpsCanvasBlock[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    // La RPC est idempotente : elle crée le canvas + ses 9 blocs si absents.
+    const { data: id, error: e1 } = await supabase.rpc("cps_canvas_ensure", { p_app: appId ?? null });
+    if (e1) { setError(e1.message); setLoading(false); return; }
+    const [{ data: c }, { data: b, error: e2 }] = await Promise.all([
+      supabase.from("cps_canvas").select("*").eq("id", id).single(),
+      supabase.from("cps_canvas_blocks").select("*").eq("canvas_id", id),
+    ]);
+    if (e2) setError(e2.message);
+    else { setCanvas((c ?? null) as CpsCanvas | null); setBlocks((b ?? []) as CpsCanvasBlock[]); setError(null); }
+    setLoading(false);
+  }, [appId]);
+  useEffect(() => { refresh(); }, [refresh]);
+
+  /** Remplace le contenu d'un bloc (les items sont stockés en jsonb). */
+  const saveBlock = useCallback(async (blockId: string, items: CanvasItem[]) => {
+    const { error } = await supabase.from("cps_canvas_blocks").update({ items }).eq("id", blockId);
+    if (error) throw error;
+    setBlocks((prev) => prev.map((b) => (b.id === blockId ? { ...b, items } : b)));
+  }, []);
+
+  return { canvas, blocks, loading, error, refresh, saveBlock };
+}
+
+/** Tous les canvas + blocs, pour la vue Synergies (recoupements inter-apps). */
+export function useCortexCanvasAll() {
+  const [canvases, setCanvases] = useState<CpsCanvas[]>([]);
+  const [blocks, setBlocks] = useState<CpsCanvasBlock[]>([]);
+  const [loading, setLoading] = useState(true);
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    const [{ data: c }, { data: b }] = await Promise.all([
+      supabase.from("cps_canvas").select("*"),
+      supabase.from("cps_canvas_blocks").select("*"),
+    ]);
+    setCanvases((c ?? []) as CpsCanvas[]);
+    setBlocks((b ?? []) as CpsCanvasBlock[]);
+    setLoading(false);
+  }, []);
+  useEffect(() => { refresh(); }, [refresh]);
+  return { canvases, blocks, loading, refresh };
 }

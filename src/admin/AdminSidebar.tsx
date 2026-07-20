@@ -160,6 +160,7 @@ const NAV_GROUPS: NavGroup[] = [
         items: [
           { to: "/admin/cortex", icon: LayoutDashboard, label: "Dashboard exécutif" },
           { to: "/admin/cortex/portfolio", icon: Rocket, label: "Portefeuille" },
+          { to: "/admin/cortex/canvas", icon: Layers, label: "Canvas & Synergies" },
         ],
       },
       {
@@ -175,6 +176,7 @@ const NAV_GROUPS: NavGroup[] = [
         items: [
           { to: "/admin/cortex/finance", icon: CreditCard, label: "Pricing" },
           { to: "/admin/cortex/scenarios", icon: BarChart3, label: "Scénarios & Projections" },
+          { to: "/admin/cortex/report", icon: FileText, label: "Business plan" },
         ],
       },
       {

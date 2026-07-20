@@ -35,3 +35,18 @@
 
 /* Cartes insight PROPH3T (liseré ambre) — préparé pour la Vague 4 */
 [data-module="cortex"] .cps-insight { border-left: 3px solid var(--cps-accent); }
+
+/* ── Vague 5 : impression du business plan ───────────────────────────────
+   On isole #cps-bp : tout le chrome de la console disparaît à l'impression. */
+@media print {
+  body { background: #fff !important; }
+  body * { visibility: hidden; }
+  #cps-bp, #cps-bp * { visibility: visible; }
+  #cps-bp {
+    position: absolute; left: 0; top: 0; width: 100%;
+    margin: 0; padding: 0; color: #000; font-size: 11pt;
+  }
+  #cps-bp .cps-bp-section { break-inside: avoid; page-break-inside: avoid; }
+  #cps-bp .cps-bp-break { break-before: page; page-break-before: always; }
+  .cps-noprint { display: none !important; }
+}

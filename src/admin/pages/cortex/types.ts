@@ -151,6 +151,31 @@ export interface CpsInsight {
   created_at: string; updated_at: string;
 }
 
+/* ── Vague 5 : Canvas & business plan ───────────────────────────────────── */
+export type BlockType =
+  | "segments" | "value_prop" | "channels" | "relations"
+  | "revenues" | "resources" | "activities" | "partners" | "costs";
+export type Confidence = "hypothese" | "testee" | "validee";
+/** Profils d'export du business plan (RG-11 : whitelist de champs par profil). */
+export type BpProfile = "complet" | "banquier" | "partenaire";
+
+export interface CanvasItem {
+  label: string;
+  detail?: string;
+  confidence?: Confidence;
+  linked_assumption_id?: string | null;
+}
+
+export interface CpsCanvas {
+  id: string; app_id: string | null; version: number; label: string | null;
+  created_at: string; updated_at: string;
+}
+
+export interface CpsCanvasBlock {
+  id: string; canvas_id: string; block_type: BlockType;
+  items: CanvasItem[]; updated_at: string;
+}
+
 /** Snapshot KPI du dashboard (calculé côté Postgres — RG-07). */
 export interface CpsDashboard {
   apps_total: number;
