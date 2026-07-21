@@ -31,7 +31,7 @@ export default function NewsletterPage() {
         name: "Nouvelle campagne",
         subject: "",
         from_name: "Pamela — Atlas Studio",
-        from_email: "notifications@atlasstudio.org",
+        from_email: "notifications@atlas-studio.org",
         blocks: defaultBlocks,
         status: "draft",
       })

@@ -477,7 +477,7 @@ export default function ContentManagementPage() {
         {/* ═══ CONTACT ═══ */}
         {tab === "Contact" && (
           <>
-            <Field label="Email" value={content.contact?.email || ""} onChange={v => update("contact", { ...content.contact, email: v })} placeholder="contact@atlasstudio.com" />
+            <Field label="Email" value={content.contact?.email || ""} onChange={v => update("contact", { ...content.contact, email: v })} placeholder="contact@atlas-studio.org" />
             <Field label="Téléphone" value={content.contact?.phone || ""} onChange={v => update("contact", { ...content.contact, phone: v })} placeholder="+225 XX XX XX XX" />
             <Field label="Ville" value={content.contact?.city || ""} onChange={v => update("contact", { ...content.contact, city: v })} placeholder="Abidjan, Côte d'Ivoire" />
           </>

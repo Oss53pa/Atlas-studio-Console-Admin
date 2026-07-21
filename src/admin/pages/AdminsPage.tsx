@@ -340,7 +340,7 @@ export default function AdminsPage() {
                   type="email"
                   value={form.email}
                   onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                  placeholder="admin@atlasstudio.org"
+                  placeholder="admin@atlas-studio.org"
                   className="w-full px-3 py-2 bg-warm-bg dark:bg-admin-surface-alt border border-warm-border dark:border-admin-surface-alt rounded-lg text-sm text-neutral-text dark:text-admin-text outline-none focus:border-p-accent"
                 />
               </Field>

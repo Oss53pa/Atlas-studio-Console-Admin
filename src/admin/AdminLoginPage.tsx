@@ -96,7 +96,7 @@ export default function AdminLoginPage() {
             <label className="block text-p-text-2 text-[13px] font-semibold mb-1.5">Email</label>
             <input
               type="email" value={email} onChange={e => setEmail(e.target.value)}
-              placeholder="admin@atlasstudio.com"
+              placeholder="admin@atlas-studio.org"
               onKeyDown={e => e.key === 'Enter' && (forgotMode ? handleForgotPassword() : handleSubmit())}
               className="w-full px-4 py-3 bg-p-surface-alt border border-p-border rounded-lg text-p-text text-sm outline-none transition-colors focus:border-p-accent placeholder:text-p-muted/60"
             />

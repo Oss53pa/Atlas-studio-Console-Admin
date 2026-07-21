@@ -136,7 +136,7 @@ export default function SettingsPage() {
   const [paymentConfig, setPaymentConfig] = useState({
     stripe_secret_key: "", stripe_webhook_secret: "", stripe_publishable_key: "",
     cinetpay_api_key: "", cinetpay_site_id: "", cinetpay_secret_key: "",
-    resend_api_key: "", from_email: "notifications@atlasstudio.org",
+    resend_api_key: "", from_email: "notifications@atlas-studio.org",
   });
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
   const [testingProvider, setTestingProvider] = useState<string | null>(null);
@@ -481,7 +481,7 @@ export default function SettingsPage() {
                 <div>
                   <label className="block text-neutral-body dark:text-admin-text/80 text-[12px] font-semibold mb-1">Email expéditeur</label>
                   <input value={paymentConfig.from_email} onChange={e => setPaymentConfig(p => ({ ...p, from_email: e.target.value }))}
-                    placeholder="notifications@atlasstudio.org" className={`${inputClass} text-[12px]`} />
+                    placeholder="notifications@atlas-studio.org" className={`${inputClass} text-[12px]`} />
                 </div>
                 <div className="flex items-center gap-3">
                   <button onClick={() => testProvider("resend")} disabled={testingProvider === "resend"}
