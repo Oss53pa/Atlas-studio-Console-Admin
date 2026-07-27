@@ -134,11 +134,20 @@ await supabase.auth.updateUser({
 
 ## 4. Factory client Supabase (frontend)
 
-- **Atlas-banx** : mergé (#16). Se déploie via ton déploiement front habituel
-  (Vercel). Le changement de `storageKey` (→ `atlasbanx-auth`) **déconnecte une
-  fois** les sessions existantes (re-login, sans perte de données).
-- **Autres apps** : à généraliser — chaque app fournit son `storageKey`
-  (`import { createAtlasSupabaseClient }` puis remplacer son `createClient`).
+Généralisée à **tous les satellites** (mergé) : chaque app importe
+`createAtlasSupabaseClient` (storageKey explicite par app, lock no-op, fetch
+résilient) au lieu de `createClient` direct.
+
+| App | storageKey | Déconnexion unique |
+|-----|-----------|--------------------|
+| Atlas-banx (#16) | `atlasbanx-auth` | oui |
+| Advist (#35) | `advist-auth` | oui |
+| Atlas-Finance (#83) | `atlas-fna-auth` (réutilisé) | **non** |
+| SmartTable (#7) | `tablesmart-auth` | oui |
+| Liass-Pilot (#44) | `taxpilot-auth` | oui |
+
+La « déconnexion unique » = re-login au prochain accès (nouveau `storageKey`),
+sans perte de données. Se déploie via le déploiement front habituel (Vercel).
 
 ---
 
@@ -194,13 +203,17 @@ await supabase.auth.updateUser({
   (`/portal/forgot-password`, OTP `reset_password`) existait déjà ; les
   satellites redirigent désormais vers elle (login + page locale). **PR mergées**
   (Atlas-banx #18, Advist #34, Atlas-Finance #82, SmartTable #6, Liass-Pilot #43).
+  Advist **mobile** aligné aussi (#36, `expo-linking` → portail).
+- **Factory client Supabase** : ✅ généralisée aux 5 satellites (cf. §4) —
+  **PR mergées** (Advist #35, Atlas-Finance #83, SmartTable #7, Liass-Pilot #44).
 
 ### Reste
 - **Déploiement Supabase** (manuel) : `atlas-sso` par satellite (§1), edge
   functions D6 du portail, coller les templates email (§3), migration branding
   (§2.1), + redirections autorisées / `SITE_URL`.
-- **Factory client** : à étendre aux autres frontends (1 PR chacun).
-- **Advist mobile** : l'app React Native garde un écran forgot-password local
-  (hors périmètre des PR D5 web) — à centraliser en suivi si souhaité.
+- **CI rouges préexistantes** (Advist, SmartTable, Liass-Pilot) : échouaient déjà
+  avant le chantier auth (merges proph3t / autres) — à investiguer hors auth.
+- **Déconnexion unique** attendue au 1er accès sur Advist / SmartTable / Liass-Pilot
+  (nouveau `storageKey` factory) — prévenir les utilisateurs si besoin.
 
 _Généré par Claude Code — harmonisation auth Atlas Studio._
