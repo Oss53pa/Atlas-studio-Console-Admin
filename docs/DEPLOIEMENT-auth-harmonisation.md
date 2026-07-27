@@ -184,13 +184,23 @@ await supabase.auth.updateUser({
   `syncAppBranding(<app_id>)` après établissement de la session SSO
   (`ExternalAuthPage`) dans Atlas-banx (`atlasbanx`), Advist (`advist`),
   Atlas-Finance (`atlas-compta`), SmartTable (`tablesmart`, + page reset local),
-  Liass-Pilot (`taxpilot`). Branche `claude/atlas-auth-harmonization` par dépôt.
+  Liass-Pilot (`taxpilot`). **PR mergées** (Atlas-banx #17, Advist #33,
+  Atlas-Finance #81, SmartTable #5, Liass-Pilot #42).
+- **SSO** : ✅ harmonisé et **mergé** sur les 5 satellites (Atlas-banx #15/#16,
+  Advist #32, Atlas-Finance #80, SmartTable #4, Liass-Pilot #41).
+  ⚠️ Actif en prod seulement après `supabase functions deploy atlas-sso` par
+  projet (cf. §1) — étape Supabase manuelle restante.
+- **D5 — récupération MDP centralisée** : la page centrale du portail
+  (`/portal/forgot-password`, OTP `reset_password`) existait déjà ; les
+  satellites redirigent désormais vers elle (login + page locale). **PR mergées**
+  (Atlas-banx #18, Advist #34, Atlas-Finance #82, SmartTable #6, Liass-Pilot #43).
 
 ### Reste
-- **SSO** : merger + déployer les 4 PR restantes (Advist, Atlas-Finance,
-  SmartTable, Liass-Pilot) — cf. §1.
+- **Déploiement Supabase** (manuel) : `atlas-sso` par satellite (§1), edge
+  functions D6 du portail, coller les templates email (§3), migration branding
+  (§2.1), + redirections autorisées / `SITE_URL`.
 - **Factory client** : à étendre aux autres frontends (1 PR chacun).
-- **D5 — récupération MDP centralisée** : écran satellite → redirige vers le
-  portail `…/portal/forgot-password` (non encore entamé).
+- **Advist mobile** : l'app React Native garde un écran forgot-password local
+  (hors périmètre des PR D5 web) — à centraliser en suivi si souhaité.
 
 _Généré par Claude Code — harmonisation auth Atlas Studio._
