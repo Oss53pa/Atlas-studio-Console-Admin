@@ -53,7 +53,8 @@ export default function ClientsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editClient, setEditClient] = useState<Profile | null>(null);
   // Brief 2026-05-07 : creation client = email + full_name + trial obligatoire.
-  // Le mot de passe est genere par admin-clients v9 et envoye par email d'invitation.
+  // D6 : le compte est cree SANS mot de passe ; admin-clients envoie un lien
+  // securise de definition de mot de passe (jamais de MDP en clair).
   // company_name / phone restent pour l'edition (pas demandes a la creation).
   const [formData, setFormData] = useState({
     email: "",
@@ -137,13 +138,13 @@ export default function ClientsPage() {
 
   const handleResetPassword = async (client: Profile) => {
     setConfirmDialog({
-      open: true, title: "Réinitialiser le mot de passe ?",
-      message: `Un nouveau mot de passe sera envoyé à ${client.email}.`,
+      open: true, title: "Envoyer un lien de réinitialisation ?",
+      message: `Un lien sécurisé de définition de mot de passe sera envoyé à ${client.email}.`,
       onConfirm: async () => {
         setConfirmDialog(prev => ({ ...prev, open: false }));
         try {
           await apiCall("admin-reset-password", { method: "POST", body: { userId: client.id, email: client.email, fullName: client.full_name } });
-          success(`Nouveau mot de passe envoyé à ${client.email}`);
+          success(`Lien de réinitialisation envoyé à ${client.email}`);
         } catch (err: unknown) { showError(formatSupabaseError(err)); }
       },
     });
@@ -193,8 +194,8 @@ export default function ClientsPage() {
         await supabase.from("profiles").update({ full_name: fullName, company_name: formData.company_name, phone: formData.phone, updated_at: new Date().toISOString() }).eq("id", editClient.id);
         success("Client modifié");
       } else {
-        // Brief 2026-05-07 : admin-clients v9 cree user (mot de passe auto-genere),
-        // envoie email d'invitation, puis cree la subscription trial.
+        // D6 : admin-clients cree le user SANS mot de passe, provisionne le trial,
+        // puis envoie un lien de definition de mot de passe (email d'invitation harmonise).
         await apiCall("admin-clients", {
           method: "POST",
           body: {
@@ -595,7 +596,7 @@ export default function ClientsPage() {
                 />
               </Field>
               <p className="text-neutral-muted dark:text-admin-muted text-[12px] -mt-1 mb-3">
-                Un mot de passe sera genere automatiquement et envoye au client par email d'invitation.
+                Le client recevra un lien securise pour definir son mot de passe (aucun mot de passe en clair).
               </p>
 
               <div className="mt-4 mb-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
