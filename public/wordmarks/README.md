@@ -23,7 +23,7 @@ L'URL de chaque wordmark est enregistrée dans `public.apps.wordmark_url`
 | tablesmart      | TableSmart     | #C0A24E  |
 | atlasbanx       | AtlasBanx      | #C29A4B  |
 | taxpilot        | Liass'Pilot    | #0F766E  |
-| advist          | Advist         | #3E5C8A ⚠️ à confirmer |
+| advist          | Advist         | #4F46E5  |
 | atlas-studio    | Atlas Studio (neutre) | #1A1D17 |
 
 ## Régénérer
