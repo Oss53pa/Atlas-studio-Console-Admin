@@ -166,13 +166,28 @@ await supabase.auth.updateUser({
 
 ---
 
-## 7. Ce qui reste à généraliser (optionnel)
+## 7. Ce qui reste à généraliser
 
-- **SSO** : ✅ complet (les 5 apps ayant `atlas-sso` sont couvertes).
+### Déjà livré (branches dédiées, non mergées)
+- **Templates e-mail Auth harmonisés (D9)** : `emails/*.harmonise.html` +
+  `emails/README.md` (ce dépôt, branche `claude/atlas-auth-harmonization-153yhj`).
+- **D6 — premier accès / reset sans MDP en clair** : `admin-clients` +
+  `admin-reset-password` réécrits (lien de définition de MDP + e-mail harmonisé
+  à contexte par requête via `_shared/authEmail.ts`). UI Console Admin alignée.
+  → Portail : branche `claude/atlas-auth-harmonization`.
+- **OTP à contexte par requête (D9, 2ᵉ partie)** : couvert côté serveur pour
+  `admin-clients` / `admin-reset-password` par `_shared/authEmail.ts` (palette
+  résolue depuis `public.apps` à l'envoi → plus de « dernière app gagne »).
+- **Resync branding (portail)** : `src/lib/brandingSync.ts` + câblage
+  `LaunchPage` (pose la palette dans `raw_user_meta_data` au lancement d'app).
+
+### Reste
+- **SSO** : merger + déployer les 4 PR restantes (Advist, Atlas-Finance,
+  SmartTable, Liass-Pilot) — cf. §1.
+- **Resync branding satellites** : déposer `brandingSync.ts` (module autonome)
+  dans chaque satellite et l'appeler après authentification.
 - **Factory client** : à étendre aux autres frontends (1 PR chacun).
-- **Branding métadonnées** : brancher la resync `raw_user_meta_data` sur
-  `public.apps` dans chaque app.
-- **Récupération MDP centralisée** (D5) et **OTP à contexte par requête** :
-  chantiers du brief non encore entamés.
+- **D5 — récupération MDP centralisée** : écran satellite → redirige vers le
+  portail `…/portal/forgot-password` (non encore entamé).
 
 _Généré par Claude Code — harmonisation auth Atlas Studio._
