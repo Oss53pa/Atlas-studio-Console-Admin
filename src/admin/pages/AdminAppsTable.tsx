@@ -19,7 +19,7 @@ const STATUS_LABELS: Record<string, string> = { available: "Disponible", coming_
 const emptyApp: Partial<AppRow> = {
   id: "", name: "", type: "App", tagline: "", description: "",
   features: [], categories: [], pricing: {}, pricing_period: "mois",
-  color: "var(--c-accent-dark)", icon: "receipt", highlights: [],
+  color: "var(--c-accent-dark)", accent_deep: null, accent_soft: null, wordmark_url: null, icon: "receipt", highlights: [],
   status: "available", visible: true, sort_order: 0, external_url: null,
 };
 
@@ -118,7 +118,11 @@ export default function AdminAppsTable() {
       features: featuresStr.split("\n").map(s => s.trim()).filter(Boolean),
       categories: categoriesStr.split(",").map(s => s.trim()).filter(Boolean),
       pricing, pricing_period: editApp.pricing_period || "mois",
-      color: editApp.color || "var(--c-accent-dark)", icon: editApp.icon || "receipt",
+      color: editApp.color || "var(--c-accent-dark)",
+      accent_deep: editApp.accent_deep || null,
+      accent_soft: editApp.accent_soft || null,
+      wordmark_url: editApp.wordmark_url || null,
+      icon: editApp.icon || "receipt",
       highlights: highlightsStr.split(",").map(s => s.trim()).filter(Boolean),
       external_url: editApp.external_url || null,
       status: editApp.status as AppStatus || "available",
@@ -329,6 +333,30 @@ export default function AdminAppsTable() {
               <label className="block text-neutral-text dark:text-admin-text/80 text-[13px] font-semibold mb-1.5">URL externe (landing page)</label>
               <input value={editApp.external_url || ""} onChange={e => setEditApp({ ...editApp, external_url: e.target.value || null })} placeholder="https://mon-app.atlas-studio.org" className={ADMIN_INPUT_CLASS} />
               <p className="text-neutral-muted dark:text-admin-muted/60 text-[11px] mt-1">Redirige vers ce site au lieu de la page détail interne.</p>
+            </div>
+
+            {/* Branding (emails d'auth + portail) */}
+            <div>
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-semibold mb-3">Branding</h3>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-neutral-text dark:text-admin-text/80 text-[13px] font-semibold mb-1.5">Accent</label>
+                  <input value={editApp.color || ""} onChange={e => setEditApp({ ...editApp, color: e.target.value })} placeholder="#235A6E" className={ADMIN_INPUT_CLASS} />
+                </div>
+                <div>
+                  <label className="block text-neutral-text dark:text-admin-text/80 text-[13px] font-semibold mb-1.5">Accent foncé</label>
+                  <input value={editApp.accent_deep || ""} onChange={e => setEditApp({ ...editApp, accent_deep: e.target.value || null })} placeholder="#1B4655" className={ADMIN_INPUT_CLASS} />
+                </div>
+                <div>
+                  <label className="block text-neutral-text dark:text-admin-text/80 text-[13px] font-semibold mb-1.5">Accent clair (tuile)</label>
+                  <input value={editApp.accent_soft || ""} onChange={e => setEditApp({ ...editApp, accent_soft: e.target.value || null })} placeholder="#E7EFF1" className={ADMIN_INPUT_CLASS} />
+                </div>
+              </div>
+              <div className="mt-4">
+                <label className="block text-neutral-text dark:text-admin-text/80 text-[13px] font-semibold mb-1.5">Wordmark (URL image Grand Hotel)</label>
+                <input value={editApp.wordmark_url || ""} onChange={e => setEditApp({ ...editApp, wordmark_url: e.target.value || null })} placeholder="https://cdn.jsdelivr.net/gh/Oss53pa/Atlas-studio-Console-Admin@main/public/wordmarks/wm-<id>.png" className={ADMIN_INPUT_CLASS} />
+                <p className="text-neutral-muted dark:text-admin-muted/60 text-[11px] mt-1">Sert le titre de l'app dans les emails d'authentification et le portail.</p>
+              </div>
             </div>
 
             {/* Visibilité publique */}
