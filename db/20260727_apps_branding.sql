@@ -34,6 +34,6 @@ FROM (VALUES
   ('tablesmart',      '#C0A24E', '#9A7E30', '#F5EFDD', 'wm-tablesmart'),
   ('atlasbanx',       '#C29A4B', '#8A6E2E', '#F4ECD4', 'wm-atlasbanx'),
   ('taxpilot',        '#0F766E', '#0B544E', '#DCF0EC', 'wm-taxpilot'),
-  ('advist',          '#3E5C8A', '#2E4568', '#E7ECF4', 'wm-advist')  -- ⚠️ accent Advist à confirmer
+  ('advist',          '#4F46E5', '#4338CA', '#EEF2FF', 'wm-advist')  -- indigo (landingConfig.color_primary)
 ) AS v(app_id, accent, deep, soft, wm)
 WHERE a.id = v.app_id;
