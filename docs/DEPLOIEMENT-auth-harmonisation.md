@@ -94,11 +94,17 @@ La couleur/wordmark de chaque app se modifie désormais depuis la **Console Admi
 
 Sur le projet partagé `vgtmljfayiysuvrcmunt` :
 
-1. **Authentication → Email Templates → Magic Link** (et *Confirm signup* /
-   *Reset password* si tu veux le même branding partout).
-2. Coller le contenu de **`magic-link.harmonise.html`**.
+1. **Authentication → Email Templates**. Les trois patrons harmonisés sont
+   versionnés dans **`emails/`** (source unique, pilotés par palette) :
+   - `emails/magic-link.harmonise.html` → **Magic Link**
+   - `emails/confirm-signup.harmonise.html` → **Confirm signup**
+   - `emails/reset-password.harmonise.html` → **Reset password**
+     (sert aussi le premier accès d'un client créé par l'admin — D6).
+2. Coller le contenu du fichier correspondant dans chaque template.
 3. Le template lit depuis `raw_user_meta_data` : `app`, `app_tagline`,
-   `app_accent`, `app_accent_deep`, `app_accent_soft`, `app_wordmark`.
+   `app_accent`, `app_accent_deep`, `app_accent_soft`, `app_wordmark`
+   (repli neutre « Atlas Studio » sauge si absents). Contrat détaillé et
+   aperçu local dans **`emails/README.md`** / **`emails/preview.html`**.
 
 ### 3.1 Alimenter les métadonnées par app (côté apps)
 Au signup **et** en resync après login, chaque app doit poser ces champs
@@ -160,13 +166,31 @@ await supabase.auth.updateUser({
 
 ---
 
-## 7. Ce qui reste à généraliser (optionnel)
+## 7. Ce qui reste à généraliser
 
-- **SSO** : ✅ complet (les 5 apps ayant `atlas-sso` sont couvertes).
+### Déjà livré (branches dédiées, non mergées)
+- **Templates e-mail Auth harmonisés (D9)** : `emails/*.harmonise.html` +
+  `emails/README.md` (ce dépôt, branche `claude/atlas-auth-harmonization-153yhj`).
+- **D6 — premier accès / reset sans MDP en clair** : `admin-clients` +
+  `admin-reset-password` réécrits (lien de définition de MDP + e-mail harmonisé
+  à contexte par requête via `_shared/authEmail.ts`). UI Console Admin alignée.
+  → Portail : branche `claude/atlas-auth-harmonization`.
+- **OTP à contexte par requête (D9, 2ᵉ partie)** : couvert côté serveur pour
+  `admin-clients` / `admin-reset-password` par `_shared/authEmail.ts` (palette
+  résolue depuis `public.apps` à l'envoi → plus de « dernière app gagne »).
+- **Resync branding (portail)** : `src/lib/brandingSync.ts` + câblage
+  `LaunchPage` (pose la palette dans `raw_user_meta_data` au lancement d'app).
+- **Resync branding (5 satellites)** : `brandingSync.ts` déposé + appel
+  `syncAppBranding(<app_id>)` après établissement de la session SSO
+  (`ExternalAuthPage`) dans Atlas-banx (`atlasbanx`), Advist (`advist`),
+  Atlas-Finance (`atlas-compta`), SmartTable (`tablesmart`, + page reset local),
+  Liass-Pilot (`taxpilot`). Branche `claude/atlas-auth-harmonization` par dépôt.
+
+### Reste
+- **SSO** : merger + déployer les 4 PR restantes (Advist, Atlas-Finance,
+  SmartTable, Liass-Pilot) — cf. §1.
 - **Factory client** : à étendre aux autres frontends (1 PR chacun).
-- **Branding métadonnées** : brancher la resync `raw_user_meta_data` sur
-  `public.apps` dans chaque app.
-- **Récupération MDP centralisée** (D5) et **OTP à contexte par requête** :
-  chantiers du brief non encore entamés.
+- **D5 — récupération MDP centralisée** : écran satellite → redirige vers le
+  portail `…/portal/forgot-password` (non encore entamé).
 
 _Généré par Claude Code — harmonisation auth Atlas Studio._
