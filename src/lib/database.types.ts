@@ -33,6 +33,9 @@ export interface AppRow {
   pricing: Record<string, number>;
   pricing_period: string;
   color: string;
+  accent_deep: string | null;
+  accent_soft: string | null;
+  wordmark_url: string | null;
   icon: string;
   highlights: string[];
   external_url: string | null;
