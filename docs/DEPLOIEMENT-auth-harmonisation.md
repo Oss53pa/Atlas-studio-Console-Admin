@@ -180,12 +180,15 @@ await supabase.auth.updateUser({
   résolue depuis `public.apps` à l'envoi → plus de « dernière app gagne »).
 - **Resync branding (portail)** : `src/lib/brandingSync.ts` + câblage
   `LaunchPage` (pose la palette dans `raw_user_meta_data` au lancement d'app).
+- **Resync branding (5 satellites)** : `brandingSync.ts` déposé + appel
+  `syncAppBranding(<app_id>)` après établissement de la session SSO
+  (`ExternalAuthPage`) dans Atlas-banx (`atlasbanx`), Advist (`advist`),
+  Atlas-Finance (`atlas-compta`), SmartTable (`tablesmart`, + page reset local),
+  Liass-Pilot (`taxpilot`). Branche `claude/atlas-auth-harmonization` par dépôt.
 
 ### Reste
 - **SSO** : merger + déployer les 4 PR restantes (Advist, Atlas-Finance,
   SmartTable, Liass-Pilot) — cf. §1.
-- **Resync branding satellites** : déposer `brandingSync.ts` (module autonome)
-  dans chaque satellite et l'appeler après authentification.
 - **Factory client** : à étendre aux autres frontends (1 PR chacun).
 - **D5 — récupération MDP centralisée** : écran satellite → redirige vers le
   portail `…/portal/forgot-password` (non encore entamé).
