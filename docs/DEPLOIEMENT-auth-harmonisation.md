@@ -94,11 +94,17 @@ La couleur/wordmark de chaque app se modifie désormais depuis la **Console Admi
 
 Sur le projet partagé `vgtmljfayiysuvrcmunt` :
 
-1. **Authentication → Email Templates → Magic Link** (et *Confirm signup* /
-   *Reset password* si tu veux le même branding partout).
-2. Coller le contenu de **`magic-link.harmonise.html`**.
+1. **Authentication → Email Templates**. Les trois patrons harmonisés sont
+   versionnés dans **`emails/`** (source unique, pilotés par palette) :
+   - `emails/magic-link.harmonise.html` → **Magic Link**
+   - `emails/confirm-signup.harmonise.html` → **Confirm signup**
+   - `emails/reset-password.harmonise.html` → **Reset password**
+     (sert aussi le premier accès d'un client créé par l'admin — D6).
+2. Coller le contenu du fichier correspondant dans chaque template.
 3. Le template lit depuis `raw_user_meta_data` : `app`, `app_tagline`,
-   `app_accent`, `app_accent_deep`, `app_accent_soft`, `app_wordmark`.
+   `app_accent`, `app_accent_deep`, `app_accent_soft`, `app_wordmark`
+   (repli neutre « Atlas Studio » sauge si absents). Contrat détaillé et
+   aperçu local dans **`emails/README.md`** / **`emails/preview.html`**.
 
 ### 3.1 Alimenter les métadonnées par app (côté apps)
 Au signup **et** en resync après login, chaque app doit poser ces champs
