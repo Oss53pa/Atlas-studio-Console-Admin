@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Paperclip, X, Bot, User, Zap } from "lucide-react";
+import { Send, Paperclip, X, User } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 
 interface Message {
@@ -239,8 +239,8 @@ export function Proph3tChat({ open, onClose }: { open: boolean; onClose: () => v
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gold flex items-center justify-center">
-              <Zap size={18} className="text-onyx" />
+            <div className="w-10 h-10 rounded-full flex items-center justify-center">
+              <img src="/proph3t.png" alt="Proph3t" className="w-full h-full object-contain drop-shadow-[0_2px_8px_rgba(212,175,55,0.4)]" />
             </div>
             <div>
               <div className="text-neutral-light text-sm font-semibold flex items-center gap-2">
@@ -268,10 +268,12 @@ export function Proph3tChat({ open, onClose }: { open: boolean; onClose: () => v
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
           {messages.map(msg => (
             <div key={msg.id} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
-              <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${
-                msg.role === "user" ? "bg-white/10" : "bg-gold"
+              <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center overflow-hidden ${
+                msg.role === "user" ? "bg-white/10" : ""
               }`}>
-                {msg.role === "user" ? <User size={14} className="text-neutral-light" /> : <Bot size={14} className="text-onyx" />}
+                {msg.role === "user"
+                  ? <User size={14} className="text-neutral-light" />
+                  : <img src="/proph3t.png" alt="Proph3t" className="w-full h-full object-contain" />}
               </div>
               <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${
                 msg.role === "user"
