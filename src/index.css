@@ -396,6 +396,17 @@
 
 .animate-float { animation: float 7s ease-in-out infinite; }
 
+/* ─── Proph3t orb : halo doré qui respire (subtil, sans déplacement) ─── */
+@keyframes proph3t-glow {
+  0%, 100% { filter: drop-shadow(0 3px 8px rgba(212,175,55,0.28)); }
+  50%      { filter: drop-shadow(0 4px 13px rgba(212,175,55,0.50)); }
+}
+.proph3t-orb img       { animation: proph3t-glow 3.4s ease-in-out infinite; }
+.proph3t-orb:hover img { animation-play-state: paused; filter: drop-shadow(0 6px 18px rgba(212,175,55,0.75)); }
+@media (prefers-reduced-motion: reduce) {
+  .proph3t-orb img { animation: none; }
+}
+
 /* Aurora background — soft animated emerald + champagne blobs */
 @keyframes aurora-1 {
   0%, 100% { transform: translate3d(-25%, -10%, 0) scale(1); opacity: 0.55; }
