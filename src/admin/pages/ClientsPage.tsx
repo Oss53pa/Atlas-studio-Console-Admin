@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Search, UserX, UserCheck, Plus, Pencil, Trash2, Download, KeyRound, FlaskConical, Gift, Check } from "lucide-react";
+import { Search, UserX, UserCheck, Plus, Pencil, Trash2, Download, KeyRound, Gift } from "lucide-react";
 import { ADMIN_INPUT_CLASS } from "../components/AdminFormField";
 import { supabase } from "../../lib/supabase";
 import { apiCall } from "../../lib/api";
@@ -8,15 +8,33 @@ import { AdminTable } from "../components/AdminTable";
 import { AdminBadge } from "../components/AdminBadge";
 import { AdminModal } from "../components/AdminModal";
 import { AdminConfirmDialog } from "../components/AdminConfirmDialog";
+import { GrantAccessModal } from "../components/GrantAccessModal";
 import { useToast } from "../contexts/ToastContext";
 import { useAppFilter } from "../contexts/AppFilterContext";
-import { useAuth } from "../../lib/auth";
 import { formatSupabaseError } from "../../lib/errorMessages";
-import { loadProductsMap, resolvePlanId, ensureTenantForProfile, createGrantedLicence, type ProductsMap } from "../../lib/licenceGeneration";
 import type { Profile, Subscription, Invoice } from "../../lib/database.types";
 import { useAppCatalog } from "../../hooks/useAppCatalog";
 
-type DetailTab = "profile" | "subscriptions" | "invoices";
+type DetailTab = "profile" | "subscriptions" | "invoices" | "communications";
+
+type MessageDelivery = {
+  id: string; subscription_id: string | null; evenement: string; canal: string;
+  statut: string; sujet: string | null; destinataire: string; corps_snapshot: string;
+  provider_message_id: string | null; created_at: string; envoye_le: string | null;
+  remis_le: string | null; ouvert_le: string | null; clique_le: string | null; erreur: string | null;
+};
+
+const MSG_STATUT: Record<string, { label: string; cls: string }> = {
+  en_attente: { label: "En attente", cls: "text-amber-600 bg-amber-500/10" },
+  envoye: { label: "Envoyé", cls: "text-blue-600 bg-blue-500/10" },
+  remis: { label: "Remis", cls: "text-emerald-600 bg-emerald-500/10" },
+  ouvert: { label: "Ouvert", cls: "text-emerald-700 bg-emerald-500/10" },
+  clique: { label: "Cliqué", cls: "text-emerald-700 bg-emerald-500/10" },
+  rebond_dur: { label: "Rebond dur", cls: "text-red-600 bg-red-500/10" },
+  rebond_doux: { label: "Rebond", cls: "text-orange-600 bg-orange-500/10" },
+  plainte: { label: "Plainte", cls: "text-red-700 bg-red-500/10" },
+  echec: { label: "Échec", cls: "text-red-600 bg-red-500/10" },
+};
 
 // NOTE: defined at module scope (not inside ClientsPage) so inputs don't
 // remount on every parent re-render and lose focus between keystrokes.
@@ -27,20 +45,10 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
   </div>
 );
 
-// Durées d'abonnement offert
-const GRANT_DURATIONS = [
-  { label: "1 mois", days: 30 },
-  { label: "3 mois", days: 90 },
-  { label: "6 mois", days: 180 },
-  { label: "1 an", days: 365 },
-  { label: "Illimité (10 ans)", days: 3650 },
-];
-
 export default function ClientsPage() {
   const { appMap, appList } = useAppCatalog();
   const { success, error: showError } = useToast();
   const { selectedApp } = useAppFilter();
-  const { user: adminUser, isSuperAdmin } = useAuth();
   const [clients, setClients] = useState<Profile[]>([]);
   const [allSubs, setAllSubs] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,6 +58,9 @@ export default function ClientsPage() {
   const [detailTab, setDetailTab] = useState<DetailTab>("profile");
   const [clientSubs, setClientSubs] = useState<Subscription[]>([]);
   const [clientInvoices, setClientInvoices] = useState<Invoice[]>([]);
+  const [clientMessages, setClientMessages] = useState<MessageDelivery[]>([]);
+  const [viewMsg, setViewMsg] = useState<MessageDelivery | null>(null);
+  const [resending, setResending] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editClient, setEditClient] = useState<Profile | null>(null);
   // Brief 2026-05-07 : creation client = email + full_name + trial obligatoire.
@@ -67,17 +78,8 @@ export default function ClientsPage() {
   const [saving, setSaving] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{ open: boolean; title: string; message: string; onConfirm: () => void }>({ open: false, title: "", message: "", onConfirm: () => {} });
 
-  const [testAccessClient, setTestAccessClient] = useState<Profile | null>(null);
-  const [testAccessForm, setTestAccessForm] = useState({ appId: "", duration: "7" });
-  const [grantingAccess, setGrantingAccess] = useState(false);
-
-  // ── Grant free subscription state ──
-  const [grantClient, setGrantClient] = useState<Profile | null>(null);
-  const [grantApps, setGrantApps] = useState<Record<string, { selected: boolean; plan: string }>>({});
-  const [grantDuration, setGrantDuration] = useState(365);
-  const [grantNote, setGrantNote] = useState("");
-  const [grantingSubs, setGrantingSubs] = useState(false);
-  const [productsMap, setProductsMap] = useState<ProductsMap | null>(null);
+  // ── Octroi d'accès unifié (CDC 7.3) ──
+  const [grantAccessClient, setGrantAccessClient] = useState<Profile | null>(null);
 
   const fetchClients = async () => {
     const [profilesRes, subsRes] = await Promise.all([
@@ -131,8 +133,38 @@ export default function ClientsPage() {
       supabase.from("subscriptions").select("*").eq("user_id", client.id).order("created_at", { ascending: false }),
       supabase.from("invoices").select("*").eq("user_id", client.id).order("created_at", { ascending: false }).limit(20),
     ]);
-    setClientSubs(subsRes.data as unknown as Subscription[] || []);
+    const subs = (subsRes.data as unknown as Subscription[]) || [];
+    setClientSubs(subs);
     setClientInvoices(invRes.data as unknown as Invoice[] || []);
+    // Communications : messages liés aux abonnements du client (lecture admin RLS)
+    const subIds = subs.map(s => s.id).filter(Boolean);
+    if (subIds.length) {
+      const { data: msgs } = await supabase.from("message_deliveries").select("*")
+        .in("subscription_id", subIds).order("created_at", { ascending: false });
+      setClientMessages((msgs as unknown as MessageDelivery[]) || []);
+    } else {
+      setClientMessages([]);
+    }
+  };
+
+  const reloadMessages = async (subIds: string[]) => {
+    if (!subIds.length) return;
+    const { data: msgs } = await supabase.from("message_deliveries").select("*")
+      .in("subscription_id", subIds).order("created_at", { ascending: false });
+    setClientMessages((msgs as unknown as MessageDelivery[]) || []);
+  };
+
+  const handleResendAccess = async (subscriptionId: string | null) => {
+    if (!subscriptionId) { showError("Aucun abonnement lié à ce message"); return; }
+    setResending(subscriptionId);
+    try {
+      const msgId = await supabase.rpc("queue_access_resend", { p_subscription_id: subscriptionId });
+      if (msgId.error) throw msgId.error;
+      await apiCall(`dispatch-access-messages?id=${msgId.data}`, { method: "POST" });
+      success("Accès renvoyés au client");
+      await reloadMessages(clientSubs.map(s => s.id));
+    } catch (err: unknown) { showError(formatSupabaseError(err)); }
+    setResending(null);
   };
 
   const handleResetPassword = async (client: Profile) => {
@@ -231,148 +263,6 @@ export default function ClientsPage() {
     success(`${ids.length} client(s) suspendu(s)`);
   };
 
-  const openTestAccess = (client: Profile) => { setTestAccessClient(client); setTestAccessForm({ appId: appList[0]?.id || "", duration: "7" }); };
-
-  const handleGrantTestAccess = async () => {
-    if (!testAccessClient || !testAccessForm.appId) return;
-    setGrantingAccess(true);
-    try {
-      const days = parseInt(testAccessForm.duration);
-      const trialEnd = new Date(Date.now() + days * 86400000);
-      const { error: err } = await supabase.from("subscriptions").insert({
-        user_id: testAccessClient.id, app_id: testAccessForm.appId, plan: "test", status: "trial",
-        price_at_subscription: 0, trial_ends_at: trialEnd.toISOString(),
-        current_period_start: new Date().toISOString(), current_period_end: trialEnd.toISOString(),
-      });
-      if (err) throw err;
-      await supabase.from("activity_log").insert({ user_id: testAccessClient.id, action: "test_access_granted", metadata: { app_id: testAccessForm.appId, duration_days: days } });
-      setTestAccessClient(null);
-      success(`Accès test accordé pour ${days} jours`);
-    } catch (err: unknown) { showError(formatSupabaseError(err)); }
-    setGrantingAccess(false);
-  };
-
-  // ── Grant free subscription ──
-  const openGrantModal = async (client: Profile) => {
-    setGrantClient(client);
-    setGrantDuration(365);
-    setGrantNote("");
-    // Initialize checkbox state per app, default unchecked; detect already-subscribed apps
-    const activeSubs = allSubs.filter(s => s.user_id === client.id && (s.status === "active" || s.status === "trial"));
-    const activeAppIds = new Set(activeSubs.map(s => s.app_id));
-    const init: Record<string, { selected: boolean; plan: string }> = {};
-    for (const app of appList) {
-      const plans = Object.keys((app.pricing as Record<string, number>) || {});
-      const alreadyActive = activeAppIds.has(app.id);
-      init[app.id] = { selected: false, plan: plans[plans.length - 1] || "" };
-      if (alreadyActive) init[app.id].selected = false; // Can't select already-active apps
-    }
-    setGrantApps(init);
-    // Load products/plans for licence generation (cached for session)
-    if (!productsMap) {
-      loadProductsMap().then(setProductsMap).catch(e => console.warn("loadProductsMap failed", e));
-    }
-  };
-
-  const handleGrantSubscriptions = async () => {
-    if (!grantClient || !adminUser) return;
-    const selectedApps = Object.entries(grantApps).filter(([, v]) => v.selected);
-    if (selectedApps.length === 0) { showError("Sélectionnez au moins une application"); return; }
-
-    setGrantingSubs(true);
-    const licenceFailures: string[] = [];
-    let licencesCreated = 0;
-    try {
-      const now = new Date().toISOString();
-      const endDate = new Date(Date.now() + grantDuration * 86400000).toISOString();
-
-      // Ensure productsMap is loaded (in case user clicked Attribuer before load finished)
-      const pmap = productsMap || await loadProductsMap();
-      if (!productsMap) setProductsMap(pmap);
-
-      // Ensure tenant exists (shared across all granted apps for this user)
-      let tenantId: string | null = null;
-      try {
-        tenantId = await ensureTenantForProfile(grantClient, adminUser.id);
-      } catch (e) {
-        console.warn("[grant] tenant creation failed — licences will be skipped", e);
-      }
-
-      for (const [appId, { plan }] of selectedApps) {
-        const { data: subData, error: err } = await supabase.from("subscriptions").insert({
-          user_id: grantClient.id,
-          app_id: appId,
-          plan,
-          status: "active",
-          price_at_subscription: 0,
-          is_granted: true,
-          granted_by: adminUser.id,
-          current_period_start: now,
-          current_period_end: endDate,
-        }).select("id").single();
-        if (err) throw new Error(`${appMap[appId]?.name || appId}: ${err.message}`);
-
-        // Activity log — non-blocking
-        supabase.from("activity_log").insert({
-          user_id: grantClient.id,
-          action: "subscription_granted",
-          metadata: { app_id: appId, plan, duration_days: grantDuration, granted_by: adminUser.id, note: grantNote || undefined },
-        }).then(({ error: logErr }) => {
-          if (logErr) console.warn("[grant] activity_log insert failed (non-blocking)", logErr);
-        });
-
-        // Licence generation — best-effort, continues the grant flow even if this fails
-        if (tenantId && subData?.id) {
-          const resolved = resolvePlanId(pmap, appId, plan);
-          if (!resolved) {
-            licenceFailures.push(`${appMap[appId]?.name || appId} (plan "${plan}" introuvable dans le catalogue)`);
-          } else {
-            try {
-              await createGrantedLicence({
-                tenantId,
-                productId: resolved.productId,
-                planId: resolved.planId,
-                maxSeats: resolved.maxSeats,
-                subscriptionId: subData.id,
-                userEmail: grantClient.email,
-                userName: grantClient.full_name,
-                durationDays: grantDuration,
-                productSlug: appId,
-                planName: plan,
-              });
-              licencesCreated++;
-            } catch (licErr) {
-              console.warn("[grant] licence creation failed", { appId, plan, licErr });
-              licenceFailures.push(`${appMap[appId]?.name || appId}: ${(licErr as Error).message}`);
-            }
-          }
-        }
-      }
-
-      const parts = [`${selectedApps.length} abonnement(s) offert(s) à ${grantClient.full_name || grantClient.email}`];
-      if (licencesCreated > 0) parts.push(`${licencesCreated} licence(s) générée(s)`);
-      success(parts.join(" — "));
-      if (licenceFailures.length > 0) {
-        showError(`Licences non générées : ${licenceFailures.join(", ")}`);
-      }
-      setGrantClient(null);
-      fetchClients();
-    } catch (err: unknown) {
-      console.error("[grant] failed", err);
-      showError(formatSupabaseError(err, "Erreur lors de l'attribution"));
-    } finally {
-      setGrantingSubs(false);
-    }
-  };
-
-  const grantSelectedCount = Object.values(grantApps).filter(v => v.selected).length;
-
-  // Already-active app ids for the grant client
-  const grantClientActiveApps = useMemo(() => {
-    if (!grantClient) return new Set<string>();
-    return new Set(allSubs.filter(s => s.user_id === grantClient.id && (s.status === "active" || s.status === "trial")).map(s => s.app_id));
-  }, [grantClient, allSubs]);
-
   const handleExport = () => {
     exportToCSV(filtered, [
       { key: "full_name", label: "Nom" }, { key: "email", label: "Email" }, { key: "company_name", label: "Entreprise" },
@@ -394,6 +284,7 @@ export default function ClientsPage() {
     { label: "Profil", value: "profile" },
     { label: "Abonnements", value: "subscriptions", count: clientSubs.length },
     { label: "Factures", value: "invoices", count: clientInvoices.length },
+    { label: "Communications", value: "communications", count: clientMessages.length },
   ];
 
   // inputClass imported from AdminFormField
@@ -481,8 +372,7 @@ export default function ClientsPage() {
             <div className="flex items-center gap-0.5" onClick={e => e.stopPropagation()}>
               <button onClick={() => openEditForm(r)} className="p-1.5 rounded hover:bg-white dark:bg-admin-surface-alt text-neutral-muted dark:text-admin-muted hover:text-gold dark:text-admin-accent transition-colors" title="Modifier"><Pencil size={14} /></button>
               <button onClick={() => handleResetPassword(r)} className="p-1.5 rounded hover:bg-blue-50 text-neutral-muted dark:text-admin-muted hover:text-blue-600 transition-colors" title="Reset mot de passe"><KeyRound size={14} /></button>
-              <button onClick={() => openTestAccess(r)} className="p-1.5 rounded hover:bg-emerald-50 text-neutral-muted dark:text-admin-muted hover:text-emerald-600 transition-colors" title="Accès test"><FlaskConical size={14} /></button>
-              {isSuperAdmin && <button onClick={() => openGrantModal(r)} className="p-1.5 rounded hover:bg-purple-500/10 text-neutral-muted dark:text-admin-muted hover:text-purple-700 transition-colors" title="Offrir un abonnement"><Gift size={14} /></button>}
+              <button onClick={() => setGrantAccessClient(r)} className="p-1.5 rounded hover:bg-gold/10 text-neutral-muted dark:text-admin-muted hover:text-gold dark:hover:text-admin-accent transition-colors" title="Donner accès"><Gift size={14} /></button>
               <button onClick={() => toggleActive(r)} className={`p-1.5 rounded transition-colors ${r.is_active ? "hover:bg-red-50 text-red-700" : "hover:bg-green-50 text-green-600"}`} title={r.is_active ? "Suspendre" : "Réactiver"}>
                 {r.is_active ? <UserX size={14} /> : <UserCheck size={14} />}
               </button>
@@ -575,6 +465,48 @@ export default function ClientsPage() {
                 </div>
               )
             )}
+
+            {detailTab === "communications" && (
+              clientMessages.length === 0 ? (
+                <p className="text-neutral-muted dark:text-admin-muted text-sm py-4">Aucun message envoyé à ce client.</p>
+              ) : (
+                <div className="space-y-2">
+                  {clientMessages.map(m => {
+                    const st = MSG_STATUT[m.statut] || { label: m.statut, cls: "text-neutral-muted bg-neutral-500/10" };
+                    return (
+                      <div key={m.id} className="p-4 bg-white dark:bg-admin-surface-alt rounded-xl">
+                        <div className="flex items-center justify-between gap-3 flex-wrap">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${st.cls}`}>{st.label}</span>
+                              <span className="text-[11px] text-neutral-muted dark:text-admin-muted uppercase">{m.canal}</span>
+                              <span className="text-[11px] text-neutral-muted dark:text-admin-muted">{new Date(m.created_at).toLocaleString("fr-FR")}</span>
+                            </div>
+                            <div className="text-neutral-text dark:text-admin-text text-sm mt-1 truncate">{m.sujet || m.evenement}</div>
+                            <div className="text-neutral-muted dark:text-admin-muted text-[11px]">
+                              → {m.destinataire}
+                              {m.ouvert_le && " · ouvert"}
+                              {m.clique_le && " · cliqué"}
+                              {m.erreur && <span className="text-red-600"> · {m.erreur.slice(0, 60)}</span>}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button onClick={() => setViewMsg(m)} disabled={!m.corps_snapshot}
+                              className="px-2.5 py-1.5 text-[12px] rounded-lg border border-warm-border dark:border-admin-surface-alt hover:border-gold/40 text-neutral-text dark:text-admin-text/80 disabled:opacity-40">
+                              Voir le message
+                            </button>
+                            <button onClick={() => handleResendAccess(m.subscription_id)} disabled={resending === m.subscription_id}
+                              className="px-2.5 py-1.5 text-[12px] rounded-lg bg-gold dark:bg-admin-accent text-black font-medium hover:bg-gold-dark disabled:opacity-50">
+                              {resending === m.subscription_id ? "..." : "Renvoyer"}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )
+            )}
           </div>
         )}
       </AdminModal>
@@ -651,165 +583,22 @@ export default function ClientsPage() {
         </div>
       </AdminModal>
 
-      {/* Test access modal */}
-      <AdminModal open={!!testAccessClient} onClose={() => setTestAccessClient(null)} title="Accorder un accès test"
-        footer={<button onClick={handleGrantTestAccess} disabled={grantingAccess || !testAccessForm.appId} className={`bg-gold dark:bg-admin-accent text-black font-semibold rounded-lg hover:bg-gold-dark dark:hover:bg-admin-accent-dark transition-colors !py-2.5 flex items-center gap-2 ${grantingAccess || !testAccessForm.appId ? "opacity-50" : ""}`}><FlaskConical size={14} />{grantingAccess ? "En cours..." : "Accorder"}</button>}>
-        {testAccessClient && (
-          <div className="space-y-4">
-            <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-              <p className="text-emerald-400 text-sm">Accès test pour <strong>{testAccessClient.full_name}</strong></p>
-            </div>
-            <Field label="Application">
-              <select value={testAccessForm.appId} onChange={e => setTestAccessForm(p => ({ ...p, appId: e.target.value }))} className={ADMIN_INPUT_CLASS}>
-                <option value="">-- Choisir --</option>
-                {appList.map(app => <option key={app.id} value={app.id}>{app.name}</option>)}
-              </select>
-            </Field>
-            <Field label="Durée">
-              <select value={testAccessForm.duration} onChange={e => setTestAccessForm(p => ({ ...p, duration: e.target.value }))} className={ADMIN_INPUT_CLASS}>
-                {[3, 7, 14, 30].map(d => <option key={d} value={d}>{d} jours</option>)}
-              </select>
-            </Field>
-          </div>
-        )}
-      </AdminModal>
+      {grantAccessClient && (
+        <GrantAccessModal
+          client={grantAccessClient}
+          appList={appList}
+          activeAppIds={new Set(allSubs.filter(s => s.user_id === grantAccessClient.id && (s.status === "active" || s.status === "trial")).map(s => s.app_id))}
+          onClose={() => setGrantAccessClient(null)}
+          onDone={fetchClients}
+        />
+      )}
 
-      {/* Grant free subscription modal (super_admin only) */}
-      <AdminModal
-        open={!!grantClient}
-        onClose={() => setGrantClient(null)}
-        title="Offrir un abonnement gratuit"
-        subtitle={grantClient ? `${grantClient.full_name || "— Profil incomplet —"} · ${grantClient.email}` : undefined}
-        footer={
-          <button
-            onClick={handleGrantSubscriptions}
-            disabled={grantingSubs || grantSelectedCount === 0 || !grantClient?.full_name}
-            className={`bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg px-5 py-2.5 transition-colors text-[13px] flex items-center gap-2 ${grantingSubs || grantSelectedCount === 0 || !grantClient?.full_name ? "opacity-50 cursor-not-allowed" : ""}`}
-          >
-            <Gift size={14} />
-            {grantingSubs ? "Attribution..." : `Accorder ${grantSelectedCount} abonnement${grantSelectedCount > 1 ? "s" : ""}`}
-          </button>
-        }
-      >
-        {grantClient && (
-          <div className="space-y-5">
-            {/* Client info */}
-            <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-700 text-[13px] font-bold shrink-0">
-                {(grantClient.full_name || "?").split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
-              </div>
-              <div>
-                <p className="text-admin-text text-sm font-medium">{grantClient.full_name || <span className="text-amber-700">Profil incomplet — à compléter</span>}</p>
-                <p className="text-admin-muted text-[11px]">{grantClient.email}{grantClient.company_name ? ` · ${grantClient.company_name}` : ""}</p>
-              </div>
-            </div>
-            {!grantClient.full_name && (
-              <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-700 text-[12px]">
-                Ce client n'a pas de nom renseigné. Ferme ce modal, clique sur "Modifier" (crayon) pour compléter sa fiche avant d'offrir un abonnement.
-              </div>
-            )}
-
-            {/* App selection */}
-            <div>
-              <label className="block text-admin-text/80 text-[13px] font-semibold mb-2">
-                Applications à offrir
-              </label>
-              <div className="space-y-2">
-                {appList.map(app => {
-                  const isAlreadyActive = grantClientActiveApps.has(app.id);
-                  const state = grantApps[app.id];
-                  if (!state) return null;
-                  const plans = Object.entries((app.pricing as Record<string, number>) || {});
-                  const selectedPlan = plans.find(([p]) => p === state.plan);
-                  const planPrice = selectedPlan ? selectedPlan[1] : 0;
-
-                  return (
-                    <div
-                      key={app.id}
-                      className={`border rounded-xl p-3 transition-all ${
-                        isAlreadyActive
-                          ? "border-admin-surface-alt opacity-50"
-                          : state.selected
-                          ? "border-purple-500/40 bg-purple-500/5"
-                          : "border-admin-surface-alt hover:border-admin-surface-alt/80"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <label className="flex items-center gap-3 cursor-pointer flex-1">
-                          <input
-                            type="checkbox"
-                            checked={state.selected}
-                            disabled={isAlreadyActive}
-                            onChange={() =>
-                              setGrantApps(prev => ({
-                                ...prev,
-                                [app.id]: { ...prev[app.id], selected: !prev[app.id].selected },
-                              }))
-                            }
-                            className="w-4 h-4 accent-purple-500 cursor-pointer"
-                          />
-                          <div>
-                            <span className="text-admin-text text-sm font-medium">{app.name}</span>
-                            {isAlreadyActive && (
-                              <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                                <Check size={9} className="inline mr-0.5" />Déjà abonné
-                              </span>
-                            )}
-                          </div>
-                        </label>
-                        {state.selected && plans.length > 0 && (
-                          <select
-                            value={state.plan}
-                            onChange={e =>
-                              setGrantApps(prev => ({
-                                ...prev,
-                                [app.id]: { ...prev[app.id], plan: e.target.value },
-                              }))
-                            }
-                            className="px-2 py-1.5 bg-admin-surface-alt border border-admin-surface-alt rounded-lg text-admin-text text-[12px] outline-none focus:border-purple-500 transition-colors"
-                          >
-                            {plans.map(([p]) => (
-                              <option key={p} value={p}>{p}</option>
-                            ))}
-                          </select>
-                        )}
-                      </div>
-                      {state.selected && (
-                        <div className="mt-2 ml-7 flex items-center gap-2">
-                          <span className="text-admin-muted text-[12px] line-through">{planPrice.toLocaleString("fr-FR")} FCFA/mois</span>
-                          <span className="text-emerald-400 text-[12px] font-semibold">Gratuit</span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Duration */}
-            <Field label="Durée de l'abonnement offert">
-              <select
-                value={grantDuration}
-                onChange={e => setGrantDuration(Number(e.target.value))}
-                className={ADMIN_INPUT_CLASS}
-              >
-                {GRANT_DURATIONS.map(d => (
-                  <option key={d.days} value={d.days}>{d.label}</option>
-                ))}
-              </select>
-            </Field>
-
-            {/* Note */}
-            <Field label="Note interne (optionnel)">
-              <textarea
-                value={grantNote}
-                onChange={e => setGrantNote(e.target.value)}
-                placeholder="Raison de l'offre, contexte commercial..."
-                rows={3}
-                className={ADMIN_INPUT_CLASS + " resize-none"}
-              />
-            </Field>
-          </div>
+      {/* Visionneuse du message envoyé (pièce probante) */}
+      <AdminModal open={!!viewMsg} onClose={() => setViewMsg(null)} title="Message envoyé" size="xl"
+        subtitle={viewMsg ? `${viewMsg.destinataire} · ${new Date(viewMsg.created_at).toLocaleString("fr-FR")}${viewMsg.provider_message_id ? ` · ${viewMsg.provider_message_id}` : ""}` : undefined}>
+        {viewMsg && (
+          <iframe title="message" srcDoc={viewMsg.corps_snapshot}
+            className="w-full h-[60vh] rounded-lg border border-warm-border dark:border-admin-surface-alt bg-white" sandbox="" />
         )}
       </AdminModal>
 
