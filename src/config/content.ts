@@ -45,6 +45,26 @@ export interface HomeSections {
   dualClientCta: string;
 }
 
+export interface NavLink { to: string; label: string }
+
+export interface FooterContent {
+  baseline: string;
+  newsletterLabel: string;
+  appsTitle: string;
+  resourcesTitle: string;
+  resources: NavLink[];
+  companyTitle: string;
+  company: NavLink[];
+  copyright: string;
+  security: string;
+}
+
+export interface NavContent {
+  links: NavLink[];
+  homeLabel: string;
+  clientSpace: string;
+}
+
 export interface SiteContent {
   hero: {
     title: string;
@@ -73,6 +93,8 @@ export interface SiteContent {
   contact: { email: string; phone: string; city: string };
   social?: { facebook?: string; instagram?: string; linkedin?: string; twitter?: string; youtube?: string; tiktok?: string };
   appearance?: { primaryColor?: string; accentColor?: string; heroBackground?: string; clientLogos?: string[] };
+  footer?: FooterContent;
+  nav?: NavContent;
 }
 
 export const DEFAULT_CONTENT: SiteContent = {
@@ -182,4 +204,39 @@ export const DEFAULT_CONTENT: SiteContent = {
     { q: "Quels moyens de paiement ?", a: "Carte bancaire (Visa, Mastercard), Mobile Money (Orange Money, MTN, Wave) et virement bancaire." },
   ],
   contact: { email: "contact@atlas-studio.org", phone: "+225 XX XX XX XX", city: "Abidjan, Côte d'Ivoire" },
+  footer: {
+    baseline: "La suite de gestion conçue pour les entreprises d'Afrique francophone. SYSCOHADA natif, Mobile Money, IA Proph3t.",
+    newsletterLabel: "Newsletter",
+    appsTitle: "Applications",
+    resourcesTitle: "Ressources",
+    resources: [
+      { to: "/applications", label: "Tous les produits" },
+      { to: "/tarifs", label: "Tarifs" },
+      { to: "/blog", label: "Blog" },
+      { to: "/faq", label: "FAQ" },
+      { to: "/portal", label: "Souscrire" },
+    ],
+    companyTitle: "Entreprise",
+    company: [
+      { to: "/a-propos", label: "À propos" },
+      { to: "/contact", label: "Contact" },
+      { to: "/mentions-legales", label: "Mentions légales" },
+      { to: "/cgu", label: "CGU" },
+      { to: "/confidentialite", label: "Confidentialité" },
+    ],
+    copyright: "© 2026 Atlas Studio. Abidjan, Côte d'Ivoire",
+    security: "Données chiffrées AES-256 — traitement IA 100% local sur nos serveurs dédiés",
+  },
+  nav: {
+    links: [
+      { to: "/applications", label: "Applications" },
+      { to: "/tarifs", label: "Tarifs" },
+      { to: "/blog", label: "Blog" },
+      { to: "/a-propos", label: "À propos" },
+      { to: "/faq", label: "FAQ" },
+      { to: "/contact", label: "Contact" },
+    ],
+    homeLabel: "Accueil",
+    clientSpace: "Espace Client",
+  },
 };

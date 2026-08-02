@@ -5,12 +5,14 @@ import { useAuth } from "../../lib/auth";
 import { DEFAULT_CONTENT } from "../../config/content";
 import { SITE_URL } from "../../config/site";
 
-const tabs = ["Hero", "Accueil", "Stats", "Trust Bar", "Steps", "About", "Témoignages", "Secteurs", "Comparatif", "FAQs", "Contact", "Réseaux sociaux", "Apparence"] as const;
+const tabs = ["Hero", "Accueil", "Stats", "Trust Bar", "Steps", "About", "Témoignages", "Secteurs", "Comparatif", "FAQs", "Contact", "Réseaux sociaux", "Footer", "Navigation", "Apparence"] as const;
 type Tab = (typeof tabs)[number];
 
 const TAB_KEY_MAP: Record<Tab, string> = {
   Hero: "hero",
   Accueil: "homeSections",
+  Footer: "footer",
+  Navigation: "nav",
   Stats: "stats",
   "Trust Bar": "trustBar",
   Steps: "steps",
@@ -160,6 +162,8 @@ export default function ContentManagementPage() {
         comparatif: map.comparatif || DEFAULT_CONTENT.comparatif,
         faqs: map.faqs || DEFAULT_CONTENT.faqs,
         contact: map.contact || DEFAULT_CONTENT.contact,
+        footer: map.footer || DEFAULT_CONTENT.footer,
+        nav: map.nav || DEFAULT_CONTENT.nav,
         social: map.social || { facebook: "", instagram: "", linkedin: "", twitter: "", youtube: "", tiktok: "" },
         appearance: map.appearance || {
           primaryColor: "var(--c-accent-dark)",
@@ -204,6 +208,8 @@ export default function ContentManagementPage() {
       comparatif: DEFAULT_CONTENT.comparatif,
       faqs: DEFAULT_CONTENT.faqs,
       contact: DEFAULT_CONTENT.contact,
+      footer: DEFAULT_CONTENT.footer,
+      nav: DEFAULT_CONTENT.nav,
       social: { facebook: "", instagram: "", linkedin: "", twitter: "", youtube: "", tiktok: "" },
       appearance: { primaryColor: "var(--c-accent-dark)", accentColor: "var(--c-accent)", heroBackground: "var(--c-surface)", clientLogos: [] },
     };
@@ -322,6 +328,78 @@ export default function ContentManagementPage() {
               </div>
               <Field label="Description" value={hs.dualClientDesc || ""} onChange={v => set("dualClientDesc", v)} multiline />
               <Field label="Libellé du lien" value={hs.dualClientCta || ""} onChange={v => set("dualClientCta", v)} placeholder="Ouvrir le portail" />
+            </>
+          );
+        })()}
+
+        {/* ═══ FOOTER ═══ */}
+        {tab === "Footer" && (() => {
+          const f = content.footer || {};
+          const set = (k: string, v: any) => update("footer", { ...f, [k]: v });
+          const setLink = (col: "resources" | "company", i: number, key: "to" | "label", v: string) => {
+            const arr = [...(f[col] || [])]; arr[i] = { ...arr[i], [key]: v }; set(col, arr);
+          };
+          const linkColumn = (col: "resources" | "company") => (
+            <>
+              {(f[col] || []).map((l: any, i: number) => (
+                <div key={i} className="flex gap-3 mb-3 items-end">
+                  <div className="flex-1"><Field label={`Libellé ${i + 1}`} value={l.label} onChange={v => setLink(col, i, "label", v)} /></div>
+                  <div className="flex-1"><Field label="Lien (chemin)" value={l.to} onChange={v => setLink(col, i, "to", v)} placeholder="/tarifs" /></div>
+                  <div className="pb-4"><DeleteBtn onClick={() => set(col, (f[col] || []).filter((_: any, j: number) => j !== i))} /></div>
+                </div>
+              ))}
+              <AddBtn label="Ajouter un lien" onClick={() => set(col, [...(f[col] || []), { to: "/", label: "" }])} />
+            </>
+          );
+          return (
+            <>
+              <Field label="Baseline (accroche de marque)" value={f.baseline || ""} onChange={v => set("baseline", v)} multiline />
+              <p className="text-neutral-muted dark:text-admin-muted text-[12px] mb-4 -mt-2">Le mot « Proph3t » reste automatiquement dans la police du logo.</p>
+              <Field label="Libellé Newsletter" value={f.newsletterLabel || ""} onChange={v => set("newsletterLabel", v)} />
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-4">Colonne « Applications »</h3>
+              <Field label="Titre de la colonne" value={f.appsTitle || ""} onChange={v => set("appsTitle", v)} />
+              <p className="text-neutral-muted dark:text-admin-muted text-[12px] mb-4 -mt-2">La liste des applications est générée automatiquement depuis le catalogue.</p>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-4">Colonne « Ressources »</h3>
+              <Field label="Titre de la colonne" value={f.resourcesTitle || ""} onChange={v => set("resourcesTitle", v)} />
+              {linkColumn("resources")}
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-4">Colonne « Entreprise »</h3>
+              <Field label="Titre de la colonne" value={f.companyTitle || ""} onChange={v => set("companyTitle", v)} />
+              {linkColumn("company")}
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-4">Bas de page</h3>
+              <Field label="Copyright" value={f.copyright || ""} onChange={v => set("copyright", v)} />
+              <Field label="Mention sécurité" value={f.security || ""} onChange={v => set("security", v)} multiline />
+            </>
+          );
+        })()}
+
+        {/* ═══ NAVIGATION ═══ */}
+        {tab === "Navigation" && (() => {
+          const n = content.nav || {};
+          const set = (k: string, v: any) => update("nav", { ...n, [k]: v });
+          const setLink = (i: number, key: "to" | "label", v: string) => {
+            const arr = [...(n.links || [])]; arr[i] = { ...arr[i], [key]: v }; set("links", arr);
+          };
+          return (
+            <>
+              <p className="text-neutral-muted dark:text-admin-muted text-[13px] mb-4">Liens du menu principal (partagés entre l'en-tête et le menu mobile).</p>
+              {(n.links || []).map((l: any, i: number) => (
+                <div key={i} className="flex gap-3 mb-3 items-end">
+                  <div className="flex-1"><Field label={`Libellé ${i + 1}`} value={l.label} onChange={v => setLink(i, "label", v)} /></div>
+                  <div className="flex-1"><Field label="Lien (chemin)" value={l.to} onChange={v => setLink(i, "to", v)} placeholder="/tarifs" /></div>
+                  <div className="pb-4"><DeleteBtn onClick={() => set("links", (n.links || []).filter((_: any, j: number) => j !== i))} /></div>
+                </div>
+              ))}
+              <AddBtn label="Ajouter un lien" onClick={() => set("links", [...(n.links || []), { to: "/", label: "" }])} />
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-6">Libellés</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Entrée « Accueil » (menu mobile)" value={n.homeLabel || ""} onChange={v => set("homeLabel", v)} placeholder="Accueil" />
+                <Field label="Bouton portail" value={n.clientSpace || ""} onChange={v => set("clientSpace", v)} placeholder="Espace Client" />
+              </div>
             </>
           );
         })()}
