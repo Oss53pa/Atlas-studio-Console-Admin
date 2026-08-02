@@ -5,11 +5,12 @@ import { useAuth } from "../../lib/auth";
 import { DEFAULT_CONTENT } from "../../config/content";
 import { SITE_URL } from "../../config/site";
 
-const tabs = ["Hero", "Stats", "Trust Bar", "Steps", "About", "Témoignages", "Secteurs", "Comparatif", "FAQs", "Contact", "Réseaux sociaux", "Apparence"] as const;
+const tabs = ["Hero", "Accueil", "Stats", "Trust Bar", "Steps", "About", "Témoignages", "Secteurs", "Comparatif", "FAQs", "Contact", "Réseaux sociaux", "Apparence"] as const;
 type Tab = (typeof tabs)[number];
 
 const TAB_KEY_MAP: Record<Tab, string> = {
   Hero: "hero",
+  Accueil: "homeSections",
   Stats: "stats",
   "Trust Bar": "trustBar",
   Steps: "steps",
@@ -149,6 +150,7 @@ export default function ContentManagementPage() {
       if (data) data.forEach(r => { map[r.key] = r.data; });
       setContent({
         hero: map.hero || DEFAULT_CONTENT.hero,
+        homeSections: map.homeSections || DEFAULT_CONTENT.homeSections,
         stats: map.stats || DEFAULT_CONTENT.stats,
         trustBar: map.trustBar || DEFAULT_CONTENT.trustBar,
         steps: map.steps || DEFAULT_CONTENT.steps,
@@ -192,6 +194,7 @@ export default function ContentManagementPage() {
   const reset = (key: string) => {
     const defaults: Record<string, any> = {
       hero: DEFAULT_CONTENT.hero,
+      homeSections: DEFAULT_CONTENT.homeSections,
       stats: DEFAULT_CONTENT.stats,
       trustBar: DEFAULT_CONTENT.trustBar,
       steps: DEFAULT_CONTENT.steps,
@@ -268,6 +271,60 @@ export default function ContentManagementPage() {
             </div>
           </>
         )}
+
+        {/* ═══ ACCUEIL (intitulés de sections) ═══ */}
+        {tab === "Accueil" && (() => {
+          const hs = content.homeSections || {};
+          const set = (k: string, v: string) => update("homeSections", { ...hs, [k]: v });
+          return (
+            <>
+              <p className="text-neutral-muted dark:text-admin-muted text-[13px] mb-4">Titres, sous-titres et blocs d'appel à l'action de la page d'accueil. Le contenu des sections (étapes, secteurs, FAQ…) s'édite dans leurs propres onglets.</p>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2">Section « Comment ça marche »</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre" value={hs.howTitle || ""} onChange={v => set("howTitle", v)} />
+                <Field label="Sous-titre" value={hs.howSubtitle || ""} onChange={v => set("howSubtitle", v)} />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2 mt-4">Section « Nos applications »</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre" value={hs.appsTitle || ""} onChange={v => set("appsTitle", v)} />
+                <Field label="Suffixe (après le nombre d'apps)" value={hs.appsSubtitleSuffix || ""} onChange={v => set("appsSubtitleSuffix", v)} placeholder="apps · filtrez & survolez" />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2 mt-4">Section « Secteurs »</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre" value={hs.sectorsTitle || ""} onChange={v => set("sectorsTitle", v)} />
+                <Field label="Sous-titre" value={hs.sectorsSubtitle || ""} onChange={v => set("sectorsSubtitle", v)} />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2 mt-4">Section « Pourquoi Atlas Studio »</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre" value={hs.whyTitle || ""} onChange={v => set("whyTitle", v)} />
+                <Field label="Sous-titre" value={hs.whySubtitle || ""} onChange={v => set("whySubtitle", v)} />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2 mt-4">Autres titres</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre « Témoignages »" value={hs.testimonialsTitle || ""} onChange={v => set("testimonialsTitle", v)} />
+                <Field label="Titre « FAQ »" value={hs.faqTitle || ""} onChange={v => set("faqTitle", v)} />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2 mt-4">Bloc « Pour commencer » (nouveau visiteur)</h3>
+              <Field label="Surtitre" value={hs.dualStartKicker || ""} onChange={v => set("dualStartKicker", v)} placeholder="POUR COMMENCER" />
+              <Field label="Description" value={hs.dualStartDesc || ""} onChange={v => set("dualStartDesc", v)} multiline />
+              <p className="text-neutral-muted dark:text-admin-muted text-[12px] mb-4 -mt-2">Le titre et le lien de ce bloc reprennent le « Bouton primaire (CTA) » de l'onglet Hero.</p>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2 mt-4">Bloc « Déjà client »</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Surtitre" value={hs.dualClientKicker || ""} onChange={v => set("dualClientKicker", v)} placeholder="DÉJÀ CLIENT" />
+                <Field label="Titre" value={hs.dualClientTitle || ""} onChange={v => set("dualClientTitle", v)} />
+              </div>
+              <Field label="Description" value={hs.dualClientDesc || ""} onChange={v => set("dualClientDesc", v)} multiline />
+              <Field label="Libellé du lien" value={hs.dualClientCta || ""} onChange={v => set("dualClientCta", v)} placeholder="Ouvrir le portail" />
+            </>
+          );
+        })()}
 
         {/* ═══ STATS ═══ */}
         {tab === "Stats" && (

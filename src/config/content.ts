@@ -25,6 +25,26 @@ export interface AppItem {
   external_url?: string;
 }
 
+/** Intitulés des sections de la page d'accueil (titres, sous-titres, blocs CTA). */
+export interface HomeSections {
+  howTitle: string;
+  howSubtitle: string;
+  appsTitle: string;
+  appsSubtitleSuffix: string;
+  sectorsTitle: string;
+  sectorsSubtitle: string;
+  whyTitle: string;
+  whySubtitle: string;
+  testimonialsTitle: string;
+  faqTitle: string;
+  dualStartKicker: string;
+  dualStartDesc: string;
+  dualClientKicker: string;
+  dualClientTitle: string;
+  dualClientDesc: string;
+  dualClientCta: string;
+}
+
 export interface SiteContent {
   hero: {
     title: string;
@@ -32,6 +52,7 @@ export interface SiteContent {
     cta1: string;
     cta2: string;
   };
+  homeSections?: HomeSections;
   stats: { value: string; label: string }[];
   trustBar: string[];
   steps: { num: string; title: string; desc: string }[];
@@ -60,6 +81,24 @@ export const DEFAULT_CONTENT: SiteContent = {
     subtitle: "Comptabilité SYSCOHADA, liasse fiscale, signature électronique : des apps SaaS prêtes à l'emploi, pensées pour les entreprises africaines. Déjà adoptées par 500+ entreprises dans 10 pays.",
     cta1: "Créer un compte",
     cta2: "Découvrir les apps",
+  },
+  homeSections: {
+    howTitle: "Comment ça marche",
+    howSubtitle: "De la création du compte à l'automatisation, en quelques étapes.",
+    appsTitle: "Nos applications",
+    appsSubtitleSuffix: "apps · filtrez & survolez",
+    sectorsTitle: "Pensé pour tous les secteurs",
+    sectorsSubtitle: "Des outils qui s'adaptent aux réalités de chaque métier, partout en Afrique francophone.",
+    whyTitle: "Pourquoi Atlas Studio",
+    whySubtitle: "Comparé aux solutions du marché, sur ce qui compte vraiment ici.",
+    testimonialsTitle: "Ils nous font confiance",
+    faqTitle: "Questions fréquentes",
+    dualStartKicker: "POUR COMMENCER",
+    dualStartDesc: "Inscription en 2 minutes, votre espace entreprise prêt immédiatement.",
+    dualClientKicker: "DÉJÀ CLIENT",
+    dualClientTitle: "Accéder au portail.",
+    dualClientDesc: "Licences, factures, tickets et téléchargements — tout au même endroit.",
+    dualClientCta: "Ouvrir le portail",
   },
   stats: [
     { value: "500+", label: "entreprises clientes" },
