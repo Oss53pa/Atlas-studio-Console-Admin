@@ -65,6 +65,18 @@ export interface NavContent {
   clientSpace: string;
 }
 
+export interface PagesContent {
+  applications: {
+    title: string; subtitle: string;
+    ctaTitle: string; ctaSubtitle: string; ctaPrimary: string; ctaSecondary: string;
+  };
+  pricing: {
+    title: string; subtitle: string;
+    suitesTitle: string; suitesSubtitle: string;
+    ctaTitle: string; ctaSubtitle: string; ctaPrimary: string; ctaSecondary: string;
+  };
+}
+
 export interface SiteContent {
   hero: {
     title: string;
@@ -95,6 +107,7 @@ export interface SiteContent {
   appearance?: { primaryColor?: string; accentColor?: string; heroBackground?: string; clientLogos?: string[] };
   footer?: FooterContent;
   nav?: NavContent;
+  pages?: PagesContent;
 }
 
 export const DEFAULT_CONTENT: SiteContent = {
@@ -238,5 +251,25 @@ export const DEFAULT_CONTENT: SiteContent = {
     ],
     homeLabel: "Accueil",
     clientSpace: "Espace Client",
+  },
+  pages: {
+    applications: {
+      title: "Nos Solutions",
+      subtitle: "Des outils professionnels pensés pour les réalités africaines. Comptabilité SYSCOHADA, liasse fiscale, signature électronique : tout ce qu'il faut pour digitaliser votre gestion, sans détour.",
+      ctaTitle: "Prêt à digitaliser votre gestion ?",
+      ctaSubtitle: "Souscrivez maintenant. Sans engagement, annulation à tout moment.",
+      ctaPrimary: "Créer un compte",
+      ctaSecondary: "Nous contacter",
+    },
+    pricing: {
+      title: "Tarifs simples et transparents",
+      subtitle: "Payez uniquement ce que vous utilisez. Sans engagement, changez ou annulez à tout moment.",
+      suitesTitle: "Économisez avec les suites",
+      suitesSubtitle: "Regroupez plusieurs applications et profitez de −20 % sur le total. Engagement annuel cumulable.",
+      ctaTitle: "Prêt à démarrer ?",
+      ctaSubtitle: "Souscrivez maintenant. Sans engagement, annulation à tout moment.",
+      ctaPrimary: "Créer mon compte",
+      ctaSecondary: "Nous contacter",
+    },
   },
 };

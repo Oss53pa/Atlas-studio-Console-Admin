@@ -5,12 +5,13 @@ import { useAuth } from "../../lib/auth";
 import { DEFAULT_CONTENT } from "../../config/content";
 import { SITE_URL } from "../../config/site";
 
-const tabs = ["Hero", "Accueil", "Stats", "Trust Bar", "Steps", "About", "Témoignages", "Secteurs", "Comparatif", "FAQs", "Contact", "Réseaux sociaux", "Footer", "Navigation", "Apparence"] as const;
+const tabs = ["Hero", "Accueil", "Pages", "Stats", "Trust Bar", "Steps", "About", "Témoignages", "Secteurs", "Comparatif", "FAQs", "Contact", "Réseaux sociaux", "Footer", "Navigation", "Apparence"] as const;
 type Tab = (typeof tabs)[number];
 
 const TAB_KEY_MAP: Record<Tab, string> = {
   Hero: "hero",
   Accueil: "homeSections",
+  Pages: "pages",
   Footer: "footer",
   Navigation: "nav",
   Stats: "stats",
@@ -153,6 +154,7 @@ export default function ContentManagementPage() {
       setContent({
         hero: map.hero || DEFAULT_CONTENT.hero,
         homeSections: map.homeSections || DEFAULT_CONTENT.homeSections,
+        pages: map.pages || DEFAULT_CONTENT.pages,
         stats: map.stats || DEFAULT_CONTENT.stats,
         trustBar: map.trustBar || DEFAULT_CONTENT.trustBar,
         steps: map.steps || DEFAULT_CONTENT.steps,
@@ -199,6 +201,7 @@ export default function ContentManagementPage() {
     const defaults: Record<string, any> = {
       hero: DEFAULT_CONTENT.hero,
       homeSections: DEFAULT_CONTENT.homeSections,
+      pages: DEFAULT_CONTENT.pages,
       stats: DEFAULT_CONTENT.stats,
       trustBar: DEFAULT_CONTENT.trustBar,
       steps: DEFAULT_CONTENT.steps,
@@ -328,6 +331,45 @@ export default function ContentManagementPage() {
               </div>
               <Field label="Description" value={hs.dualClientDesc || ""} onChange={v => set("dualClientDesc", v)} multiline />
               <Field label="Libellé du lien" value={hs.dualClientCta || ""} onChange={v => set("dualClientCta", v)} placeholder="Ouvrir le portail" />
+            </>
+          );
+        })()}
+
+        {/* ═══ PAGES (Applications & Tarifs) ═══ */}
+        {tab === "Pages" && (() => {
+          const pg = content.pages || {};
+          const ap = pg.applications || {};
+          const pr = pg.pricing || {};
+          const setAp = (k: string, v: string) => update("pages", { ...pg, applications: { ...ap, [k]: v } });
+          const setPr = (k: string, v: string) => update("pages", { ...pg, pricing: { ...pr, [k]: v } });
+          return (
+            <>
+              <p className="text-neutral-muted dark:text-admin-muted text-[13px] mb-4">Intitulés éditoriaux des pages « Applications » et « Tarifs ». Les cartes d'apps, prix et suites restent générés automatiquement.</p>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3">Page « Applications »</h3>
+              <Field label="Titre" value={ap.title || ""} onChange={v => setAp("title", v)} />
+              <Field label="Sous-titre" value={ap.subtitle || ""} onChange={v => setAp("subtitle", v)} multiline />
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Bloc final — titre" value={ap.ctaTitle || ""} onChange={v => setAp("ctaTitle", v)} />
+                <Field label="Bloc final — sous-titre" value={ap.ctaSubtitle || ""} onChange={v => setAp("ctaSubtitle", v)} />
+                <Field label="Bouton principal" value={ap.ctaPrimary || ""} onChange={v => setAp("ctaPrimary", v)} />
+                <Field label="Bouton secondaire" value={ap.ctaSecondary || ""} onChange={v => setAp("ctaSecondary", v)} />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-6">Page « Tarifs »</h3>
+              <Field label="Titre" value={pr.title || ""} onChange={v => setPr("title", v)} />
+              <Field label="Sous-titre" value={pr.subtitle || ""} onChange={v => setPr("subtitle", v)} multiline />
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Section Suites — titre" value={pr.suitesTitle || ""} onChange={v => setPr("suitesTitle", v)} />
+                <Field label="Section Suites — sous-titre" value={pr.suitesSubtitle || ""} onChange={v => setPr("suitesSubtitle", v)} />
+              </div>
+              <p className="text-neutral-muted dark:text-admin-muted text-[12px] mb-4 -mt-1">Le « −20 % » est un texte descriptif : la vraie remise vient du calcul des suites (table bundles).</p>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Bloc final — titre" value={pr.ctaTitle || ""} onChange={v => setPr("ctaTitle", v)} />
+                <Field label="Bloc final — sous-titre" value={pr.ctaSubtitle || ""} onChange={v => setPr("ctaSubtitle", v)} />
+                <Field label="Bouton principal" value={pr.ctaPrimary || ""} onChange={v => setPr("ctaPrimary", v)} />
+                <Field label="Bouton secondaire" value={pr.ctaSecondary || ""} onChange={v => setPr("ctaSecondary", v)} />
+              </div>
             </>
           );
         })()}
