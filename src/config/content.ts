@@ -75,6 +75,17 @@ export interface PagesContent {
     suitesTitle: string; suitesSubtitle: string;
     ctaTitle: string; ctaSubtitle: string; ctaPrimary: string; ctaSecondary: string;
   };
+  faq?: {
+    title: string; subtitle: string;
+    notFoundTitle: string; notFoundSubtitle: string; contactBtn: string;
+  };
+  contact?: {
+    title: string; subtitle: string;
+    sentTitle: string; sentSubtitle: string;
+    labelName: string; labelEmail: string; labelCompany: string; labelMessage: string;
+    phName: string; phEmail: string; phCompany: string; phMessage: string;
+    submit: string;
+  };
 }
 
 export interface SiteContent {
@@ -270,6 +281,28 @@ export const DEFAULT_CONTENT: SiteContent = {
       ctaSubtitle: "Souscrivez maintenant. Sans engagement, annulation à tout moment.",
       ctaPrimary: "Créer mon compte",
       ctaSecondary: "Nous contacter",
+    },
+    faq: {
+      title: "Questions fréquentes",
+      subtitle: "Trouvez rapidement les réponses à vos questions.",
+      notFoundTitle: "Vous n'avez pas trouvé votre réponse ?",
+      notFoundSubtitle: "Notre équipe est là pour vous aider.",
+      contactBtn: "Nous contacter",
+    },
+    contact: {
+      title: "Contactez-nous",
+      subtitle: "Une question ? Notre équipe vous répond sous 24h.",
+      sentTitle: "Message envoyé !",
+      sentSubtitle: "Nous vous répondrons dans les plus brefs délais.",
+      labelName: "Nom",
+      labelEmail: "Email",
+      labelCompany: "Entreprise",
+      labelMessage: "Message",
+      phName: "Votre nom",
+      phEmail: "vous@entreprise.com",
+      phCompany: "Nom de votre entreprise",
+      phMessage: "Décrivez votre besoin...",
+      submit: "Envoyer le message",
     },
   },
 };

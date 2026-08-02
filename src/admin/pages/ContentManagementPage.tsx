@@ -340,8 +340,12 @@ export default function ContentManagementPage() {
           const pg = content.pages || {};
           const ap = pg.applications || {};
           const pr = pg.pricing || {};
+          const fq = pg.faq || {};
+          const ct = pg.contact || {};
           const setAp = (k: string, v: string) => update("pages", { ...pg, applications: { ...ap, [k]: v } });
           const setPr = (k: string, v: string) => update("pages", { ...pg, pricing: { ...pr, [k]: v } });
+          const setFq = (k: string, v: string) => update("pages", { ...pg, faq: { ...fq, [k]: v } });
+          const setCt = (k: string, v: string) => update("pages", { ...pg, contact: { ...ct, [k]: v } });
           return (
             <>
               <p className="text-neutral-muted dark:text-admin-muted text-[13px] mb-4">Intitulés éditoriaux des pages « Applications » et « Tarifs ». Les cartes d'apps, prix et suites restent générés automatiquement.</p>
@@ -370,6 +374,37 @@ export default function ContentManagementPage() {
                 <Field label="Bouton principal" value={pr.ctaPrimary || ""} onChange={v => setPr("ctaPrimary", v)} />
                 <Field label="Bouton secondaire" value={pr.ctaSecondary || ""} onChange={v => setPr("ctaSecondary", v)} />
               </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-6">Page « FAQ »</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre" value={fq.title || ""} onChange={v => setFq("title", v)} />
+                <Field label="Sous-titre" value={fq.subtitle || ""} onChange={v => setFq("subtitle", v)} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Bloc « pas trouvé » — titre" value={fq.notFoundTitle || ""} onChange={v => setFq("notFoundTitle", v)} />
+                <Field label="Bloc « pas trouvé » — sous-titre" value={fq.notFoundSubtitle || ""} onChange={v => setFq("notFoundSubtitle", v)} />
+              </div>
+              <Field label="Bouton contact" value={fq.contactBtn || ""} onChange={v => setFq("contactBtn", v)} />
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-6">Page « Contact »</h3>
+              <p className="text-neutral-muted dark:text-admin-muted text-[12px] mb-3 -mt-1">L'email, le téléphone et la ville s'éditent dans l'onglet « Contact ».</p>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre" value={ct.title || ""} onChange={v => setCt("title", v)} />
+                <Field label="Sous-titre" value={ct.subtitle || ""} onChange={v => setCt("subtitle", v)} />
+                <Field label="Confirmation — titre" value={ct.sentTitle || ""} onChange={v => setCt("sentTitle", v)} />
+                <Field label="Confirmation — sous-titre" value={ct.sentSubtitle || ""} onChange={v => setCt("sentSubtitle", v)} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Libellé champ Nom" value={ct.labelName || ""} onChange={v => setCt("labelName", v)} />
+                <Field label="Placeholder Nom" value={ct.phName || ""} onChange={v => setCt("phName", v)} />
+                <Field label="Libellé champ Email" value={ct.labelEmail || ""} onChange={v => setCt("labelEmail", v)} />
+                <Field label="Placeholder Email" value={ct.phEmail || ""} onChange={v => setCt("phEmail", v)} />
+                <Field label="Libellé champ Entreprise" value={ct.labelCompany || ""} onChange={v => setCt("labelCompany", v)} />
+                <Field label="Placeholder Entreprise" value={ct.phCompany || ""} onChange={v => setCt("phCompany", v)} />
+                <Field label="Libellé champ Message" value={ct.labelMessage || ""} onChange={v => setCt("labelMessage", v)} />
+                <Field label="Placeholder Message" value={ct.phMessage || ""} onChange={v => setCt("phMessage", v)} />
+              </div>
+              <Field label="Bouton d'envoi" value={ct.submit || ""} onChange={v => setCt("submit", v)} />
             </>
           );
         })()}
