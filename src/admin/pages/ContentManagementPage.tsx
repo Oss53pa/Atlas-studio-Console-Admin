@@ -5,11 +5,15 @@ import { useAuth } from "../../lib/auth";
 import { DEFAULT_CONTENT } from "../../config/content";
 import { SITE_URL } from "../../config/site";
 
-const tabs = ["Hero", "Stats", "Trust Bar", "Steps", "About", "Témoignages", "Secteurs", "Comparatif", "FAQs", "Contact", "Réseaux sociaux", "Apparence"] as const;
+const tabs = ["Hero", "Accueil", "Pages", "Stats", "Trust Bar", "Steps", "About", "Témoignages", "Secteurs", "Comparatif", "FAQs", "Contact", "Réseaux sociaux", "Footer", "Navigation", "Apparence"] as const;
 type Tab = (typeof tabs)[number];
 
 const TAB_KEY_MAP: Record<Tab, string> = {
   Hero: "hero",
+  Accueil: "homeSections",
+  Pages: "pages",
+  Footer: "footer",
+  Navigation: "nav",
   Stats: "stats",
   "Trust Bar": "trustBar",
   Steps: "steps",
@@ -149,6 +153,8 @@ export default function ContentManagementPage() {
       if (data) data.forEach(r => { map[r.key] = r.data; });
       setContent({
         hero: map.hero || DEFAULT_CONTENT.hero,
+        homeSections: map.homeSections || DEFAULT_CONTENT.homeSections,
+        pages: map.pages || DEFAULT_CONTENT.pages,
         stats: map.stats || DEFAULT_CONTENT.stats,
         trustBar: map.trustBar || DEFAULT_CONTENT.trustBar,
         steps: map.steps || DEFAULT_CONTENT.steps,
@@ -158,6 +164,8 @@ export default function ContentManagementPage() {
         comparatif: map.comparatif || DEFAULT_CONTENT.comparatif,
         faqs: map.faqs || DEFAULT_CONTENT.faqs,
         contact: map.contact || DEFAULT_CONTENT.contact,
+        footer: map.footer || DEFAULT_CONTENT.footer,
+        nav: map.nav || DEFAULT_CONTENT.nav,
         social: map.social || { facebook: "", instagram: "", linkedin: "", twitter: "", youtube: "", tiktok: "" },
         appearance: map.appearance || {
           primaryColor: "var(--c-accent-dark)",
@@ -192,6 +200,8 @@ export default function ContentManagementPage() {
   const reset = (key: string) => {
     const defaults: Record<string, any> = {
       hero: DEFAULT_CONTENT.hero,
+      homeSections: DEFAULT_CONTENT.homeSections,
+      pages: DEFAULT_CONTENT.pages,
       stats: DEFAULT_CONTENT.stats,
       trustBar: DEFAULT_CONTENT.trustBar,
       steps: DEFAULT_CONTENT.steps,
@@ -201,6 +211,8 @@ export default function ContentManagementPage() {
       comparatif: DEFAULT_CONTENT.comparatif,
       faqs: DEFAULT_CONTENT.faqs,
       contact: DEFAULT_CONTENT.contact,
+      footer: DEFAULT_CONTENT.footer,
+      nav: DEFAULT_CONTENT.nav,
       social: { facebook: "", instagram: "", linkedin: "", twitter: "", youtube: "", tiktok: "" },
       appearance: { primaryColor: "var(--c-accent-dark)", accentColor: "var(--c-accent)", heroBackground: "var(--c-surface)", clientLogos: [] },
     };
@@ -268,6 +280,206 @@ export default function ContentManagementPage() {
             </div>
           </>
         )}
+
+        {/* ═══ ACCUEIL (intitulés de sections) ═══ */}
+        {tab === "Accueil" && (() => {
+          const hs = content.homeSections || {};
+          const set = (k: string, v: string) => update("homeSections", { ...hs, [k]: v });
+          return (
+            <>
+              <p className="text-neutral-muted dark:text-admin-muted text-[13px] mb-4">Titres, sous-titres et blocs d'appel à l'action de la page d'accueil. Le contenu des sections (étapes, secteurs, FAQ…) s'édite dans leurs propres onglets.</p>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2">Section « Comment ça marche »</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre" value={hs.howTitle || ""} onChange={v => set("howTitle", v)} />
+                <Field label="Sous-titre" value={hs.howSubtitle || ""} onChange={v => set("howSubtitle", v)} />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2 mt-4">Section « Nos applications »</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre" value={hs.appsTitle || ""} onChange={v => set("appsTitle", v)} />
+                <Field label="Suffixe (après le nombre d'apps)" value={hs.appsSubtitleSuffix || ""} onChange={v => set("appsSubtitleSuffix", v)} placeholder="apps · filtrez & survolez" />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2 mt-4">Section « Secteurs »</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre" value={hs.sectorsTitle || ""} onChange={v => set("sectorsTitle", v)} />
+                <Field label="Sous-titre" value={hs.sectorsSubtitle || ""} onChange={v => set("sectorsSubtitle", v)} />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2 mt-4">Section « Pourquoi Atlas Studio »</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre" value={hs.whyTitle || ""} onChange={v => set("whyTitle", v)} />
+                <Field label="Sous-titre" value={hs.whySubtitle || ""} onChange={v => set("whySubtitle", v)} />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2 mt-4">Autres titres</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre « Témoignages »" value={hs.testimonialsTitle || ""} onChange={v => set("testimonialsTitle", v)} />
+                <Field label="Titre « FAQ »" value={hs.faqTitle || ""} onChange={v => set("faqTitle", v)} />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2 mt-4">Bloc « Pour commencer » (nouveau visiteur)</h3>
+              <Field label="Surtitre" value={hs.dualStartKicker || ""} onChange={v => set("dualStartKicker", v)} placeholder="POUR COMMENCER" />
+              <Field label="Description" value={hs.dualStartDesc || ""} onChange={v => set("dualStartDesc", v)} multiline />
+              <p className="text-neutral-muted dark:text-admin-muted text-[12px] mb-4 -mt-2">Le titre et le lien de ce bloc reprennent le « Bouton primaire (CTA) » de l'onglet Hero.</p>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-2 mt-4">Bloc « Déjà client »</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Surtitre" value={hs.dualClientKicker || ""} onChange={v => set("dualClientKicker", v)} placeholder="DÉJÀ CLIENT" />
+                <Field label="Titre" value={hs.dualClientTitle || ""} onChange={v => set("dualClientTitle", v)} />
+              </div>
+              <Field label="Description" value={hs.dualClientDesc || ""} onChange={v => set("dualClientDesc", v)} multiline />
+              <Field label="Libellé du lien" value={hs.dualClientCta || ""} onChange={v => set("dualClientCta", v)} placeholder="Ouvrir le portail" />
+            </>
+          );
+        })()}
+
+        {/* ═══ PAGES (Applications & Tarifs) ═══ */}
+        {tab === "Pages" && (() => {
+          const pg = content.pages || {};
+          const ap = pg.applications || {};
+          const pr = pg.pricing || {};
+          const fq = pg.faq || {};
+          const ct = pg.contact || {};
+          const setAp = (k: string, v: string) => update("pages", { ...pg, applications: { ...ap, [k]: v } });
+          const setPr = (k: string, v: string) => update("pages", { ...pg, pricing: { ...pr, [k]: v } });
+          const setFq = (k: string, v: string) => update("pages", { ...pg, faq: { ...fq, [k]: v } });
+          const setCt = (k: string, v: string) => update("pages", { ...pg, contact: { ...ct, [k]: v } });
+          return (
+            <>
+              <p className="text-neutral-muted dark:text-admin-muted text-[13px] mb-4">Intitulés éditoriaux des pages « Applications » et « Tarifs ». Les cartes d'apps, prix et suites restent générés automatiquement.</p>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3">Page « Applications »</h3>
+              <Field label="Titre" value={ap.title || ""} onChange={v => setAp("title", v)} />
+              <Field label="Sous-titre" value={ap.subtitle || ""} onChange={v => setAp("subtitle", v)} multiline />
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Bloc final — titre" value={ap.ctaTitle || ""} onChange={v => setAp("ctaTitle", v)} />
+                <Field label="Bloc final — sous-titre" value={ap.ctaSubtitle || ""} onChange={v => setAp("ctaSubtitle", v)} />
+                <Field label="Bouton principal" value={ap.ctaPrimary || ""} onChange={v => setAp("ctaPrimary", v)} />
+                <Field label="Bouton secondaire" value={ap.ctaSecondary || ""} onChange={v => setAp("ctaSecondary", v)} />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-6">Page « Tarifs »</h3>
+              <Field label="Titre" value={pr.title || ""} onChange={v => setPr("title", v)} />
+              <Field label="Sous-titre" value={pr.subtitle || ""} onChange={v => setPr("subtitle", v)} multiline />
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Section Suites — titre" value={pr.suitesTitle || ""} onChange={v => setPr("suitesTitle", v)} />
+                <Field label="Section Suites — sous-titre" value={pr.suitesSubtitle || ""} onChange={v => setPr("suitesSubtitle", v)} />
+              </div>
+              <p className="text-neutral-muted dark:text-admin-muted text-[12px] mb-4 -mt-1">Le « −20 % » est un texte descriptif : la vraie remise vient du calcul des suites (table bundles).</p>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Bloc final — titre" value={pr.ctaTitle || ""} onChange={v => setPr("ctaTitle", v)} />
+                <Field label="Bloc final — sous-titre" value={pr.ctaSubtitle || ""} onChange={v => setPr("ctaSubtitle", v)} />
+                <Field label="Bouton principal" value={pr.ctaPrimary || ""} onChange={v => setPr("ctaPrimary", v)} />
+                <Field label="Bouton secondaire" value={pr.ctaSecondary || ""} onChange={v => setPr("ctaSecondary", v)} />
+              </div>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-6">Page « FAQ »</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre" value={fq.title || ""} onChange={v => setFq("title", v)} />
+                <Field label="Sous-titre" value={fq.subtitle || ""} onChange={v => setFq("subtitle", v)} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Bloc « pas trouvé » — titre" value={fq.notFoundTitle || ""} onChange={v => setFq("notFoundTitle", v)} />
+                <Field label="Bloc « pas trouvé » — sous-titre" value={fq.notFoundSubtitle || ""} onChange={v => setFq("notFoundSubtitle", v)} />
+              </div>
+              <Field label="Bouton contact" value={fq.contactBtn || ""} onChange={v => setFq("contactBtn", v)} />
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-6">Page « Contact »</h3>
+              <p className="text-neutral-muted dark:text-admin-muted text-[12px] mb-3 -mt-1">L'email, le téléphone et la ville s'éditent dans l'onglet « Contact ».</p>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titre" value={ct.title || ""} onChange={v => setCt("title", v)} />
+                <Field label="Sous-titre" value={ct.subtitle || ""} onChange={v => setCt("subtitle", v)} />
+                <Field label="Confirmation — titre" value={ct.sentTitle || ""} onChange={v => setCt("sentTitle", v)} />
+                <Field label="Confirmation — sous-titre" value={ct.sentSubtitle || ""} onChange={v => setCt("sentSubtitle", v)} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Libellé champ Nom" value={ct.labelName || ""} onChange={v => setCt("labelName", v)} />
+                <Field label="Placeholder Nom" value={ct.phName || ""} onChange={v => setCt("phName", v)} />
+                <Field label="Libellé champ Email" value={ct.labelEmail || ""} onChange={v => setCt("labelEmail", v)} />
+                <Field label="Placeholder Email" value={ct.phEmail || ""} onChange={v => setCt("phEmail", v)} />
+                <Field label="Libellé champ Entreprise" value={ct.labelCompany || ""} onChange={v => setCt("labelCompany", v)} />
+                <Field label="Placeholder Entreprise" value={ct.phCompany || ""} onChange={v => setCt("phCompany", v)} />
+                <Field label="Libellé champ Message" value={ct.labelMessage || ""} onChange={v => setCt("labelMessage", v)} />
+                <Field label="Placeholder Message" value={ct.phMessage || ""} onChange={v => setCt("phMessage", v)} />
+              </div>
+              <Field label="Bouton d'envoi" value={ct.submit || ""} onChange={v => setCt("submit", v)} />
+            </>
+          );
+        })()}
+
+        {/* ═══ FOOTER ═══ */}
+        {tab === "Footer" && (() => {
+          const f = content.footer || {};
+          const set = (k: string, v: any) => update("footer", { ...f, [k]: v });
+          const setLink = (col: "resources" | "company", i: number, key: "to" | "label", v: string) => {
+            const arr = [...(f[col] || [])]; arr[i] = { ...arr[i], [key]: v }; set(col, arr);
+          };
+          const linkColumn = (col: "resources" | "company") => (
+            <>
+              {(f[col] || []).map((l: any, i: number) => (
+                <div key={i} className="flex gap-3 mb-3 items-end">
+                  <div className="flex-1"><Field label={`Libellé ${i + 1}`} value={l.label} onChange={v => setLink(col, i, "label", v)} /></div>
+                  <div className="flex-1"><Field label="Lien (chemin)" value={l.to} onChange={v => setLink(col, i, "to", v)} placeholder="/tarifs" /></div>
+                  <div className="pb-4"><DeleteBtn onClick={() => set(col, (f[col] || []).filter((_: any, j: number) => j !== i))} /></div>
+                </div>
+              ))}
+              <AddBtn label="Ajouter un lien" onClick={() => set(col, [...(f[col] || []), { to: "/", label: "" }])} />
+            </>
+          );
+          return (
+            <>
+              <Field label="Baseline (accroche de marque)" value={f.baseline || ""} onChange={v => set("baseline", v)} multiline />
+              <p className="text-neutral-muted dark:text-admin-muted text-[12px] mb-4 -mt-2">Le mot « Proph3t » reste automatiquement dans la police du logo.</p>
+              <Field label="Libellé Newsletter" value={f.newsletterLabel || ""} onChange={v => set("newsletterLabel", v)} />
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-4">Colonne « Applications »</h3>
+              <Field label="Titre de la colonne" value={f.appsTitle || ""} onChange={v => set("appsTitle", v)} />
+              <p className="text-neutral-muted dark:text-admin-muted text-[12px] mb-4 -mt-2">La liste des applications est générée automatiquement depuis le catalogue.</p>
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-4">Colonne « Ressources »</h3>
+              <Field label="Titre de la colonne" value={f.resourcesTitle || ""} onChange={v => set("resourcesTitle", v)} />
+              {linkColumn("resources")}
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-4">Colonne « Entreprise »</h3>
+              <Field label="Titre de la colonne" value={f.companyTitle || ""} onChange={v => set("companyTitle", v)} />
+              {linkColumn("company")}
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-4">Bas de page</h3>
+              <Field label="Copyright" value={f.copyright || ""} onChange={v => set("copyright", v)} />
+              <Field label="Mention sécurité" value={f.security || ""} onChange={v => set("security", v)} multiline />
+            </>
+          );
+        })()}
+
+        {/* ═══ NAVIGATION ═══ */}
+        {tab === "Navigation" && (() => {
+          const n = content.nav || {};
+          const set = (k: string, v: any) => update("nav", { ...n, [k]: v });
+          const setLink = (i: number, key: "to" | "label", v: string) => {
+            const arr = [...(n.links || [])]; arr[i] = { ...arr[i], [key]: v }; set("links", arr);
+          };
+          return (
+            <>
+              <p className="text-neutral-muted dark:text-admin-muted text-[13px] mb-4">Liens du menu principal (partagés entre l'en-tête et le menu mobile).</p>
+              {(n.links || []).map((l: any, i: number) => (
+                <div key={i} className="flex gap-3 mb-3 items-end">
+                  <div className="flex-1"><Field label={`Libellé ${i + 1}`} value={l.label} onChange={v => setLink(i, "label", v)} /></div>
+                  <div className="flex-1"><Field label="Lien (chemin)" value={l.to} onChange={v => setLink(i, "to", v)} placeholder="/tarifs" /></div>
+                  <div className="pb-4"><DeleteBtn onClick={() => set("links", (n.links || []).filter((_: any, j: number) => j !== i))} /></div>
+                </div>
+              ))}
+              <AddBtn label="Ajouter un lien" onClick={() => set("links", [...(n.links || []), { to: "/", label: "" }])} />
+
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-bold mb-3 mt-6">Libellés</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Entrée « Accueil » (menu mobile)" value={n.homeLabel || ""} onChange={v => set("homeLabel", v)} placeholder="Accueil" />
+                <Field label="Bouton portail" value={n.clientSpace || ""} onChange={v => set("clientSpace", v)} placeholder="Espace Client" />
+              </div>
+            </>
+          );
+        })()}
 
         {/* ═══ STATS ═══ */}
         {tab === "Stats" && (

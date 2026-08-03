@@ -25,6 +25,69 @@ export interface AppItem {
   external_url?: string;
 }
 
+/** Intitulés des sections de la page d'accueil (titres, sous-titres, blocs CTA). */
+export interface HomeSections {
+  howTitle: string;
+  howSubtitle: string;
+  appsTitle: string;
+  appsSubtitleSuffix: string;
+  sectorsTitle: string;
+  sectorsSubtitle: string;
+  whyTitle: string;
+  whySubtitle: string;
+  testimonialsTitle: string;
+  faqTitle: string;
+  dualStartKicker: string;
+  dualStartDesc: string;
+  dualClientKicker: string;
+  dualClientTitle: string;
+  dualClientDesc: string;
+  dualClientCta: string;
+}
+
+export interface NavLink { to: string; label: string }
+
+export interface FooterContent {
+  baseline: string;
+  newsletterLabel: string;
+  appsTitle: string;
+  resourcesTitle: string;
+  resources: NavLink[];
+  companyTitle: string;
+  company: NavLink[];
+  copyright: string;
+  security: string;
+}
+
+export interface NavContent {
+  links: NavLink[];
+  homeLabel: string;
+  clientSpace: string;
+}
+
+export interface PagesContent {
+  applications: {
+    title: string; subtitle: string;
+    ctaTitle: string; ctaSubtitle: string; ctaPrimary: string; ctaSecondary: string;
+  };
+  pricing: {
+    title: string; subtitle: string;
+    suitesTitle: string; suitesSubtitle: string;
+    ctaTitle: string; ctaSubtitle: string; ctaPrimary: string; ctaSecondary: string;
+  };
+  faq?: {
+    title: string; subtitle: string;
+    notFoundTitle: string; notFoundSubtitle: string; contactBtn: string;
+  };
+  contact?: {
+    title: string; subtitle: string;
+    sentTitle: string; sentSubtitle: string;
+    labelName: string; labelEmail: string; labelCompany: string; labelMessage: string;
+    phName: string; phEmail: string; phCompany: string; phMessage: string;
+    submit: string;
+  };
+}
+
 export interface SiteContent {
   hero: {
     title: string;
@@ -32,6 +95,7 @@ export interface SiteContent {
     cta1: string;
     cta2: string;
   };
+  homeSections?: HomeSections;
   stats: { value: string; label: string }[];
   trustBar: string[];
   steps: { num: string; title: string; desc: string }[];
@@ -52,6 +116,9 @@ export interface SiteContent {
   contact: { email: string; phone: string; city: string };
   social?: { facebook?: string; instagram?: string; linkedin?: string; twitter?: string; youtube?: string; tiktok?: string };
   appearance?: { primaryColor?: string; accentColor?: string; heroBackground?: string; clientLogos?: string[] };
+  footer?: FooterContent;
+  nav?: NavContent;
+  pages?: PagesContent;
 }
 
 export const DEFAULT_CONTENT: SiteContent = {
@@ -60,6 +127,24 @@ export const DEFAULT_CONTENT: SiteContent = {
     subtitle: "Comptabilité SYSCOHADA, liasse fiscale, signature électronique : des apps SaaS prêtes à l'emploi, pensées pour les entreprises africaines. Déjà adoptées par 500+ entreprises dans 10 pays.",
     cta1: "Créer un compte",
     cta2: "Découvrir les apps",
+  },
+  homeSections: {
+    howTitle: "Comment ça marche",
+    howSubtitle: "De la création du compte à l'automatisation, en quelques étapes.",
+    appsTitle: "Nos applications",
+    appsSubtitleSuffix: "apps · filtrez & survolez",
+    sectorsTitle: "Pensé pour tous les secteurs",
+    sectorsSubtitle: "Des outils qui s'adaptent aux réalités de chaque métier, partout en Afrique francophone.",
+    whyTitle: "Pourquoi Atlas Studio",
+    whySubtitle: "Comparé aux solutions du marché, sur ce qui compte vraiment ici.",
+    testimonialsTitle: "Ils nous font confiance",
+    faqTitle: "Questions fréquentes",
+    dualStartKicker: "POUR COMMENCER",
+    dualStartDesc: "Inscription en 2 minutes, votre espace entreprise prêt immédiatement.",
+    dualClientKicker: "DÉJÀ CLIENT",
+    dualClientTitle: "Accéder au portail.",
+    dualClientDesc: "Licences, factures, tickets et téléchargements — tout au même endroit.",
+    dualClientCta: "Ouvrir le portail",
   },
   stats: [
     { value: "500+", label: "entreprises clientes" },
@@ -143,4 +228,81 @@ export const DEFAULT_CONTENT: SiteContent = {
     { q: "Quels moyens de paiement ?", a: "Carte bancaire (Visa, Mastercard), Mobile Money (Orange Money, MTN, Wave) et virement bancaire." },
   ],
   contact: { email: "contact@atlas-studio.org", phone: "+225 XX XX XX XX", city: "Abidjan, Côte d'Ivoire" },
+  footer: {
+    baseline: "La suite de gestion conçue pour les entreprises d'Afrique francophone. SYSCOHADA natif, Mobile Money, IA Proph3t.",
+    newsletterLabel: "Newsletter",
+    appsTitle: "Applications",
+    resourcesTitle: "Ressources",
+    resources: [
+      { to: "/applications", label: "Tous les produits" },
+      { to: "/tarifs", label: "Tarifs" },
+      { to: "/blog", label: "Blog" },
+      { to: "/faq", label: "FAQ" },
+      { to: "/portal", label: "Souscrire" },
+    ],
+    companyTitle: "Entreprise",
+    company: [
+      { to: "/a-propos", label: "À propos" },
+      { to: "/contact", label: "Contact" },
+      { to: "/mentions-legales", label: "Mentions légales" },
+      { to: "/cgu", label: "CGU" },
+      { to: "/confidentialite", label: "Confidentialité" },
+    ],
+    copyright: "© 2026 Atlas Studio. Abidjan, Côte d'Ivoire",
+    security: "Données chiffrées AES-256 — traitement IA 100% local sur nos serveurs dédiés",
+  },
+  nav: {
+    links: [
+      { to: "/applications", label: "Applications" },
+      { to: "/tarifs", label: "Tarifs" },
+      { to: "/blog", label: "Blog" },
+      { to: "/a-propos", label: "À propos" },
+      { to: "/faq", label: "FAQ" },
+      { to: "/contact", label: "Contact" },
+    ],
+    homeLabel: "Accueil",
+    clientSpace: "Espace Client",
+  },
+  pages: {
+    applications: {
+      title: "Nos Solutions",
+      subtitle: "Des outils professionnels pensés pour les réalités africaines. Comptabilité SYSCOHADA, liasse fiscale, signature électronique : tout ce qu'il faut pour digitaliser votre gestion, sans détour.",
+      ctaTitle: "Prêt à digitaliser votre gestion ?",
+      ctaSubtitle: "Souscrivez maintenant. Sans engagement, annulation à tout moment.",
+      ctaPrimary: "Créer un compte",
+      ctaSecondary: "Nous contacter",
+    },
+    pricing: {
+      title: "Tarifs simples et transparents",
+      subtitle: "Payez uniquement ce que vous utilisez. Sans engagement, changez ou annulez à tout moment.",
+      suitesTitle: "Économisez avec les suites",
+      suitesSubtitle: "Regroupez plusieurs applications et profitez de −20 % sur le total. Engagement annuel cumulable.",
+      ctaTitle: "Prêt à démarrer ?",
+      ctaSubtitle: "Souscrivez maintenant. Sans engagement, annulation à tout moment.",
+      ctaPrimary: "Créer mon compte",
+      ctaSecondary: "Nous contacter",
+    },
+    faq: {
+      title: "Questions fréquentes",
+      subtitle: "Trouvez rapidement les réponses à vos questions.",
+      notFoundTitle: "Vous n'avez pas trouvé votre réponse ?",
+      notFoundSubtitle: "Notre équipe est là pour vous aider.",
+      contactBtn: "Nous contacter",
+    },
+    contact: {
+      title: "Contactez-nous",
+      subtitle: "Une question ? Notre équipe vous répond sous 24h.",
+      sentTitle: "Message envoyé !",
+      sentSubtitle: "Nous vous répondrons dans les plus brefs délais.",
+      labelName: "Nom",
+      labelEmail: "Email",
+      labelCompany: "Entreprise",
+      labelMessage: "Message",
+      phName: "Votre nom",
+      phEmail: "vous@entreprise.com",
+      phCompany: "Nom de votre entreprise",
+      phMessage: "Décrivez votre besoin...",
+      submit: "Envoyer le message",
+    },
+  },
 };

@@ -12,7 +12,20 @@ import { apiCall } from "../../lib/api";
 type AnthropicModel = "claude-haiku-4-5-20251001" | "claude-sonnet-4-6";
 type GeminiModel = "gemini-2.0-flash" | "gemini-2.5-flash" | "gemini-2.5-pro";
 
+/**
+ * État de santé du cœur (« core ») Proph3t, exposé publiquement par la
+ * edge function `proph3t-health`. Sert à afficher l'état live du moteur Groq.
+ */
+type Proph3tHealth = {
+  env_vars: { GROQ_API_KEY: boolean };
+  diagnostic: { groq_ready: boolean; llm_provider_ready: boolean };
+};
+
 type Proph3tStatus = {
+  // Slot « ollama » = moteur gratuit hébergé par défaut. En prod cloud il route
+  // vers Groq (Ollama est injoignable depuis les Edge Functions Supabase — cf.
+  // docs/atlas-cortex-plan.md D3). On garde le nom interne « ollama » pour ne
+  // pas casser le contrat de `claude-proxy`, mais on l'affiche « Groq ».
   provider: "ollama" | "anthropic" | "gemini";
   anthropic: {
     model: AnthropicModel;
@@ -51,6 +64,7 @@ export function Proph3tConfigPanel({ variant = "portal", subtitle }: Proph3tConf
 
   const [toast, setToast] = useState<string | null>(null);
   const [status, setStatus] = useState<Proph3tStatus | null>(null);
+  const [groqHealth, setGroqHealth] = useState<Proph3tHealth | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeProvider, setActiveProvider] = useState<"anthropic" | "gemini">("anthropic");
   const [apiKeyInput, setApiKeyInput] = useState("");
@@ -79,6 +93,20 @@ export function Proph3tConfigPanel({ variant = "portal", subtitle }: Proph3tConf
       try { if (!cancelled) await refreshStatus(); }
       catch (err: any) { if (!cancelled) flashToast(`Erreur : ${err.message}`); }
       finally { if (!cancelled) setLoading(false); }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // État live du cœur Proph3t (moteur Groq) — endpoint public, sans auth.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+        if (!url) return;
+        const res = await fetch(`${url}/functions/v1/proph3t-health`);
+        if (!cancelled && res.ok) setGroqHealth(await res.json());
+      } catch { /* silencieux : la carte affichera l'état par défaut */ }
     })();
     return () => { cancelled = true; };
   }, []);
@@ -193,7 +221,7 @@ export function Proph3tConfigPanel({ variant = "portal", subtitle }: Proph3tConf
       <p className={subtitleCls}>
         {subtitle ?? (isAdmin
           ? "Configurez votre propre clé Anthropic ou Gemini pour Proph3t. Cette clé est dédiée à votre usage administrateur — vos clients ont leur propre configuration via leur portail."
-          : "Choisissez le moteur d'IA utilisé par Proph3t. Ollama (gratuit) hébergé par Atlas Studio, Anthropic Claude (qualité premium), ou Google Gemini (le moins cher).")}
+          : "Choisissez le moteur d'IA utilisé par Proph3t. Groq (gratuit) hébergé par Atlas Studio, Anthropic Claude (qualité premium), ou Google Gemini (le moins cher).")}
       </p>
 
       {toast && (
@@ -210,12 +238,29 @@ export function Proph3tConfigPanel({ variant = "portal", subtitle }: Proph3tConf
           <div className="mb-6">
             <label className={labelCls}>Moteur IA actif</label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Moteur core = Groq (slot backend « ollama »). C'est l'IA principale
+                  qui alimente toutes les applications par défaut. */}
               <button onClick={() => handleProviderChange("ollama")}
                 className={`text-left p-4 rounded-xl border-2 transition-all ${
                   status.provider === "ollama" ? cardSelected : cardUnselected
                 }`}>
-                <div className="font-semibold text-neutral-text dark:text-admin-text text-[13px]">Ollama</div>
-                <div className="text-neutral-muted dark:text-admin-muted text-[11px] mt-1">Gratuit, hébergé. Llama 3.1 8B. Qualité basique.</div>
+                <div className="font-semibold text-neutral-text dark:text-admin-text text-[13px] flex items-center gap-1.5">
+                  Groq
+                  {groqHealth && (
+                    <span
+                      title={groqHealth.diagnostic?.groq_ready ? "Groq connecté (GROQ_API_KEY configurée)" : "GROQ_API_KEY non configurée côté serveur"}
+                      className={`inline-block w-2 h-2 rounded-full ${groqHealth.diagnostic?.groq_ready ? "bg-emerald-500" : "bg-red-500"}`}
+                    />
+                  )}
+                  <span className="ml-auto text-[9px] font-semibold uppercase tracking-wider text-neutral-muted dark:text-admin-muted">Core</span>
+                </div>
+                <div className="text-neutral-muted dark:text-admin-muted text-[11px] mt-1">
+                  {groqHealth
+                    ? (groqHealth.diagnostic?.groq_ready
+                        ? "Gratuit, hébergé. Llama 3.1 8B via Groq. Connecté."
+                        : "Gratuit, hébergé via Groq. Clé serveur GROQ_API_KEY manquante.")
+                    : "Gratuit, hébergé. Llama 3.1 8B via Groq. Moteur par défaut."}
+                </div>
               </button>
               <button onClick={() => handleProviderChange("anthropic")} disabled={!status.anthropic?.has_key}
                 className={`text-left p-4 rounded-xl border-2 transition-all ${
