@@ -193,23 +193,23 @@ par défaut » ne doit donc plus être utilisé** : sur une table vidée, il
 recréerait un doublon `atlas-fa` et perdrait 4 apps. Il ne s'affiche que si la
 table est vide, ce qui n'est pas le cas aujourd'hui.
 
-**d) Branding incomplet — ✅ complété le 2026-08-07 (wordmarks en 2 temps).**
-`atlas-people`, `cockpit-cr`, `cockpit-projet` et `wedo` n'avaient ni
-`accent_deep`, ni `accent_soft`, ni `wordmark_url`.
+**d) Branding incomplet — ✅ complété le 2026-08-07.** `atlas-people`,
+`cockpit-cr`, `cockpit-projet` et `wedo` n'avaient ni `accent_deep`, ni
+`accent_soft`, ni `wordmark_url`. Les 11 apps sont désormais complètes.
 
-- **Accents : appliqués.** Palette dérivée de l'accent déjà en base
-  (`accent_deep` = même teinte à 75 % de luminosité, `accent_soft` = accent
-  mélangé au blanc à 86 %). La règle a été contrôlée sur les 7 apps déjà
-  brandées : elle reproduit leurs paires à moins de 13/255 par canal — sauf
-  `advist`, dont la palette vient de l'échelle indigo de Tailwind.
-- **Wordmarks : générés et commités, URL pas encore posée en base.** Les
-  fichiers `wm-<id>.svg`, `.png` et `@2x.png` sont dans `public/wordmarks/`,
-  mais `wordmark_url` pointe sur jsDelivr `@main` — qui ne sert que ce qui est
-  sur `main`. Poser l'URL avant le merge produirait des images cassées dans les
-  emails d'auth, soit une régression par rapport à `NULL` (repli propre).
-  L'`UPDATE` correspondant attend, en commentaire, dans
-  `db/20260807_apps_branding_complement.sql` — **à exécuter une fois la branche
-  fusionnée**.
+- **Accents.** Palette dérivée de l'accent déjà en base (`accent_deep` = même
+  teinte à 75 % de luminosité, `accent_soft` = accent mélangé au blanc à 86 %).
+  La règle a été contrôlée sur les 7 apps déjà brandées : elle reproduit leurs
+  paires à moins de 13/255 par canal — sauf `advist`, dont la palette vient de
+  l'échelle indigo de Tailwind.
+- **Wordmarks.** Les fichiers `wm-<id>.svg`, `.png` et `@2x.png` sont dans
+  `public/wordmarks/`, et `wordmark_url` pointe dessus via jsDelivr `@main`.
+  L'ordre compte : `@main` ne sert que ce qui est sur `main`, donc l'`UPDATE`
+  des URL (étape 2 de `db/20260807_apps_branding_complement.sql`) n'a été
+  exécuté qu'**après** le merge des assets — le poser avant aurait affiché des
+  images cassées dans les emails d'auth, soit une régression par rapport à
+  `NULL`, qui a un repli propre. Même précaution pour tout wordmark ajouté par
+  la suite.
 
 `cockpit-cr` partage exactement l'accent d'`advist` (`#4F46E5`) : sa palette est
 alignée sur celle d'`advist` plutôt que recalculée, pour éviter deux variantes
