@@ -193,10 +193,28 @@ par défaut » ne doit donc plus être utilisé** : sur une table vidée, il
 recréerait un doublon `atlas-fa` et perdrait 4 apps. Il ne s'affiche que si la
 table est vide, ce qui n'est pas le cas aujourd'hui.
 
-**d) Branding incomplet.** `atlas-people`, `cockpit-cr`, `cockpit-projet` et
-`wedo` n'ont ni `accent_deep`, ni `accent_soft`, ni `wordmark_url`. Impact :
-emails d'authentification et portail retombent sur les valeurs par défaut pour
-ces quatre apps.
+**d) Branding incomplet — ✅ complété le 2026-08-07 (wordmarks en 2 temps).**
+`atlas-people`, `cockpit-cr`, `cockpit-projet` et `wedo` n'avaient ni
+`accent_deep`, ni `accent_soft`, ni `wordmark_url`.
+
+- **Accents : appliqués.** Palette dérivée de l'accent déjà en base
+  (`accent_deep` = même teinte à 75 % de luminosité, `accent_soft` = accent
+  mélangé au blanc à 86 %). La règle a été contrôlée sur les 7 apps déjà
+  brandées : elle reproduit leurs paires à moins de 13/255 par canal — sauf
+  `advist`, dont la palette vient de l'échelle indigo de Tailwind.
+- **Wordmarks : générés et commités, URL pas encore posée en base.** Les
+  fichiers `wm-<id>.svg`, `.png` et `@2x.png` sont dans `public/wordmarks/`,
+  mais `wordmark_url` pointe sur jsDelivr `@main` — qui ne sert que ce qui est
+  sur `main`. Poser l'URL avant le merge produirait des images cassées dans les
+  emails d'auth, soit une régression par rapport à `NULL` (repli propre).
+  L'`UPDATE` correspondant attend, en commentaire, dans
+  `db/20260807_apps_branding_complement.sql` — **à exécuter une fois la branche
+  fusionnée**.
+
+`cockpit-cr` partage exactement l'accent d'`advist` (`#4F46E5`) : sa palette est
+alignée sur celle d'`advist` plutôt que recalculée, pour éviter deux variantes
+foncées différentes d'un même accent. Les deux apps ont donc aujourd'hui le même
+indigo — à arbitrer côté design si une distinction est voulue.
 
 **e) `atlasbanx` est `visible = false`** (statut `available`) : l'app est en
 service mais absente du site public. À confirmer si c'est volontaire.
