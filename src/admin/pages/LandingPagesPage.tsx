@@ -40,6 +40,18 @@ type Store = Record<string, AppSections>;
 
 const EMPTY_SECTION: SectionState = { data: {}, isActive: true, updatedAt: null, exists: false };
 
+/* Contenus stockés sous un app_id qui n'est pas celui du catalogue.
+   CockpitJourney est référencé « cockpit-journey » dans public.apps (et dans
+   subscriptions, et dans le seed de branding) mais ses sections de landing
+   sont enregistrées sous « cockpitjourney ». Tant que la base n'est pas
+   alignée, on rattache le contenu à son application : il s'édite sous le bon
+   nom, la bonne couleur et la bonne URL. La lecture ET l'écriture continuent
+   d'utiliser l'identifiant d'origine — rien ne change pour le site public.
+   Clé = id du catalogue, valeur = app_id réellement utilisé en base. */
+const CONTENT_ID_ALIASES: Record<string, string> = {
+  "cockpit-journey": "cockpitjourney",
+};
+
 const sectionOf = (store: Store, appId: string, key: string): SectionState =>
   store[appId]?.[key] ?? EMPTY_SECTION;
 
@@ -110,15 +122,16 @@ export default function LandingPagesPage() {
   const apps = useMemo(() => {
     const known = appList.map(a => ({
       id: a.id,
+      contentId: CONTENT_ID_ALIASES[a.id] ?? a.id,
       name: a.name,
       color: a.color || "#4F46E5",
       url: a.external_url || `${SITE_URL}/apps/${a.id}`,
       orphan: false,
     }));
-    const knownIds = new Set(known.map(a => a.id));
+    const claimed = new Set(known.map(a => a.contentId));
     const orphans = Object.keys(published)
-      .filter(id => !knownIds.has(id))
-      .map(id => ({ id, name: id, color: "#4F46E5", url: `${SITE_URL}/apps/${id}`, orphan: true }));
+      .filter(id => !claimed.has(id))
+      .map(id => ({ id, contentId: id, name: id, color: "#4F46E5", url: `${SITE_URL}/apps/${id}`, orphan: true }));
     return [...known, ...orphans];
   }, [appList, published]);
 
@@ -127,6 +140,8 @@ export default function LandingPagesPage() {
   }, [apps, appId]);
 
   const app = apps.find(a => a.id === appId);
+  /** Identifiant sous lequel le contenu de l'app sélectionnée vit en base. */
+  const contentId = app?.contentId ?? appId;
 
   const visibleApps = useMemo(() => {
     const q = appQuery.trim().toLowerCase();
@@ -136,10 +151,10 @@ export default function LandingPagesPage() {
   /* ── sections de l'app : schéma ∪ sections trouvées en base ── */
   const sectionKeys = useMemo(() => {
     const keys = new Set(SECTIONS.map(s => s.key));
-    Object.keys(published[appId] ?? {}).forEach(k => keys.add(k));
-    Object.keys(draft[appId] ?? {}).forEach(k => keys.add(k));
+    Object.keys(published[contentId] ?? {}).forEach(k => keys.add(k));
+    Object.keys(draft[contentId] ?? {}).forEach(k => keys.add(k));
     return [...keys].sort((a, b) => sectionMeta(a).order - sectionMeta(b).order || a.localeCompare(b));
-  }, [published, draft, appId]);
+  }, [published, draft, contentId]);
 
   /* ── état modifié ── */
   const dirtyKeys = useCallback((aid: string) => {
@@ -147,9 +162,9 @@ export default function LandingPagesPage() {
     return [...keys].filter(k => !sameSection(sectionOf(draft, aid, k), sectionOf(published, aid, k)));
   }, [draft, published]);
 
-  const currentDirty = useMemo(() => dirtyKeys(appId), [dirtyKeys, appId]);
+  const currentDirty = useMemo(() => dirtyKeys(contentId), [dirtyKeys, contentId]);
   const totalDirty = useMemo(
-    () => apps.reduce((n, a) => n + dirtyKeys(a.id).length, 0),
+    () => apps.reduce((n, a) => n + dirtyKeys(a.contentId).length, 0),
     [apps, dirtyKeys],
   );
 
@@ -163,29 +178,29 @@ export default function LandingPagesPage() {
   /* ── mutations ── */
   const patchSection = (key: string, patch: Partial<SectionState>) => {
     setDraft(prev => {
-      const base = prev[appId]?.[key] ?? published[appId]?.[key] ?? EMPTY_SECTION;
-      return { ...prev, [appId]: { ...prev[appId], [key]: { ...base, ...patch } } };
+      const base = prev[contentId]?.[key] ?? published[contentId]?.[key] ?? EMPTY_SECTION;
+      return { ...prev, [contentId]: { ...prev[contentId], [key]: { ...base, ...patch } } };
     });
   };
 
   const resetSection = (key: string) => {
-    const pub = published[appId]?.[key];
+    const pub = published[contentId]?.[key];
     setDraft(prev => {
-      const sections = { ...prev[appId] };
+      const sections = { ...prev[contentId] };
       if (pub) sections[key] = JSON.parse(JSON.stringify(pub));
       else delete sections[key];
-      return { ...prev, [appId]: sections };
+      return { ...prev, [contentId]: sections };
     });
   };
 
   const publishSection = async (key: string): Promise<boolean> => {
-    const state = sectionOf(draft, appId, key);
+    const state = sectionOf(draft, contentId, key);
     setSaving(key);
     const { data, error } = await supabase
       .from("app_landing_content")
       .upsert(
         {
-          app_id: appId,
+          app_id: contentId,
           section: key,
           data: state.data ?? {},
           sort_order: sectionMeta(key).order,
@@ -210,8 +225,8 @@ export default function LandingPagesPage() {
       updatedAt: row.updated_at,
       exists: true,
     };
-    setPublished(prev => ({ ...prev, [appId]: { ...prev[appId], [key]: saved } }));
-    setDraft(prev => ({ ...prev, [appId]: { ...prev[appId], [key]: JSON.parse(JSON.stringify(saved)) } }));
+    setPublished(prev => ({ ...prev, [contentId]: { ...prev[contentId], [key]: saved } }));
+    setDraft(prev => ({ ...prev, [contentId]: { ...prev[contentId], [key]: JSON.parse(JSON.stringify(saved)) } }));
     return true;
   };
 
@@ -232,10 +247,10 @@ export default function LandingPagesPage() {
     () => sectionKeys
       .filter(k => sectionMeta(k).previewable)
       .map(k => {
-        const s = sectionOf(draft, appId, k);
+        const s = sectionOf(draft, contentId, k);
         return { key: k, data: s.data ?? {}, isActive: s.isActive };
       }),
-    [sectionKeys, draft, appId],
+    [sectionKeys, draft, contentId],
   );
 
   const busy = loading || appsLoading;
@@ -295,7 +310,7 @@ export default function LandingPagesPage() {
         <div className="flex flex-wrap gap-2">
           {visibleApps.map(a => {
             const active = a.id === appId;
-            const nDirty = dirtyKeys(a.id).length;
+            const nDirty = dirtyKeys(a.contentId).length;
             return (
               <button
                 key={a.id}
@@ -327,6 +342,14 @@ export default function LandingPagesPage() {
             Le site correspondant ne le lira que s'il utilise exactement cet identifiant.
           </p>
         )}
+        {app && !app.orphan && app.contentId !== app.id && (
+          <p className="mt-3 text-xs text-p-muted inline-flex items-start gap-1.5">
+            <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+            Le catalogue identifie cette application «&nbsp;{app.id}&nbsp;» mais son contenu est stocké sous
+            «&nbsp;{app.contentId}&nbsp;». L'édition porte bien sur les lignes existantes ; aligner les deux
+            identifiants en base reste à faire.
+          </p>
+        )}
       </div>
 
       {busy ? (
@@ -340,8 +363,8 @@ export default function LandingPagesPage() {
             {sectionKeys.map(key => {
               const meta = sectionMeta(key);
               const Icon = meta.icon;
-              const state = sectionOf(draft, appId, key);
-              const pub = published[appId]?.[key];
+              const state = sectionOf(draft, contentId, key);
+              const pub = published[contentId]?.[key];
               const isDirty = !sameSection(state, pub ?? EMPTY_SECTION);
               const isOpen = openSection === key;
               const Editor = EDITORS[key] ?? GenericEditor;
