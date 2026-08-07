@@ -17,6 +17,8 @@
 -- variantes foncées différentes pour un même accent.
 --
 -- À APPLIQUER sur le projet Supabase partagé (celui qui héberge public.apps).
+-- Statut : les deux étapes ont été exécutées le 2026-08-07 sur la base partagée
+-- (11 apps, 0 sans accents, 0 sans wordmark). Le script reste rejouable tel quel.
 -- ============================================================================
 
 -- ── Étape 1 — accents (applicable immédiatement, aucune dépendance externe) ──
@@ -33,26 +35,30 @@ FROM (VALUES
 WHERE a.id = v.app_id;
 
 -- ── Étape 2 — wordmarks ─────────────────────────────────────────────────────
--- ⚠️ À N'EXÉCUTER QU'UNE FOIS LES ASSETS PRÉSENTS SUR LA BRANCHE `main` :
--- les URL pointent sur jsDelivr @main, qui ne sert que ce qui est sur main.
--- Exécutée trop tôt, elle produirait des images cassées dans les emails d'auth —
--- soit une régression par rapport à l'état actuel (colonne NULL = repli propre).
+-- Prérequis : les fichiers wm-atlas-people, wm-cockpit-cr, wm-cockpit-projet et
+-- wm-wedo (.svg, .png, @2x.png) doivent être présents dans public/wordmarks/ sur
+-- la branche `main` — les URL pointent sur jsDelivr @main, qui ne sert que ce qui
+-- est sur main. Exécutée avant que les assets y soient, cette étape produirait des
+-- images cassées dans les emails d'auth, soit une régression par rapport à une
+-- colonne NULL (qui a un repli propre).
 --
--- Les fichiers wm-atlas-people, wm-cockpit-cr, wm-cockpit-projet et wm-wedo
--- (.svg, .png, @2x.png) sont ajoutés dans public/wordmarks/ par le même lot.
---
--- UPDATE public.apps AS a SET
---   wordmark_url = 'https://cdn.jsdelivr.net/gh/Oss53pa/Atlas-studio-Console-Admin@main/public/wordmarks/'
---                  || v.wm || '.png',
---   updated_at   = now()
--- FROM (VALUES
---   ('atlas-people',   'wm-atlas-people'),
---   ('cockpit-cr',     'wm-cockpit-cr'),
---   ('cockpit-projet', 'wm-cockpit-projet'),
---   ('wedo',           'wm-wedo')
--- ) AS v(app_id, wm)
--- WHERE a.id = v.app_id;
+-- Ce prérequis est rempli depuis la PR #7 (merge 88b88c7) : les assets sont sur
+-- main et cette étape a été exécutée dans la foulée. Sur une base neuve, elle se
+-- rejoue telle quelle, juste après l'étape 1.
+UPDATE public.apps AS a SET
+  wordmark_url = 'https://cdn.jsdelivr.net/gh/Oss53pa/Atlas-studio-Console-Admin@main/public/wordmarks/'
+                 || v.wm || '.png',
+  updated_at   = now()
+FROM (VALUES
+  ('atlas-people',   'wm-atlas-people'),
+  ('cockpit-cr',     'wm-cockpit-cr'),
+  ('cockpit-projet', 'wm-cockpit-projet'),
+  ('wedo',           'wm-wedo')
+) AS v(app_id, wm)
+WHERE a.id = v.app_id;
 
--- Contrôle
--- SELECT id, color, accent_deep, accent_soft, wordmark_url
--- FROM public.apps ORDER BY sort_order;
+-- Contrôle — doit renvoyer 0, 0, 11
+-- SELECT count(*) FILTER (WHERE accent_deep IS NULL OR accent_soft IS NULL) AS sans_accents,
+--        count(*) FILTER (WHERE wordmark_url IS NULL)                       AS sans_wordmark,
+--        count(*)                                                           AS total
+-- FROM public.apps;
