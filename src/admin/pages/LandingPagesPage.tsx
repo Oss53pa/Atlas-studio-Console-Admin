@@ -41,16 +41,12 @@ type Store = Record<string, AppSections>;
 const EMPTY_SECTION: SectionState = { data: {}, isActive: true, updatedAt: null, exists: false };
 
 /* Contenus stockés sous un app_id qui n'est pas celui du catalogue.
-   CockpitJourney est référencé « cockpit-journey » dans public.apps (et dans
-   subscriptions, et dans le seed de branding) mais ses sections de landing
-   sont enregistrées sous « cockpitjourney ». Tant que la base n'est pas
-   alignée, on rattache le contenu à son application : il s'édite sous le bon
-   nom, la bonne couleur et la bonne URL. La lecture ET l'écriture continuent
-   d'utiliser l'identifiant d'origine — rien ne change pour le site public.
+   Vide depuis l'alignement de « cockpitjourney » sur « cockpit-journey »
+   (migration align_cockpitjourney_landing_app_id). Le mécanisme est conservé :
+   il rattache un contenu à son application sans rien changer en base, ce qui
+   laisse le temps d'aligner les identifiants côté site avant de migrer.
    Clé = id du catalogue, valeur = app_id réellement utilisé en base. */
-const CONTENT_ID_ALIASES: Record<string, string> = {
-  "cockpit-journey": "cockpitjourney",
-};
+const CONTENT_ID_ALIASES: Record<string, string> = {};
 
 const sectionOf = (store: Store, appId: string, key: string): SectionState =>
   store[appId]?.[key] ?? EMPTY_SECTION;
