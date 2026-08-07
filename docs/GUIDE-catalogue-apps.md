@@ -127,11 +127,26 @@ Si le site n'affiche qu'une partie du catalogue, la cause est presque toujours
 
 ## 6. Points de vigilance constatés sur la base actuelle
 
-**a) `sort_order` en doublon.** `advist` et `cockpit-fa` valent tous deux `3`,
-`atlasbanx` et `cockpit-journey` valent tous deux `4`. Les deux lectures trient
-uniquement sur `sort_order` : à valeur égale, **l'ordre des cartes n'est pas
-déterministe** et peut changer d'un chargement à l'autre. Correctif fourni dans
-`db/20260807_apps_sort_order.sql` (renumérotation par pas de 10).
+**a) `sort_order` en doublon — ✅ corrigé le 2026-08-07.** `advist` et `cockpit-fa`
+valaient tous deux `3`, `atlasbanx` et `cockpit-journey` tous deux `4`. Les deux
+lectures trient uniquement sur `sort_order` : à valeur égale, l'ordre des cartes
+n'était pas déterministe et pouvait changer d'un chargement à l'autre.
+`db/20260807_apps_sort_order.sql` a été appliqué (renumérotation par pas de 10,
+ordre d'origine préservé) — plus aucun doublon. Ordre en vigueur :
+
+| `sort_order` | app |
+|---|---|
+| 10 | `atlas-people` |
+| 20 | `atlas-compta` |
+| 30 | `taxpilot` |
+| 40 | `advist` |
+| 50 | `cockpit-fa` |
+| 60 | `atlasbanx` *(masquée)* |
+| 70 | `cockpit-journey` |
+| 80 | `cockpit-cr` |
+| 90 | `cockpit-projet` |
+| 100 | `tablesmart` |
+| 110 | `wedo` |
 
 **b) `pricing_notes` / `seat_pricing` / `currency` ne sont pas éditables depuis
 la console.** Ces trois colonnes existent en base et sont peuplées (mentions
