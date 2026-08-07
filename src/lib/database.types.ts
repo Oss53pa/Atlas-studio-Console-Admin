@@ -46,6 +46,18 @@ export interface AppRow {
   updated_at: string;
 }
 
+/** Contenu d'une section de landing page, par app (console admin + sites publics). */
+export interface AppLandingContentRow {
+  id: string;
+  app_id: string;
+  section: string;
+  data: Record<string, any>;
+  sort_order: number | null;
+  is_active: boolean | null;
+  updated_at: string | null;
+  updated_by: string | null;
+}
+
 export interface SiteContentRow {
   key: string;
   data: Record<string, any>;
@@ -275,6 +287,7 @@ export interface Database {
       profiles: Table<Profile, Partial<Profile> & { id: string; email: string }>;
       apps: Table<AppRow, Partial<AppRow> & { id: string; name: string; type: AppType }>;
       site_content: Table<SiteContentRow, Partial<SiteContentRow> & { key: string }>;
+      app_landing_content: Table<AppLandingContentRow, Partial<AppLandingContentRow> & { app_id: string; section: string }>;
       subscriptions: Table<Subscription, Partial<Subscription> & { user_id: string; app_id: string; plan: string }>;
       invoices: Table<Invoice, Partial<Invoice> & { invoice_number: string; user_id: string; app_id: string; plan: string; amount: number }>;
       activity_log: Table<ActivityLog, Partial<ActivityLog> & { action: string }>;

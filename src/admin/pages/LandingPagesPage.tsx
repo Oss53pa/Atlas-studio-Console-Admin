@@ -1,374 +1,478 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  Save, Loader2, ChevronDown, ChevronRight, Plus, Trash2, ExternalLink,
-  Star, Clock, LayoutDashboard, MessageSquareQuote, HelpCircle, Megaphone,
-  BarChart3, CreditCard, Sparkles, X,
+  AlertTriangle, Braces, ChevronDown, ChevronRight, Clock, ExternalLink, Eye, EyeOff,
+  FormInput, Loader2, Monitor, RotateCcw, Save, Search, Smartphone, UploadCloud,
 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../lib/auth";
+import { useAppCatalog } from "../../hooks/useAppCatalog";
 import { useToast } from "../contexts/ToastContext";
+import { AdminPageHeader } from "../components/AdminPageHeader";
+import { SITE_URL } from "../../config/site";
+import { INPUT, JsonEditor, NO_AUTOFILL, type SectionData } from "../components/landing/LandingKit";
+import { EDITORS, GenericEditor } from "../components/landing/LandingEditors";
+import { SECTIONS, sectionMeta } from "../components/landing/LandingSchema";
+import { LandingPreview, type PreviewSection } from "../components/landing/LandingPreview";
+import type { AppLandingContentRow } from "../../lib/database.types";
 
-/* ── constants ── */
-const APPS = [
-  { id: "advist", label: "Advist", url: "https://advist.atlas-studio.io" },
-  { id: "taxpilot", label: "Liass'Pilot", url: "https://taxpilot.atlas-studio.io" },
-  { id: "atlas-fa", label: "Atlas F&A", url: "https://atlas-fna.atlas-studio.org" },
-  { id: "cockpit-fa", label: "Cockpit F&A", url: "https://cockpit-fna.atlas-studio.org" },
-  { id: "wedo", label: "WeDo", url: "https://wedo.atlas-studio.org" },
-] as const;
+/* ══════════════════════════════════════════════════════════════════════════
+   Landing Pages — édition du contenu marketing de chaque app.
 
-const SECTIONS = [
-  { key: "hero", label: "Hero", icon: LayoutDashboard, order: 1 },
-  { key: "stats", label: "Stats", icon: BarChart3, order: 2 },
-  { key: "features", label: "Features", icon: Sparkles, order: 3 },
-  { key: "pricing", label: "Pricing", icon: CreditCard, order: 4 },
-  { key: "testimonials", label: "Testimonials", icon: MessageSquareQuote, order: 5 },
-  { key: "faq", label: "FAQ", icon: HelpCircle, order: 6 },
-  { key: "cta", label: "CTA", icon: Megaphone, order: 7 },
-] as const;
+   Ce module remplace une version qui souffrait de trois défauts :
+     • la liste des apps était figée dans le code (5 entrées, dont un id et
+       des URLs erronés) alors que le catalogue en compte davantage ;
+     • aucun aperçu : impossible de voir une modification avant publication ;
+     • des couleurs en dur (#F5F5F5 sur blanc) rendaient le texte illisible.
 
-type AppId = (typeof APPS)[number]["id"];
-type SectionKey = (typeof SECTIONS)[number]["key"];
-type SectionData = Record<string, any>;
-type ContentMap = Partial<Record<SectionKey, { data: SectionData; updated_at: string | null }>>;
+   Principe retenu : le formulaire édite un BROUILLON local ; la base n'est
+   touchée qu'à la publication, section par section (ou en bloc).
+   ══════════════════════════════════════════════════════════════════════════ */
 
-/* ── style tokens ── */
-const cx = {
-  bg: "bg-p-surface",
-  surface: "bg-p-surface",
-  alt: "bg-p-surface",
-  border: "border-p-border",
-  accent: "text-p-accent",
-  accentBg: "bg-p-accent",
-  text: "text-[#F5F5F5]",
-  muted: "text-[#888]",
-  input: "w-full px-3 py-2 bg-p-surface border border-p-border rounded-lg text-[#F5F5F5] text-sm outline-none focus:border-p-accent transition-colors placeholder-[#666]",
-  btn: "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-};
-
-/* ── tiny components ── */
-function Field({ label, value, onChange, multi, placeholder, mono }: {
-  label: string; value: string; onChange: (v: string) => void; multi?: boolean; placeholder?: string; mono?: boolean;
-}) {
-  const cls = `${cx.input}${mono ? " font-mono" : ""}`;
-  return (
-    <div className="mb-3">
-      <label className="block text-[#888] text-xs font-semibold mb-1">{label}</label>
-      {multi
-        ? <textarea value={value} onChange={e => onChange(e.target.value)} rows={3} placeholder={placeholder} className={`${cls} resize-y`} />
-        : <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} className={cls} />}
-    </div>
-  );
+interface SectionState {
+  data: SectionData;
+  isActive: boolean;
+  updatedAt: string | null;
+  /** false tant qu'aucune ligne n'existe en base pour (app, section). */
+  exists: boolean;
 }
+type AppSections = Record<string, SectionState>;
+type Store = Record<string, AppSections>;
 
-function TagInput({ label, tags, onChange }: { label: string; tags: string[]; onChange: (t: string[]) => void }) {
-  const [draft, setDraft] = useState("");
-  const add = () => { if (draft.trim()) { onChange([...tags, draft.trim()]); setDraft(""); } };
-  return (
-    <div className="mb-3">
-      <label className="block text-[#888] text-xs font-semibold mb-1">{label}</label>
-      <div className="flex flex-wrap gap-1.5 mb-1.5">
-        {tags.map((t, i) => (
-          <span key={i} className="flex items-center gap-1 px-2 py-0.5 bg-p-accent/15 text-p-accent rounded text-xs">
-            {t}<X className="w-3 h-3 cursor-pointer" onClick={() => onChange(tags.filter((_, j) => j !== i))} />
-          </span>
-        ))}
-      </div>
-      <div className="flex gap-2">
-        <input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key === "Enter" && (e.preventDefault(), add())}
-          className={cx.input} placeholder="Type and press Enter" />
-        <button onClick={add} className={`${cx.btn} ${cx.accentBg} text-p-surface`}><Plus className="w-4 h-4" /></button>
-      </div>
-    </div>
-  );
-}
+const EMPTY_SECTION: SectionState = { data: {}, isActive: true, updatedAt: null, exists: false };
 
-/* ── section editors ── */
-function HeroEditor({ data, set }: { data: SectionData; set: (d: SectionData) => void }) {
-  const u = (k: string, v: any) => set({ ...data, [k]: v });
-  return (<>
-    <Field label="Title" value={data.title || ""} onChange={v => u("title", v)} />
-    <Field label="Subtitle" value={data.subtitle || ""} onChange={v => u("subtitle", v)} multi />
-    <div className="grid grid-cols-2 gap-3">
-      <Field label="CTA Primary Text" value={data.cta_primary_text || ""} onChange={v => u("cta_primary_text", v)} />
-      <Field label="CTA Primary URL" value={data.cta_primary_url || ""} onChange={v => u("cta_primary_url", v)} />
-      <Field label="CTA Secondary Text" value={data.cta_secondary_text || ""} onChange={v => u("cta_secondary_text", v)} />
-      <Field label="CTA Secondary URL" value={data.cta_secondary_url || ""} onChange={v => u("cta_secondary_url", v)} />
-    </div>
-    <TagInput label="Badges" tags={data.badges || []} onChange={v => u("badges", v)} />
-  </>);
-}
+const sectionOf = (store: Store, appId: string, key: string): SectionState =>
+  store[appId]?.[key] ?? EMPTY_SECTION;
 
-function StatsEditor({ data, set }: { data: SectionData; set: (d: SectionData) => void }) {
-  const items: { value: string; label: string }[] = data.items || [];
-  const upd = (arr: typeof items) => set({ ...data, items: arr });
-  return (<>
-    {items.map((s, i) => (
-      <div key={i} className="flex gap-2 mb-2 items-end">
-        <Field label="Value" value={s.value} onChange={v => upd(items.map((x, j) => j === i ? { ...x, value: v } : x))} />
-        <Field label="Label" value={s.label} onChange={v => upd(items.map((x, j) => j === i ? { ...x, label: v } : x))} />
-        <button onClick={() => upd(items.filter((_, j) => j !== i))} className="mb-3 p-2 text-red-700 hover:text-red-700"><Trash2 className="w-4 h-4" /></button>
-      </div>
-    ))}
-    <button onClick={() => upd([...items, { value: "", label: "" }])} className={`${cx.btn} border ${cx.border} ${cx.muted} hover:${cx.text}`}>
-      <Plus className="w-4 h-4 inline mr-1" />Add stat
-    </button>
-  </>);
-}
+const sameSection = (a: SectionState, b: SectionState) =>
+  a.isActive === b.isActive && JSON.stringify(a.data ?? {}) === JSON.stringify(b.data ?? {});
 
-function FeaturesEditor({ data, set }: { data: SectionData; set: (d: SectionData) => void }) {
-  const items: { title: string; description: string; icon: string }[] = data.items || [];
-  const upd = (arr: typeof items) => set({ ...data, items: arr });
-  return (<>
-    {items.map((f, i) => (
-      <div key={i} className={`p-3 ${cx.alt} rounded-lg mb-2`}>
-        <div className="flex justify-between mb-2">
-          <span className="text-xs text-[#888]">Feature {i + 1}</span>
-          <button onClick={() => upd(items.filter((_, j) => j !== i))} className="text-red-700 hover:text-red-700"><Trash2 className="w-3.5 h-3.5" /></button>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <Field label="Title" value={f.title} onChange={v => upd(items.map((x, j) => j === i ? { ...x, title: v } : x))} />
-          <Field label="Icon (lucide name)" value={f.icon || ""} onChange={v => upd(items.map((x, j) => j === i ? { ...x, icon: v } : x))} />
-        </div>
-        <Field label="Description" value={f.description} onChange={v => upd(items.map((x, j) => j === i ? { ...x, description: v } : x))} multi />
-      </div>
-    ))}
-    <button onClick={() => upd([...items, { title: "", description: "", icon: "" }])} className={`${cx.btn} border ${cx.border} ${cx.muted} hover:${cx.text}`}>
-      <Plus className="w-4 h-4 inline mr-1" />Add feature
-    </button>
-  </>);
-}
-
-function PricingEditor({ data, set }: { data: SectionData; set: (d: SectionData) => void }) {
-  const plans: any[] = data.plans || [];
-  const upd = (arr: any[]) => set({ ...data, plans: arr });
-  const patch = (i: number, k: string, v: any) => upd(plans.map((p, j) => j === i ? { ...p, [k]: v } : p));
-  return (<>
-    {plans.map((p, i) => (
-      <div key={i} className={`p-4 ${cx.alt} rounded-lg mb-3 ${p.is_popular ? "ring-1 ring-p-accent" : ""}`}>
-        <div className="flex justify-between items-center mb-3">
-          <span className="text-sm font-semibold text-[#F5F5F5]">{p.name || `Plan ${i + 1}`}</span>
-          <div className="flex items-center gap-3">
-            <label className="flex items-center gap-1.5 text-xs text-[#888] cursor-pointer">
-              <input type="checkbox" checked={!!p.is_popular} onChange={e => patch(i, "is_popular", e.target.checked)} className="accent-[var(--c-accent)]" />
-              <Star className="w-3.5 h-3.5" />Popular
-            </label>
-            <button onClick={() => upd(plans.filter((_, j) => j !== i))} className="text-red-700 hover:text-red-700"><Trash2 className="w-3.5 h-3.5" /></button>
-          </div>
-        </div>
-        <div className="grid grid-cols-4 gap-2">
-          <Field label="Name" value={p.name || ""} onChange={v => patch(i, "name", v)} />
-          <Field label="Price" value={String(p.price ?? "")} onChange={v => patch(i, "price", Number(v) || 0)} mono />
-          <Field label="Currency" value={p.currency || "FCFA"} onChange={v => patch(i, "currency", v)} mono />
-          <Field label="Period" value={p.period || ""} onChange={v => patch(i, "period", v)} placeholder="/mois" />
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <Field label="CTA Text" value={p.cta_text || ""} onChange={v => patch(i, "cta_text", v)} />
-          <Field label="CTA URL" value={p.cta_url || ""} onChange={v => patch(i, "cta_url", v)} />
-        </div>
-        <TagInput label="Features" tags={p.features || []} onChange={v => patch(i, "features", v)} />
-      </div>
-    ))}
-    <button onClick={() => upd([...plans, { name: "", price: 0, currency: "FCFA", period: "/mois", features: [], is_popular: false, cta_text: "", cta_url: "" }])}
-      className={`${cx.btn} border ${cx.border} ${cx.muted} hover:${cx.text}`}>
-      <Plus className="w-4 h-4 inline mr-1" />Add plan
-    </button>
-  </>);
-}
-
-function TestimonialsEditor({ data, set }: { data: SectionData; set: (d: SectionData) => void }) {
-  const items: any[] = data.items || [];
-  const upd = (arr: any[]) => set({ ...data, items: arr });
-  const patch = (i: number, k: string, v: any) => upd(items.map((t, j) => j === i ? { ...t, [k]: v } : t));
-  return (<>
-    {items.map((t, i) => (
-      <div key={i} className={`p-3 ${cx.alt} rounded-lg mb-2`}>
-        <div className="flex justify-between mb-2">
-          <span className="text-xs text-[#888]">Testimonial {i + 1}</span>
-          <button onClick={() => upd(items.filter((_, j) => j !== i))} className="text-red-700 hover:text-red-700"><Trash2 className="w-3.5 h-3.5" /></button>
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          <Field label="Name" value={t.name || ""} onChange={v => patch(i, "name", v)} />
-          <Field label="Role" value={t.role || ""} onChange={v => patch(i, "role", v)} />
-          <Field label="Company" value={t.company || ""} onChange={v => patch(i, "company", v)} />
-        </div>
-        <Field label="Text" value={t.text || ""} onChange={v => patch(i, "text", v)} multi />
-        <div className="grid grid-cols-2 gap-2">
-          <Field label="Avatar URL" value={t.avatar || ""} onChange={v => patch(i, "avatar", v)} />
-          <div className="mb-3">
-            <label className="block text-[#888] text-xs font-semibold mb-1">Rating</label>
-            <div className="flex gap-1 mt-1">
-              {[1, 2, 3, 4, 5].map(n => (
-                <Star key={n} className={`w-5 h-5 cursor-pointer ${n <= (t.rating || 0) ? "text-p-accent fill-p-accent" : "text-p-surface"}`}
-                  onClick={() => patch(i, "rating", n)} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    ))}
-    <button onClick={() => upd([...items, { name: "", role: "", company: "", text: "", avatar: "", rating: 5 }])}
-      className={`${cx.btn} border ${cx.border} ${cx.muted} hover:${cx.text}`}>
-      <Plus className="w-4 h-4 inline mr-1" />Add testimonial
-    </button>
-  </>);
-}
-
-function FAQEditor({ data, set }: { data: SectionData; set: (d: SectionData) => void }) {
-  const items: { question: string; answer: string }[] = data.items || [];
-  const upd = (arr: typeof items) => set({ ...data, items: arr });
-  return (<>
-    {items.map((f, i) => (
-      <div key={i} className="flex gap-2 mb-2 items-start">
-        <div className="flex-1">
-          <Field label={`Q${i + 1}`} value={f.question} onChange={v => upd(items.map((x, j) => j === i ? { ...x, question: v } : x))} />
-          <Field label="Answer" value={f.answer} onChange={v => upd(items.map((x, j) => j === i ? { ...x, answer: v } : x))} multi />
-        </div>
-        <button onClick={() => upd(items.filter((_, j) => j !== i))} className="mt-5 p-2 text-red-700 hover:text-red-700"><Trash2 className="w-4 h-4" /></button>
-      </div>
-    ))}
-    <button onClick={() => upd([...items, { question: "", answer: "" }])} className={`${cx.btn} border ${cx.border} ${cx.muted} hover:${cx.text}`}>
-      <Plus className="w-4 h-4 inline mr-1" />Add FAQ
-    </button>
-  </>);
-}
-
-function CTAEditor({ data, set }: { data: SectionData; set: (d: SectionData) => void }) {
-  const u = (k: string, v: any) => set({ ...data, [k]: v });
-  return (<>
-    <Field label="Title" value={data.title || ""} onChange={v => u("title", v)} />
-    <Field label="Subtitle" value={data.subtitle || ""} onChange={v => u("subtitle", v)} multi />
-    <div className="grid grid-cols-2 gap-3">
-      <Field label="CTA Text" value={data.cta_text || ""} onChange={v => u("cta_text", v)} />
-      <Field label="CTA URL" value={data.cta_url || ""} onChange={v => u("cta_url", v)} />
-    </div>
-  </>);
-}
-
-const EDITORS: Record<SectionKey, React.FC<{ data: SectionData; set: (d: SectionData) => void }>> = {
-  hero: HeroEditor, stats: StatsEditor, features: FeaturesEditor,
-  pricing: PricingEditor, testimonials: TestimonialsEditor, faq: FAQEditor, cta: CTAEditor,
-};
-
-/* ══════════════ MAIN PAGE ══════════════ */
 export default function LandingPagesPage() {
   const { user } = useAuth();
+  const { appList, loading: appsLoading } = useAppCatalog();
   const { success, error: toastErr } = useToast();
-  const [app, setApp] = useState<AppId>("advist");
-  const [content, setContent] = useState<Record<AppId, ContentMap>>({ advist: {}, taxpilot: {}, "atlas-fa": {}, "cockpit-fa": {}, wedo: {} });
-  const [open, setOpen] = useState<SectionKey | null>("hero");
-  const [saving, setSaving] = useState<SectionKey | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  /* fetch all apps in one go */
+  const [published, setPublished] = useState<Store>({});
+  const [draft, setDraft] = useState<Store>({});
+  const [appId, setAppId] = useState<string>("");
+  const [openSection, setOpenSection] = useState<string | null>("hero");
+  const [jsonMode, setJsonMode] = useState<Record<string, boolean>>({});
+  const [saving, setSaving] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [appQuery, setAppQuery] = useState("");
+  const [showPreview, setShowPreview] = useState(true);
+  const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
+
+  /* ── chargement ── */
   const fetchAll = useCallback(async () => {
     setLoading(true);
-    try {
-      const { data, error } = await supabase.from("app_landing_content").select("*").order("sort_order");
-      if (error) { toastErr("Failed to load content"); return; }
-      const map: Record<AppId, ContentMap> = { advist: {}, taxpilot: {}, "atlas-fa": {}, "cockpit-fa": {}, wedo: {} };
-      for (const row of (data ?? []) as { app_id: string; section: string; data: any; updated_at: string }[]) {
-        const aid = row.app_id as AppId;
-        if (map[aid]) map[aid][row.section as SectionKey] = { data: row.data ?? {}, updated_at: row.updated_at };
-      }
-      setContent(map);
-    } catch (e) {
-      console.error("LandingPages fetchAll", e);
-      toastErr("Failed to load content");
-    } finally {
+    const { data, error } = await supabase
+      .from("app_landing_content")
+      .select("app_id, section, data, is_active, updated_at")
+      .order("app_id");
+
+    if (error) {
+      console.error("LandingPages fetchAll", error);
+      toastErr(`Chargement impossible : ${error.message}`);
       setLoading(false);
+      return;
     }
+
+    const store: Store = {};
+    for (const row of (data ?? []) as Pick<AppLandingContentRow, "app_id" | "section" | "data" | "is_active" | "updated_at">[]) {
+      (store[row.app_id] ??= {})[row.section] = {
+        data: (row.data ?? {}) as SectionData,
+        isActive: row.is_active !== false,
+        updatedAt: row.updated_at,
+        exists: true,
+      };
+    }
+    setPublished(store);
+    // Les brouillons non publiés en cours d'édition sont conservés ;
+    // seules les sections propres sont resynchronisées.
+    setDraft(prev => {
+      const next: Store = JSON.parse(JSON.stringify(store));
+      for (const [aid, sections] of Object.entries(prev)) {
+        for (const [key, state] of Object.entries(sections)) {
+          const pub = store[aid]?.[key] ?? EMPTY_SECTION;
+          if (!sameSection(state, pub)) (next[aid] ??= {})[key] = state;
+        }
+      }
+      return next;
+    });
+    setLoading(false);
   }, [toastErr]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
-  const getData = (sec: SectionKey): SectionData => content[app]?.[sec]?.data ?? {};
-  const setData = (sec: SectionKey, d: SectionData) => {
-    setContent(prev => ({ ...prev, [app]: { ...prev[app], [sec]: { data: d, updated_at: prev[app]?.[sec]?.updated_at ?? null } } }));
+  /* ── liste des apps : catalogue ∪ app_id présents dans le contenu ──
+     Un contenu dont l'app_id n'existe pas au catalogue reste visible et
+     éditable (et signalé), au lieu d'être silencieusement inaccessible. */
+  const apps = useMemo(() => {
+    const known = appList.map(a => ({
+      id: a.id,
+      name: a.name,
+      color: a.color || "#4F46E5",
+      url: a.external_url || `${SITE_URL}/apps/${a.id}`,
+      orphan: false,
+    }));
+    const knownIds = new Set(known.map(a => a.id));
+    const orphans = Object.keys(published)
+      .filter(id => !knownIds.has(id))
+      .map(id => ({ id, name: id, color: "#4F46E5", url: `${SITE_URL}/apps/${id}`, orphan: true }));
+    return [...known, ...orphans];
+  }, [appList, published]);
+
+  useEffect(() => {
+    if (!appId && apps.length > 0) setAppId(apps[0].id);
+  }, [apps, appId]);
+
+  const app = apps.find(a => a.id === appId);
+
+  const visibleApps = useMemo(() => {
+    const q = appQuery.trim().toLowerCase();
+    return q ? apps.filter(a => a.name.toLowerCase().includes(q) || a.id.toLowerCase().includes(q)) : apps;
+  }, [apps, appQuery]);
+
+  /* ── sections de l'app : schéma ∪ sections trouvées en base ── */
+  const sectionKeys = useMemo(() => {
+    const keys = new Set(SECTIONS.map(s => s.key));
+    Object.keys(published[appId] ?? {}).forEach(k => keys.add(k));
+    Object.keys(draft[appId] ?? {}).forEach(k => keys.add(k));
+    return [...keys].sort((a, b) => sectionMeta(a).order - sectionMeta(b).order || a.localeCompare(b));
+  }, [published, draft, appId]);
+
+  /* ── état modifié ── */
+  const dirtyKeys = useCallback((aid: string) => {
+    const keys = new Set([...Object.keys(published[aid] ?? {}), ...Object.keys(draft[aid] ?? {})]);
+    return [...keys].filter(k => !sameSection(sectionOf(draft, aid, k), sectionOf(published, aid, k)));
+  }, [draft, published]);
+
+  const currentDirty = useMemo(() => dirtyKeys(appId), [dirtyKeys, appId]);
+  const totalDirty = useMemo(
+    () => apps.reduce((n, a) => n + dirtyKeys(a.id).length, 0),
+    [apps, dirtyKeys],
+  );
+
+  useEffect(() => {
+    if (totalDirty === 0) return;
+    const onLeave = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
+    window.addEventListener("beforeunload", onLeave);
+    return () => window.removeEventListener("beforeunload", onLeave);
+  }, [totalDirty]);
+
+  /* ── mutations ── */
+  const patchSection = (key: string, patch: Partial<SectionState>) => {
+    setDraft(prev => {
+      const base = prev[appId]?.[key] ?? published[appId]?.[key] ?? EMPTY_SECTION;
+      return { ...prev, [appId]: { ...prev[appId], [key]: { ...base, ...patch } } };
+    });
   };
 
-  const save = async (sec: SectionKey) => {
-    setSaving(sec);
-    const sectionMeta = SECTIONS.find(s => s.key === sec)!;
-    const { error } = await (supabase.from("app_landing_content").upsert as any)(
-      { app_id: app, section: sec, data: getData(sec), sort_order: sectionMeta.order, updated_at: new Date().toISOString(), updated_by: user?.id },
-      { onConflict: "app_id,section" },
-    );
+  const resetSection = (key: string) => {
+    const pub = published[appId]?.[key];
+    setDraft(prev => {
+      const sections = { ...prev[appId] };
+      if (pub) sections[key] = JSON.parse(JSON.stringify(pub));
+      else delete sections[key];
+      return { ...prev, [appId]: sections };
+    });
+  };
+
+  const publishSection = async (key: string): Promise<boolean> => {
+    const state = sectionOf(draft, appId, key);
+    setSaving(key);
+    const { data, error } = await supabase
+      .from("app_landing_content")
+      .upsert(
+        {
+          app_id: appId,
+          section: key,
+          data: state.data ?? {},
+          sort_order: sectionMeta(key).order,
+          is_active: state.isActive,
+          updated_at: new Date().toISOString(),
+          updated_by: user?.id ?? null,
+        },
+        { onConflict: "app_id,section" },
+      )
+      .select("app_id, section, data, is_active, updated_at")
+      .single();
     setSaving(null);
-    if (error) { toastErr(`Save failed: ${error.message}`); return; }
-    success(`${sectionMeta.label} saved`);
-    fetchAll();
+
+    if (error) {
+      toastErr(`Publication impossible : ${error.message}`);
+      return false;
+    }
+    const row = data as Pick<AppLandingContentRow, "data" | "is_active" | "updated_at">;
+    const saved: SectionState = {
+      data: (row.data ?? {}) as SectionData,
+      isActive: row.is_active !== false,
+      updatedAt: row.updated_at,
+      exists: true,
+    };
+    setPublished(prev => ({ ...prev, [appId]: { ...prev[appId], [key]: saved } }));
+    setDraft(prev => ({ ...prev, [appId]: { ...prev[appId], [key]: JSON.parse(JSON.stringify(saved)) } }));
+    return true;
   };
 
-  const appMeta = APPS.find(a => a.id === app)!;
+  const publishOne = async (key: string) => {
+    if (await publishSection(key)) success(`${sectionMeta(key).label} publiée`);
+  };
+
+  const publishAll = async () => {
+    let ok = 0;
+    for (const key of currentDirty) {
+      if (await publishSection(key)) ok++;
+    }
+    if (ok > 0) success(`${ok} section${ok > 1 ? "s" : ""} publiée${ok > 1 ? "s" : ""}`);
+  };
+
+  /* ── aperçu (sur le brouillon, pas sur la base) ── */
+  const previewSections: PreviewSection[] = useMemo(
+    () => sectionKeys
+      .filter(k => sectionMeta(k).previewable)
+      .map(k => {
+        const s = sectionOf(draft, appId, k);
+        return { key: k, data: s.data ?? {}, isActive: s.isActive };
+      }),
+    [sectionKeys, draft, appId],
+  );
+
+  const busy = loading || appsLoading;
 
   return (
-    <div className={`min-h-screen ${cx.bg} ${cx.text} p-6`}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Landing Pages</h1>
-          <p className={`text-sm ${cx.muted}`}>Manage landing page content for all apps</p>
-        </div>
-        <button onClick={() => window.open(appMeta.url, "_blank")}
-          className={`${cx.btn} ${cx.accentBg} text-p-surface font-semibold flex items-center gap-2`}>
-          <ExternalLink className="w-4 h-4" />Preview {appMeta.label}
+    <div className="min-h-screen bg-p-bg text-p-text p-6 md:p-8">
+      <AdminPageHeader title="Landing Pages" subtitle="Contenu marketing de chaque application — brouillon, aperçu, publication">
+        <button
+          type="button"
+          onClick={() => setShowPreview(v => !v)}
+          className="px-4 py-2 rounded-full text-[13px] font-medium border border-p-border text-p-text-2 hover:border-p-accent hover:text-p-accent transition-colors inline-flex items-center gap-2"
+        >
+          {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          {showPreview ? "Masquer l'aperçu" : "Afficher l'aperçu"}
         </button>
-      </div>
+        {app && (
+          <a
+            href={app.url}
+            target="_blank"
+            rel="noreferrer"
+            className="px-4 py-2 rounded-full text-[13px] font-medium border border-p-border text-p-text-2 hover:border-p-accent hover:text-p-accent transition-colors inline-flex items-center gap-2"
+          >
+            <ExternalLink className="w-4 h-4" />Site en ligne
+          </a>
+        )}
+        <button
+          type="button"
+          onClick={publishAll}
+          disabled={currentDirty.length === 0 || saving !== null}
+          className="px-5 py-2 rounded-full text-[13px] font-semibold bg-p-accent text-p-on-accent hover:bg-p-accent-dark transition-colors inline-flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
+          Publier cette page {currentDirty.length > 0 ? `(${currentDirty.length})` : ""}
+        </button>
+      </AdminPageHeader>
 
-      {/* App tabs */}
-      <div className={`flex gap-1 p-1 ${cx.surface} rounded-xl mb-6 w-fit`}>
-        {APPS.map(a => (
-          <button key={a.id} onClick={() => { setApp(a.id); setOpen("hero"); }}
-            className={`${cx.btn} ${app === a.id ? `${cx.accentBg} text-p-surface font-semibold` : `${cx.muted} hover:text-[#F5F5F5]`}`}>
-            {a.label}
-          </button>
-        ))}
-      </div>
-
-      {loading ? (
-        <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-p-accent" /></div>
-      ) : (
-        <div className="space-y-2 max-w-4xl">
-          {SECTIONS.map(sec => {
-            const isOpen = open === sec.key;
-            const Icon = sec.icon;
-            const Editor = EDITORS[sec.key];
-            const ts = content[app]?.[sec.key]?.updated_at;
+      {/* ── sélecteur d'application ── */}
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="relative w-full max-w-xs">
+            <Search className="w-4 h-4 text-p-muted absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              value={appQuery}
+              onChange={e => setAppQuery(e.target.value)}
+              placeholder={`Filtrer ${apps.length} applications…`}
+              className={`${INPUT} pl-9`}
+              {...NO_AUTOFILL}
+            />
+          </div>
+          {totalDirty > 0 && (
+            <span className="text-xs text-p-warn font-medium inline-flex items-center gap-1.5">
+              <AlertTriangle className="w-3.5 h-3.5" />
+              {totalDirty} modification{totalDirty > 1 ? "s" : ""} non publiée{totalDirty > 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {visibleApps.map(a => {
+            const active = a.id === appId;
+            const nDirty = dirtyKeys(a.id).length;
             return (
-              <div key={sec.key} className={`${cx.surface} rounded-xl overflow-hidden`}>
-                {/* Accordion header */}
-                <button onClick={() => setOpen(isOpen ? null : sec.key)}
-                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-p-surface/40 transition-colors">
-                  <div className="flex items-center gap-3">
-                    {isOpen ? <ChevronDown className="w-4 h-4 text-p-accent" /> : <ChevronRight className="w-4 h-4 text-[#888]" />}
-                    <Icon className={`w-4 h-4 ${isOpen ? "text-p-accent" : "text-[#888]"}`} />
-                    <span className={`text-sm font-semibold ${isOpen ? "text-[#F5F5F5]" : "text-[#888]"}`}>{sec.label}</span>
-                  </div>
-                  {ts && (
-                    <span className="flex items-center gap-1.5 text-[10px] text-[#888]">
-                      <Clock className="w-3 h-3" />{new Date(ts).toLocaleString()}
-                    </span>
-                  )}
-                </button>
-                {/* Accordion body */}
-                {isOpen && (
-                  <div className="px-5 pb-5 border-t border-p-border">
-                    <div className="pt-4">
-                      <Editor data={getData(sec.key)} set={d => setData(sec.key, d)} />
-                    </div>
-                    <div className="flex justify-end mt-4">
-                      <button onClick={() => save(sec.key)} disabled={saving === sec.key}
-                        className={`${cx.btn} ${cx.accentBg} text-p-surface font-semibold flex items-center gap-2 disabled:opacity-50`}>
-                        {saving === sec.key ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                        Save {sec.label}
-                      </button>
-                    </div>
-                  </div>
+              <button
+                key={a.id}
+                type="button"
+                onClick={() => { setAppId(a.id); setOpenSection("hero"); }}
+                className={`px-3.5 py-2 rounded-full text-[13px] font-medium transition-colors inline-flex items-center gap-2 border ${
+                  active
+                    ? "bg-p-accent text-p-on-accent border-p-accent font-semibold"
+                    : "bg-p-surface text-p-text-2 border-p-border hover:border-p-accent hover:text-p-accent"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full shrink-0" style={{ background: a.color }} />
+                {a.name}
+                {a.orphan && <span className="text-[10px] opacity-70">(orphelin)</span>}
+                {nDirty > 0 && (
+                  <span className={`text-[10px] font-bold px-1.5 rounded-full ${active ? "bg-p-on-accent/25" : "bg-p-warn/15 text-p-warn"}`}>
+                    {nDirty}
+                  </span>
                 )}
-              </div>
+              </button>
             );
           })}
+          {visibleApps.length === 0 && <p className="text-sm text-p-muted">Aucune application ne correspond.</p>}
+        </div>
+        {app?.orphan && (
+          <p className="mt-3 text-xs text-p-warn inline-flex items-start gap-1.5">
+            <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+            Contenu enregistré sous l'identifiant «&nbsp;{app.id}&nbsp;», absent du catalogue d'applications.
+            Le site correspondant ne le lira que s'il utilise exactement cet identifiant.
+          </p>
+        )}
+      </div>
+
+      {busy ? (
+        <div className="flex items-center justify-center py-24">
+          <Loader2 className="w-6 h-6 animate-spin text-p-accent" />
+        </div>
+      ) : (
+        <div className={`grid gap-6 items-start ${showPreview ? "xl:grid-cols-2" : "grid-cols-1 max-w-4xl"}`}>
+          {/* ── colonne édition ── */}
+          <div className="space-y-2 min-w-0">
+            {sectionKeys.map(key => {
+              const meta = sectionMeta(key);
+              const Icon = meta.icon;
+              const state = sectionOf(draft, appId, key);
+              const pub = published[appId]?.[key];
+              const isDirty = !sameSection(state, pub ?? EMPTY_SECTION);
+              const isOpen = openSection === key;
+              const Editor = EDITORS[key] ?? GenericEditor;
+              const raw = jsonMode[key] ?? false;
+
+              return (
+                <div key={key} className="bg-p-surface border border-p-border rounded-xl overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setOpenSection(isOpen ? null : key)}
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-p-surface-alt/60 transition-colors text-left"
+                  >
+                    <span className="flex items-center gap-3 min-w-0">
+                      {isOpen ? <ChevronDown className="w-4 h-4 text-p-accent shrink-0" /> : <ChevronRight className="w-4 h-4 text-p-muted shrink-0" />}
+                      <Icon className={`w-4 h-4 shrink-0 ${isOpen ? "text-p-accent" : "text-p-muted"}`} />
+                      <span className="text-sm font-semibold text-p-text truncate">{meta.label}</span>
+                      {!state.isActive && (
+                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-p-surface-alt text-p-muted shrink-0">MASQUÉE</span>
+                      )}
+                      {isDirty && (
+                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-p-warn/15 text-p-warn shrink-0">BROUILLON</span>
+                      )}
+                      {!pub && !isDirty && (
+                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-p-surface-alt text-p-muted shrink-0">VIDE</span>
+                      )}
+                    </span>
+                    {pub?.updatedAt && (
+                      <span className="hidden sm:flex items-center gap-1.5 text-[10px] text-p-muted shrink-0">
+                        <Clock className="w-3 h-3" />{new Date(pub.updatedAt).toLocaleString("fr-FR")}
+                      </span>
+                    )}
+                  </button>
+
+                  {isOpen && (
+                    <div className="px-4 pb-4 border-t border-p-border">
+                      <div className="flex flex-wrap items-center justify-between gap-3 py-3">
+                        <div className="flex items-center gap-1 p-0.5 bg-p-surface-alt rounded-lg">
+                          <button
+                            type="button"
+                            onClick={() => setJsonMode(m => ({ ...m, [key]: false }))}
+                            className={`px-2.5 py-1 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors ${
+                              raw ? "text-p-muted hover:text-p-text" : "bg-p-surface text-p-text shadow-elev-1"
+                            }`}
+                          >
+                            <FormInput className="w-3.5 h-3.5" />Formulaire
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setJsonMode(m => ({ ...m, [key]: true }))}
+                            className={`px-2.5 py-1 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors ${
+                              raw ? "bg-p-surface text-p-text shadow-elev-1" : "text-p-muted hover:text-p-text"
+                            }`}
+                          >
+                            <Braces className="w-3.5 h-3.5" />JSON
+                          </button>
+                        </div>
+                        <label className="flex items-center gap-2 text-xs font-medium text-p-text-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={state.isActive}
+                            onChange={e => patchSection(key, { isActive: e.target.checked })}
+                            className="w-4 h-4 rounded border-p-border accent-[var(--c-accent)]"
+                          />
+                          Visible sur le site
+                        </label>
+                      </div>
+
+                      {raw || !EDITORS[key]
+                        ? <JsonEditor data={state.data ?? {}} onChange={d => patchSection(key, { data: d })} />
+                        : <Editor data={state.data ?? {}} set={d => patchSection(key, { data: d })} />}
+
+                      <div className="flex flex-wrap justify-end gap-2 mt-4 pt-3 border-t border-p-border">
+                        <button
+                          type="button"
+                          onClick={() => resetSection(key)}
+                          disabled={!isDirty}
+                          className="px-3.5 py-2 rounded-full text-[13px] font-medium border border-p-border text-p-text-2 hover:border-p-accent hover:text-p-accent transition-colors inline-flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />Annuler les modifications
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => publishOne(key)}
+                          disabled={saving === key}
+                          className="px-4 py-2 rounded-full text-[13px] font-semibold bg-p-accent text-p-on-accent hover:bg-p-accent-dark transition-colors inline-flex items-center gap-2 disabled:opacity-40"
+                        >
+                          {saving === key ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                          Publier la section
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* ── colonne aperçu ── */}
+          {showPreview && app && (
+            <div className="min-w-0 xl:sticky xl:top-28">
+              <div className="flex items-center justify-between gap-3 mb-2">
+                <p className="text-xs text-p-text-2">
+                  Aperçu du <strong className="text-p-text">brouillon</strong>
+                  {currentDirty.length > 0
+                    ? <span className="text-p-warn"> — {currentDirty.length} section{currentDirty.length > 1 ? "s" : ""} non publiée{currentDirty.length > 1 ? "s" : ""}</span>
+                    : <span className="text-p-muted"> — identique à la version en ligne</span>}
+                </p>
+                <div className="flex items-center gap-1 p-0.5 bg-p-surface-alt rounded-lg shrink-0">
+                  <button type="button" aria-label="Aperçu bureau" onClick={() => setDevice("desktop")}
+                    className={`p-1.5 rounded-md transition-colors ${device === "desktop" ? "bg-p-surface text-p-text shadow-elev-1" : "text-p-muted hover:text-p-text"}`}>
+                    <Monitor className="w-3.5 h-3.5" />
+                  </button>
+                  <button type="button" aria-label="Aperçu mobile" onClick={() => setDevice("mobile")}
+                    className={`p-1.5 rounded-md transition-colors ${device === "mobile" ? "bg-p-surface text-p-text shadow-elev-1" : "text-p-muted hover:text-p-text"}`}>
+                    <Smartphone className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+              <div className="border border-p-border rounded-xl overflow-hidden bg-p-surface-alt shadow-elev-2">
+                <div className="max-h-[calc(100vh-13rem)] overflow-y-auto">
+                  <div className={device === "mobile" ? "mx-auto my-4 w-[390px] max-w-full border border-p-border rounded-2xl overflow-hidden shadow-elev-1" : ""}>
+                    <LandingPreview appName={app.name} appColor={app.color} sections={previewSections} />
+                  </div>
+                </div>
+              </div>
+              <p className="mt-2 text-[11px] text-p-muted">
+                Rendu de contrôle du contenu (textes, ordre, sections masquées). La mise en page finale reste
+                celle du site public.
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>
