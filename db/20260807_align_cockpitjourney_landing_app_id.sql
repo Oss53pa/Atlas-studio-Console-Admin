@@ -1,25 +1,57 @@
 -- ============================================================================
 -- Alignement de l'app_id du contenu de landing de CockpitJourney
 -- ----------------------------------------------------------------------------
--- APPLIQUÉE sur le projet Supabase partagé (migration Supabase :
--- align_cockpitjourney_landing_app_id). Fichier conservé pour traçabilité.
+-- STATUT : APPLIQUÉE PUIS ANNULÉE. NE PAS REJOUER EN L'ÉTAT.
 --
+-- Migrations Supabase correspondantes sur le projet partagé :
+--   align_cockpitjourney_landing_app_id         (le UPDATE ci-dessous)
+--   revert_align_cockpitjourney_landing_app_id  (son annulation)
+-- L'état courant de la base est donc celui d'AVANT : app_id = 'cockpitjourney'.
+--
+-- Contexte
+-- --------
 -- public.apps, public.subscriptions et db/20260727_apps_branding.sql
--- identifient l'application « cockpit-journey » ; seul
--- public.app_landing_content stockait ses 7 sections sous « cockpitjourney ».
--- Le contenu apparaissait donc orphelin dans la Console Admin (écran
--- « Landing Pages »), sans nom, couleur ni URL de marque.
+-- identifient l'application « cockpit-journey » ; public.app_landing_content
+-- stocke ses 7 sections sous « cockpitjourney ». Le contenu apparaissait donc
+-- orphelin dans la Console Admin (écran « Landing Pages »).
 --
--- Contexte de sûreté au moment de l'exécution : aucune clé étrangère sur la
--- table, contrainte UNIQUE (app_id, section), 7 lignes source et 0 ligne
--- « cockpit-journey » préexistante — donc aucune collision possible.
+-- Pourquoi l'annulation
+-- ---------------------
+-- Le site CockpitJourney (dépôt Oss53pa/cockpitJourney) lit la table avec
+-- l'identifiant en dur :
+--
+--   src/lib/landingContent.ts
+--     export const APP_ID_FOR_CMS = 'cockpitjourney';
+--     export function useLandingContent(appId: string = APP_ID_FOR_CMS) {
+--       … .from('app_landing_content').eq('app_id', appId) …
+--
+--   src/components/views/LandingPage.tsx
+--     const { content } = useLandingContent();   // aucun argument
+--
+-- Renommer les lignes vide donc sa requête : la landing retombe sur ses
+-- textes en dur au lieu du contenu du CMS.
+--
+-- Ordre correct pour aligner un jour
+-- ----------------------------------
+--   1. modifier APP_ID_FOR_CMS en 'cockpit-journey' dans le dépôt du site ;
+--   2. déployer le site ;
+--   3. rejouer le UPDATE ci-dessous ;
+--   4. vider CONTENT_ID_ALIASES dans src/admin/pages/LandingPagesPage.tsx.
+--
+-- En attendant, la Console Admin rattache le contenu à l'application via
+-- CONTENT_ID_ALIASES, sans rien changer en base.
+--
+-- Sûreté (vérifiée lors de l'exécution) : aucune clé étrangère sur la table,
+-- contrainte UNIQUE (app_id, section), 7 lignes source et 0 ligne cible
+-- préexistante — aucune collision possible dans un sens comme dans l'autre.
 -- ============================================================================
 
-UPDATE public.app_landing_content
-SET app_id = 'cockpit-journey'
-WHERE app_id = 'cockpitjourney';
+-- Étape 3 ci-dessus — à n'exécuter qu'après le déploiement du site :
+-- UPDATE public.app_landing_content
+-- SET app_id = 'cockpit-journey'
+-- WHERE app_id = 'cockpitjourney';
 
--- Rollback :
+-- Annulation (déjà appliquée — c'est l'état courant de la base) :
 -- UPDATE public.app_landing_content
 -- SET app_id = 'cockpitjourney'
 -- WHERE app_id = 'cockpit-journey';

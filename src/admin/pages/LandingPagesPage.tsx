@@ -41,12 +41,24 @@ type Store = Record<string, AppSections>;
 const EMPTY_SECTION: SectionState = { data: {}, isActive: true, updatedAt: null, exists: false };
 
 /* Contenus stockés sous un app_id qui n'est pas celui du catalogue.
-   Vide depuis l'alignement de « cockpitjourney » sur « cockpit-journey »
-   (migration align_cockpitjourney_landing_app_id). Le mécanisme est conservé :
-   il rattache un contenu à son application sans rien changer en base, ce qui
-   laisse le temps d'aligner les identifiants côté site avant de migrer.
+
+   CockpitJourney est référencé « cockpit-journey » dans public.apps (et dans
+   subscriptions, et dans le seed de branding) mais son site lit ses sections
+   sous « cockpitjourney » : Oss53pa/cockpitJourney, src/lib/landingContent.ts,
+   APP_ID_FOR_CMS = 'cockpitjourney', passé tel quel au .eq('app_id', …).
+   Renommer les lignes vide donc sa landing (elle retombe sur ses textes en
+   dur) — testé et annulé, cf. db/20260807_align_cockpitjourney_landing_app_id.sql.
+
+   L'alias rattache le contenu à son application côté console : il s'édite sous
+   le bon nom, la bonne couleur et la bonne URL. Lecture ET écriture continuent
+   d'utiliser l'identifiant d'origine, donc rien ne change pour le site.
+   Aligner pour de bon suppose de modifier APP_ID_FOR_CMS et de redéployer le
+   site, puis de renommer en base — dans cet ordre.
+
    Clé = id du catalogue, valeur = app_id réellement utilisé en base. */
-const CONTENT_ID_ALIASES: Record<string, string> = {};
+const CONTENT_ID_ALIASES: Record<string, string> = {
+  "cockpit-journey": "cockpitjourney",
+};
 
 const sectionOf = (store: Store, appId: string, key: string): SectionState =>
   store[appId]?.[key] ?? EMPTY_SECTION;
