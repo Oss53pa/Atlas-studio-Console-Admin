@@ -18,10 +18,16 @@ const STATUS_LABELS: Record<string, string> = { available: "Disponible", coming_
 
 const emptyApp: Partial<AppRow> = {
   id: "", name: "", type: "App", tagline: "", description: "",
-  features: [], categories: [], pricing: {}, pricing_notes: {}, seat_pricing: {}, pricing_period: "mois",
+  features: [], categories: [], pricing: {}, pricing_notes: {}, seat_pricing: {},
+  currency: "FCFA", pricing_period: "mois",
   color: "var(--c-accent-dark)", accent_deep: null, accent_soft: null, wordmark_url: null, icon: "receipt", highlights: [],
   status: "available", visible: true, sort_order: 0, external_url: null,
 };
+
+/** Devise par défaut en base (colonne `currency`). */
+const DEFAULT_CURRENCY = "FCFA";
+/** Devises proposées. Une valeur déjà en base hors liste reste sélectionnable (cf. currencyOptions). */
+const CURRENCIES = [DEFAULT_CURRENCY, "EUR", "USD", "MAD", "GNF", "CDF"];
 
 type SeatMode = "none" | "forfait_seats" | "per_person";
 
@@ -179,6 +185,7 @@ export default function AdminAppsTable() {
       features: featuresStr.split("\n").map(s => s.trim()).filter(Boolean),
       categories: categoriesStr.split(",").map(s => s.trim()).filter(Boolean),
       pricing, pricing_notes: pricingNotes, seat_pricing: seatPricing,
+      currency: (editApp.currency || DEFAULT_CURRENCY).trim(),
       pricing_period: editApp.pricing_period || "mois",
       color: editApp.color || "var(--c-accent-dark)",
       accent_deep: editApp.accent_deep || null,
@@ -247,8 +254,11 @@ export default function AdminAppsTable() {
   };
 
   const fmt = (n: number) => n.toLocaleString("fr-FR");
-  // Devise de l'app en cours d'édition (colonne `currency`, non éditable ici).
-  const currency = editApp?.currency || "FCFA";
+  // Devise de l'app en cours d'édition — pilote les suffixes du bloc « Tarification ».
+  const currency = editApp?.currency || DEFAULT_CURRENCY;
+  // Une devise déjà en base mais absente de CURRENCIES reste proposée : éditer une app
+  // ne doit jamais la faire basculer silencieusement sur une autre valeur.
+  const currencyOptions = CURRENCIES.includes(currency) ? CURRENCIES : [currency, ...CURRENCIES];
   // ADMIN_INPUT_CLASS imported from AdminFormField
 
   return (
@@ -462,6 +472,14 @@ export default function AdminAppsTable() {
               <p className="text-neutral-muted dark:text-admin-muted/60 text-[11px] mb-3">
                 Prix, mention publique et grille au siège se modifient ici, au même endroit — pour qu'ils ne divergent pas.
               </p>
+
+              <div className="mb-3 max-w-[220px]">
+                <label className="block text-neutral-text dark:text-admin-text/80 text-[13px] font-semibold mb-1.5">Devise</label>
+                <select value={currency} onChange={e => setEditApp({ ...editApp, currency: e.target.value })} className={ADMIN_INPUT_CLASS}>
+                  {currencyOptions.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+                <p className="text-neutral-muted dark:text-admin-muted/60 text-[11px] mt-1">S'applique à tous les plans de cette app.</p>
+              </div>
               <div className="space-y-3">
                 {pricingRows.map((row, i) => {
                   const patch = (p: Partial<PricingRow>) => { const r = [...pricingRows]; r[i] = { ...r[i], ...p }; setPricingRows(r); };

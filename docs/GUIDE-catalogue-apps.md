@@ -148,8 +148,8 @@ ordre d'origine préservé) — plus aucun doublon. Ordre en vigueur :
 | 100 | `tablesmart` |
 | 110 | `wedo` |
 
-**b) `pricing_notes` et `seat_pricing` — ✅ éditables depuis la console
-(2026-08-07).** Le bloc « Tarification » de `/admin/apps` traite désormais chaque
+**b) `pricing_notes`, `seat_pricing` et `currency` — ✅ éditables depuis la
+console (2026-08-07).** Le bloc « Tarification » de `/admin/apps` traite désormais chaque
 plan comme un tout : prix, **mention publique** et **grille au siège** se
 modifient au même endroit, ce qui supprime le risque de voir un prix évoluer
 sans sa mention. Deux modes de sièges sont pris en charge, ceux présents en
@@ -174,8 +174,12 @@ Détails d'implémentation utiles à connaître :
   sont construits depuis la même ligne de formulaire ;
 - vider la mention supprime la clé de `pricing_notes` ; passer les sièges sur
   « Aucune » supprime la clé de `seat_pricing` ;
-- `currency` **n'est toujours pas éditable** : la valeur en base est lue et
-  affichée (partout `FCFA` aujourd'hui), mais se modifie en SQL.
+- **`currency`** se choisit en tête du bloc « Tarification » et s'applique à
+  tous les plans de l'app. La liste propose `FCFA` (défaut), `EUR`, `USD`,
+  `MAD`, `GNF`, `CDF` ; une valeur déjà en base hors de cette liste reste
+  proposée, pour qu'éditer une app ne la fasse jamais basculer silencieusement.
+  Changer la devise change aussi la mention que « Générer depuis les sièges »
+  propose — pensez à régénérer les mentions concernées.
 
 Le cycle lecture → écriture a été rejoué sur les 11 apps réelles : aucune
 divergence, et les mentions générées reproduisent à l'identique celles déjà en
@@ -204,7 +208,8 @@ service mais absente du site public. À confirmer si c'est volontaire.
 - **Ordonner** : `sort_order` par pas de 10 (10, 20, 30…), valeurs uniques —
   on peut ainsi insérer une app entre deux autres sans tout renuméroter.
 - **Créer une app** : par la console, puis compléter en SQL le branding
-  (`accent_deep`, `accent_soft`, `wordmark_url`) et `currency` si nécessaire.
+  (`accent_deep`, `accent_soft`, `wordmark_url`), seul bloc encore non couvert
+  par le formulaire.
 - **Changer un prix** : entièrement dans la console — prix, mention publique et
   grille au siège sont sur la même ligne de formulaire, à mettre à jour ensemble.
 - **Ne jamais** modifier un `id` : c'est la clé de jointure des `subscriptions`,
