@@ -9,7 +9,7 @@ import { AdminModal } from "../components/AdminModal";
 import { AdminConfirmDialog } from "../components/AdminConfirmDialog";
 import { useToast } from "../contexts/ToastContext";
 import { formatSupabaseError } from "../../lib/errorMessages";
-import type { AppRow, AppType, AppStatus } from "../../lib/database.types";
+import type { AppRow, AppType, AppStatus, SeatPricingEntry } from "../../lib/database.types";
 import { DEFAULT_CONTENT } from "../../config/content";
 
 const appTypes: AppType[] = ["Module ERP", "App", "App mobile"];
@@ -18,12 +18,60 @@ const STATUS_LABELS: Record<string, string> = { available: "Disponible", coming_
 
 const emptyApp: Partial<AppRow> = {
   id: "", name: "", type: "App", tagline: "", description: "",
-  features: [], categories: [], pricing: {}, pricing_period: "mois",
+  features: [], categories: [], pricing: {}, pricing_notes: {}, seat_pricing: {}, pricing_period: "mois",
   color: "var(--c-accent-dark)", accent_deep: null, accent_soft: null, wordmark_url: null, icon: "receipt", highlights: [],
   status: "available", visible: true, sort_order: 0, external_url: null,
 };
 
-interface PricingRow { plan: string; price: number }
+type SeatMode = "none" | "forfait_seats" | "per_person";
+
+const SEAT_MODE_LABELS: Record<SeatMode, string> = {
+  none: "Aucune (forfait simple)",
+  forfait_seats: "Forfait + sièges supplémentaires",
+  per_person: "Par personne (tranche d'effectif)",
+};
+
+/** Une ligne du formulaire = un plan, avec son prix, sa mention publique et sa grille au siège. */
+interface PricingRow {
+  plan: string;
+  price: number;
+  note: string;
+  seatMode: SeatMode;
+  included: number;      // forfait_seats
+  extra: number;         // forfait_seats
+  rate: number;          // per_person
+  min: number;           // per_person
+  max: number | null;    // per_person — null = illimité
+}
+
+const emptyPricingRow = (): PricingRow => ({
+  plan: "", price: 0, note: "", seatMode: "none",
+  included: 0, extra: 0, rate: 0, min: 1, max: null,
+});
+
+const toPricingRow = (plan: string, price: number | undefined, note: string | undefined, seat: SeatPricingEntry | undefined): PricingRow => {
+  const base: PricingRow = { ...emptyPricingRow(), plan, price: price ?? 0, note: note ?? "" };
+  if (seat?.mode === "forfait_seats") return { ...base, seatMode: "forfait_seats", included: seat.included ?? 0, extra: seat.extra ?? 0 };
+  if (seat?.mode === "per_person") return { ...base, seatMode: "per_person", rate: seat.rate ?? 0, min: seat.min ?? 1, max: seat.max ?? null };
+  return base;
+};
+
+/** Mention publique dérivée de la grille au siège — évite que prix et mention divergent. */
+const noteFromSeats = (r: PricingRow, currency: string): string => {
+  // toLocaleString("fr-FR") sépare les milliers par une espace fine insécable (U+202F).
+  // Les mentions déjà en base utilisent une espace simple : on s'aligne dessus, sinon
+  // « Générer » réécrirait un texte visuellement identique mais différent octet à octet.
+  const n = (v: number) => v.toLocaleString("fr-FR").replace(/[\u202f\u00a0]/g, " ");
+  if (r.seatMode === "forfait_seats") {
+    return `${r.included} siège${r.included > 1 ? "s" : ""} inclus · +${n(r.extra)} ${currency}/siège suppl.`;
+  }
+  if (r.seatMode === "per_person") {
+    if (r.max === null) return `par personne · ${r.min} et +`;
+    if (r.max === r.min) return `par personne · ${r.min} utilisateur${r.min > 1 ? "s" : ""}`;
+    return `par personne · ${r.min} à ${r.max}`;
+  }
+  return "";
+};
 
 export default function AdminAppsTable() {
   const { success, error: showError } = useToast();
@@ -74,8 +122,13 @@ export default function AdminAppsTable() {
     setFeaturesStr((app.features || []).join("\n"));
     setCategoriesStr((app.categories || []).join(", "));
     setHighlightsStr((app.highlights || []).join(", "));
-    const pricing = app.pricing as Record<string, number> || {};
-    setPricingRows(Object.entries(pricing).map(([plan, price]) => ({ plan, price })));
+    const pricing = (app.pricing as Record<string, number>) || {};
+    const notes = (app.pricing_notes as Record<string, string>) || {};
+    const seats = (app.seat_pricing as Record<string, SeatPricingEntry>) || {};
+    // Union des clés : une mention ou une grille au siège orpheline (plan absent de
+    // `pricing`) reste visible et n'est pas perdue silencieusement à l'enregistrement.
+    const plans = Array.from(new Set([...Object.keys(pricing), ...Object.keys(notes), ...Object.keys(seats)]));
+    setPricingRows(plans.map(plan => toPricingRow(plan, pricing[plan], notes[plan], seats[plan])));
   };
 
   // Deep-link « Modifier » depuis le cockpit : /admin/apps?edit=<id>
@@ -91,7 +144,7 @@ export default function AdminAppsTable() {
   const openCreate = () => {
     setEditApp({ ...emptyApp }); setIsNew(true);
     setFeaturesStr(""); setCategoriesStr(""); setHighlightsStr("");
-    setPricingRows([{ plan: "", price: 0 }]);
+    setPricingRows([emptyPricingRow()]);
   };
 
   // Reserved IDs that cannot be used for apps (site vitrine, etc.)
@@ -110,14 +163,23 @@ export default function AdminAppsTable() {
     setSaving(true);
 
     const pricing: Record<string, number> = {};
-    pricingRows.filter(r => r.plan.trim()).forEach(r => { pricing[r.plan.trim()] = r.price; });
+    const pricingNotes: Record<string, string> = {};
+    const seatPricing: Record<string, SeatPricingEntry> = {};
+    pricingRows.filter(r => r.plan.trim()).forEach(r => {
+      const plan = r.plan.trim();
+      pricing[plan] = r.price;
+      if (r.note.trim()) pricingNotes[plan] = r.note.trim();
+      if (r.seatMode === "forfait_seats") seatPricing[plan] = { mode: "forfait_seats", included: r.included, extra: r.extra };
+      else if (r.seatMode === "per_person") seatPricing[plan] = { mode: "per_person", rate: r.rate, min: r.min, max: r.max };
+    });
 
     const row = {
       id: editApp.id, name: editApp.name, type: editApp.type as AppType,
       tagline: editApp.tagline || "", description: editApp.description || "",
       features: featuresStr.split("\n").map(s => s.trim()).filter(Boolean),
       categories: categoriesStr.split(",").map(s => s.trim()).filter(Boolean),
-      pricing, pricing_period: editApp.pricing_period || "mois",
+      pricing, pricing_notes: pricingNotes, seat_pricing: seatPricing,
+      pricing_period: editApp.pricing_period || "mois",
       color: editApp.color || "var(--c-accent-dark)",
       accent_deep: editApp.accent_deep || null,
       accent_soft: editApp.accent_soft || null,
@@ -172,6 +234,7 @@ export default function AdminAppsTable() {
     const rows = DEFAULT_CONTENT.apps.map((a, i) => ({
       id: a.id, name: a.name, type: a.type as AppType, tagline: a.tagline, description: a.desc,
       features: a.features, categories: a.categories, pricing: a.pricing,
+      pricing_notes: a.pricingNotes || {},
       pricing_period: a.pricingPeriod || "mois", color: a.color || "var(--c-accent-dark)",
       icon: a.icon || "receipt", highlights: a.highlights || [],
       status: "available" as AppStatus, visible: true, sort_order: i,
@@ -184,6 +247,8 @@ export default function AdminAppsTable() {
   };
 
   const fmt = (n: number) => n.toLocaleString("fr-FR");
+  // Devise de l'app en cours d'édition (colonne `currency`, non éditable ici).
+  const currency = editApp?.currency || "FCFA";
   // ADMIN_INPUT_CLASS imported from AdminFormField
 
   return (
@@ -254,13 +319,15 @@ export default function AdminAppsTable() {
           )},
           { key: "pricing", label: "Tarifs", render: (r: AppRow) => {
             const prices = Object.entries(r.pricing as Record<string, number>);
+            const notes = (r.pricing_notes as Record<string, string>) || {};
             if (prices.length === 0) return <span className="text-neutral-muted dark:text-admin-muted">—</span>;
             return (
               <div className="space-y-0.5">
                 {prices.map(([plan, price]) => (
                   <div key={plan} className="text-[11px]">
                     <span className="text-neutral-muted dark:text-admin-muted">{plan}:</span>{" "}
-                    <span className="text-neutral-text dark:text-admin-text font-medium">{fmt(price)} FCFA/{r.pricing_period || "mois"}</span>
+                    <span className="text-neutral-text dark:text-admin-text font-medium">{fmt(price)} {r.currency || "FCFA"}/{r.pricing_period || "mois"}</span>
+                    {notes[plan] && <div className="text-neutral-muted dark:text-admin-muted/70 text-[10px] italic">{notes[plan]}</div>}
                   </div>
                 ))}
               </div>
@@ -391,22 +458,87 @@ export default function AdminAppsTable() {
 
             {/* Structured Pricing */}
             <div>
-              <h3 className="text-neutral-text dark:text-admin-text text-sm font-semibold mb-3">Tarification</h3>
-              <div className="space-y-2">
-                {pricingRows.map((row, i) => (
-                  <div key={i} className="flex gap-3 items-center">
-                    <input value={row.plan} onChange={e => { const r = [...pricingRows]; r[i] = { ...r[i], plan: e.target.value }; setPricingRows(r); }}
-                      placeholder="Nom du plan" className={`flex-1 ${ADMIN_INPUT_CLASS}`} />
-                    <div className="relative flex-1">
-                      <input type="number" value={row.price} onChange={e => { const r = [...pricingRows]; r[i] = { ...r[i], price: Number(e.target.value) }; setPricingRows(r); }}
-                        className={ADMIN_INPUT_CLASS} />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-muted dark:text-admin-muted text-[11px]">FCFA</span>
+              <h3 className="text-neutral-text dark:text-admin-text text-sm font-semibold mb-1">Tarification</h3>
+              <p className="text-neutral-muted dark:text-admin-muted/60 text-[11px] mb-3">
+                Prix, mention publique et grille au siège se modifient ici, au même endroit — pour qu'ils ne divergent pas.
+              </p>
+              <div className="space-y-3">
+                {pricingRows.map((row, i) => {
+                  const patch = (p: Partial<PricingRow>) => { const r = [...pricingRows]; r[i] = { ...r[i], ...p }; setPricingRows(r); };
+                  const derived = noteFromSeats(row, currency);
+                  return (
+                    <div key={i} className="p-3 rounded-lg border border-warm-border dark:border-admin-surface-alt space-y-3">
+                      {/* Plan + prix */}
+                      <div className="flex gap-3 items-center">
+                        <input value={row.plan} onChange={e => patch({ plan: e.target.value })}
+                          placeholder="Nom du plan" className={`flex-1 ${ADMIN_INPUT_CLASS}`} />
+                        <div className="relative flex-1">
+                          <input type="number" value={row.price} onChange={e => patch({ price: Number(e.target.value) })}
+                            className={ADMIN_INPUT_CLASS} />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-muted dark:text-admin-muted text-[11px]">{currency}</span>
+                        </div>
+                        <button onClick={() => setPricingRows(pricingRows.filter((_, j) => j !== i))} className="p-2 text-red-700 hover:text-red-600 transition-colors" title="Supprimer ce plan"><Trash2 size={14} /></button>
+                      </div>
+
+                      {/* Mention publique */}
+                      <div>
+                        <div className="flex items-baseline justify-between gap-3 mb-1.5">
+                          <label className="text-neutral-text dark:text-admin-text/80 text-[12px] font-semibold">Mention publique</label>
+                          {derived && derived !== row.note && (
+                            <button type="button" onClick={() => patch({ note: derived })}
+                              className="text-gold dark:text-admin-accent text-[11px] font-semibold hover:underline">
+                              Générer depuis les sièges
+                            </button>
+                          )}
+                        </div>
+                        <input value={row.note} onChange={e => patch({ note: e.target.value })}
+                          placeholder="3 sièges inclus · +6 000 FCFA/siège suppl." className={ADMIN_INPUT_CLASS} />
+                        <p className="text-neutral-muted dark:text-admin-muted/60 text-[11px] mt-1">Affichée sous le prix sur le site public. Laisser vide si aucune mention.</p>
+                      </div>
+
+                      {/* Grille au siège */}
+                      <div>
+                        <label className="block text-neutral-text dark:text-admin-text/80 text-[12px] font-semibold mb-1.5">Tarification au siège</label>
+                        <select value={row.seatMode} onChange={e => patch({ seatMode: e.target.value as SeatMode })} className={ADMIN_INPUT_CLASS}>
+                          {(Object.keys(SEAT_MODE_LABELS) as SeatMode[]).map(m => <option key={m} value={m}>{SEAT_MODE_LABELS[m]}</option>)}
+                        </select>
+
+                        {row.seatMode === "forfait_seats" && (
+                          <div className="grid grid-cols-2 gap-3 mt-3">
+                            <div>
+                              <label className="block text-neutral-muted dark:text-admin-muted text-[11px] mb-1">Sièges inclus</label>
+                              <input type="number" min={0} value={row.included} onChange={e => patch({ included: Number(e.target.value) })} className={ADMIN_INPUT_CLASS} />
+                            </div>
+                            <div>
+                              <label className="block text-neutral-muted dark:text-admin-muted text-[11px] mb-1">Siège supplémentaire ({currency})</label>
+                              <input type="number" min={0} value={row.extra} onChange={e => patch({ extra: Number(e.target.value) })} className={ADMIN_INPUT_CLASS} />
+                            </div>
+                          </div>
+                        )}
+
+                        {row.seatMode === "per_person" && (
+                          <div className="grid grid-cols-3 gap-3 mt-3">
+                            <div>
+                              <label className="block text-neutral-muted dark:text-admin-muted text-[11px] mb-1">Prix / personne ({currency})</label>
+                              <input type="number" min={0} value={row.rate} onChange={e => patch({ rate: Number(e.target.value) })} className={ADMIN_INPUT_CLASS} />
+                            </div>
+                            <div>
+                              <label className="block text-neutral-muted dark:text-admin-muted text-[11px] mb-1">À partir de</label>
+                              <input type="number" min={1} value={row.min} onChange={e => patch({ min: Number(e.target.value) })} className={ADMIN_INPUT_CLASS} />
+                            </div>
+                            <div>
+                              <label className="block text-neutral-muted dark:text-admin-muted text-[11px] mb-1">Jusqu'à</label>
+                              <input type="number" min={1} value={row.max ?? ""} placeholder="illimité"
+                                onChange={e => patch({ max: e.target.value === "" ? null : Number(e.target.value) })} className={ADMIN_INPUT_CLASS} />
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <button onClick={() => setPricingRows(pricingRows.filter((_, j) => j !== i))} className="p-2 text-red-700 hover:text-red-600 transition-colors"><Trash2 size={14} /></button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-              <button onClick={() => setPricingRows([...pricingRows, { plan: "", price: 0 }])}
+              <button onClick={() => setPricingRows([...pricingRows, emptyPricingRow()])}
                 className="text-gold dark:text-admin-accent text-[12px] font-semibold mt-2 hover:underline">+ Ajouter un plan</button>
             </div>
 

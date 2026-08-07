@@ -148,14 +148,38 @@ ordre d'origine préservé) — plus aucun doublon. Ordre en vigueur :
 | 100 | `tablesmart` |
 | 110 | `wedo` |
 
-**b) `pricing_notes` / `seat_pricing` / `currency` ne sont pas éditables depuis
-la console.** Ces trois colonnes existent en base et sont peuplées (mentions
-« 3 sièges inclus · +6 000 FCFA/siège suppl. », grilles au siège), mais elles
-sont absentes du type `AppRow` et du formulaire. L'enregistrement depuis la
-console ne les écrase pas — en revanche, **modifier un prix depuis la console
-laisse la mention de sièges inchangée** : les deux peuvent se désynchroniser.
-Tant que le formulaire ne les couvre pas, toute évolution tarifaire touchant
-les sièges doit être répercutée en SQL sur `pricing_notes` et `seat_pricing`.
+**b) `pricing_notes` et `seat_pricing` — ✅ éditables depuis la console
+(2026-08-07).** Le bloc « Tarification » de `/admin/apps` traite désormais chaque
+plan comme un tout : prix, **mention publique** et **grille au siège** se
+modifient au même endroit, ce qui supprime le risque de voir un prix évoluer
+sans sa mention. Deux modes de sièges sont pris en charge, ceux présents en
+base :
+
+- **Forfait + sièges supplémentaires** (`forfait_seats`) — N sièges inclus,
+  chaque siège au-delà facturé au prix indiqué ;
+- **Par personne** (`per_person`) — prix par personne sur une tranche
+  d'effectif, borne haute vide = illimité.
+
+Le bouton **« Générer depuis les sièges »** remplit la mention à partir de la
+grille (« 3 sièges inclus · +6 000 FCFA/siège suppl. », « par personne · 2 à
+10 ») ; il n'apparaît que si la mention diffère de ce qui serait généré. La
+mention reste librement éditable à la main : rien n'est écrasé automatiquement.
+
+Détails d'implémentation utiles à connaître :
+
+- la lecture prend l'**union** des clés de `pricing`, `pricing_notes` et
+  `seat_pricing` — une mention orpheline (plan absent de `pricing`) reste
+  visible et n'est pas perdue à l'enregistrement ;
+- renommer un plan renomme la clé dans les trois objets d'un coup, puisqu'ils
+  sont construits depuis la même ligne de formulaire ;
+- vider la mention supprime la clé de `pricing_notes` ; passer les sièges sur
+  « Aucune » supprime la clé de `seat_pricing` ;
+- `currency` **n'est toujours pas éditable** : la valeur en base est lue et
+  affichée (partout `FCFA` aujourd'hui), mais se modifie en SQL.
+
+Le cycle lecture → écriture a été rejoué sur les 11 apps réelles : aucune
+divergence, et les mentions générées reproduisent à l'identique celles déjà en
+base.
 
 **c) Le catalogue par défaut du code a divergé de la base.** `DEFAULT_CONTENT.apps`
 (`src/config/content.ts`) décrit 7 apps avec l'id `atlas-fa`, alors que la base
@@ -179,9 +203,9 @@ service mais absente du site public. À confirmer si c'est volontaire.
   `delete`.
 - **Ordonner** : `sort_order` par pas de 10 (10, 20, 30…), valeurs uniques —
   on peut ainsi insérer une app entre deux autres sans tout renuméroter.
-- **Créer une app** : par la console, puis compléter en SQL `pricing_notes`,
-  `seat_pricing` et le branding tant que le formulaire ne les couvre pas.
-- **Changer un prix** : console pour `pricing`, **et** SQL pour
-  `pricing_notes` / `seat_pricing` s'il y a des sièges.
+- **Créer une app** : par la console, puis compléter en SQL le branding
+  (`accent_deep`, `accent_soft`, `wordmark_url`) et `currency` si nécessaire.
+- **Changer un prix** : entièrement dans la console — prix, mention publique et
+  grille au siège sont sur la même ligne de formulaire, à mettre à jour ensemble.
 - **Ne jamais** modifier un `id` : c'est la clé de jointure des `subscriptions`,
   `licences`, `error_logs` et `deployments`.

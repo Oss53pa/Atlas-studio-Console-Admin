@@ -22,6 +22,24 @@ export interface Profile {
   preferred_payment_method?: string | null;
 }
 
+/**
+ * Tarification au siege, par plan. Deux modes coexistent en base :
+ *  - forfait_seats : forfait incluant N sieges, chaque siege au-dela est facture
+ *  - per_person    : prix par personne sur une tranche d'effectif (max null = illimite)
+ */
+export interface SeatPricingForfait {
+  mode: 'forfait_seats';
+  included: number;
+  extra: number;
+}
+export interface SeatPricingPerPerson {
+  mode: 'per_person';
+  rate: number;
+  min: number;
+  max: number | null;
+}
+export type SeatPricingEntry = SeatPricingForfait | SeatPricingPerPerson;
+
 export interface AppRow {
   id: string;
   name: string;
@@ -31,6 +49,11 @@ export interface AppRow {
   features: string[];
   categories: string[];
   pricing: Record<string, number>;
+  /** Mention publique affichee sous le prix de chaque plan. Cle = nom du plan. */
+  pricing_notes: Record<string, string>;
+  /** Grille au siege par plan. Cle = nom du plan. */
+  seat_pricing: Record<string, SeatPricingEntry>;
+  currency: string;
   pricing_period: string;
   color: string;
   accent_deep: string | null;
